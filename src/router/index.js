@@ -1,5 +1,6 @@
 import { createWebHistory, createRouter } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
+import NovelView from "@/views/NovelView.vue";
 
 const routes = [
     {
@@ -7,12 +8,12 @@ const routes = [
         name: "home",
         component: HomeView,
     },
+    {
+        path: "/novels/:id",
+        name: "novel-detail",
+        component: NovelView,
+    },
     // TODO: Thêm các route sau khi tạo file view tương ứng
-    // {
-    //     path: "/novels/:id",
-    //     name: "novel-detail",
-    //     component: () => import("@/views/NovelDetail.vue"),
-    // },
     // {
     //     path: "/favorites",
     //     name: "favorites",

@@ -23,9 +23,10 @@
 
                 <div class="user-actions">
                     <div v-if="isLoggedIn" class="user-menu">
-                        <img :src="user?.avatar || '/default-avatar.png'" 
+                        <img :src="getUserAvatar()" 
                              :alt="user?.username" 
-                             class="user-avatar" />
+                             class="user-avatar" 
+                             @error="handleAvatarError" />
                         <span class="user-name">{{ user?.username }}</span>
                         <div class="dropdown">
                             <router-link to="/profile" class="dropdown-item">
@@ -66,6 +67,29 @@ export default {
             if (this.isLoggedIn) {
                 this.user = AuthService.getUser();
             }
+        },
+        getUserAvatar() {
+            if (!this.user) return '/assets/default-avatar.svg';
+            
+            // Nếu avatar là URL đầy đủ (http/https)
+            if (this.user.avatar && (this.user.avatar.startsWith('http://') || this.user.avatar.startsWith('https://'))) {
+                return this.user.avatar;
+            }
+            
+            // Nếu có userId, dùng đường dẫn theo userId
+            if (this.user._id || this.user.id) {
+                const userId = this.user._id || this.user.id;
+                return this.user.avatar 
+                    ? `/assets/user/${userId}/${this.user.avatar}`
+                    : `/assets/user/${userId}/avatar.png`;
+            }
+            
+            // Fallback
+            return '/assets/default-avatar.svg';
+        },
+        handleAvatarError(event) {
+            // Nếu ảnh lỗi, dùng ảnh mặc định
+            event.target.src = '/assets/default-avatar.svg';
         },
         handleLogout() {
             AuthService.logout();
@@ -139,6 +163,11 @@ export default {
     padding: 0.5rem 1rem;
     border-radius: 25px;
     background: rgba(255, 255, 255, 0.2);
+    transition: background 0.3s ease;
+}
+
+.user-menu:hover {
+    background: rgba(255, 255, 255, 0.3);
 }
 
 .user-avatar {
@@ -146,6 +175,7 @@ export default {
     height: 35px;
     border-radius: 50%;
     border: 2px solid white;
+    object-fit: cover;
 }
 
 .user-name {
@@ -155,6 +185,18 @@ export default {
 
 .user-menu:hover .dropdown {
     display: block;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .dropdown {
@@ -162,28 +204,53 @@ export default {
     position: absolute;
     top: 100%;
     right: 0;
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
     background: white;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    min-width: 180px;
+    min-width: 200px;
+    overflow: hidden;
+    z-index: 1000;
+}
+
+/* Mở rộng vùng hover */
+.dropdown::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 0;
+    right: 0;
+    height: 10px;
 }
 
 .dropdown-item {
     display: block;
-    padding: 0.75rem 1rem;
+    padding: 0.75rem 1.25rem;
     color: #2c3e50;
     text-decoration: none;
-    transition: background 0.2s;
+    transition: all 0.2s;
     border: none;
     width: 100%;
     text-align: left;
     background: none;
     cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.dropdown-item:first-child {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.dropdown-item:last-child {
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
 }
 
 .dropdown-item:hover {
-    background: #f5f5f5;
+    background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
+    color: white;
+    padding-left: 1.5rem;
 }
 
 .btn-login,

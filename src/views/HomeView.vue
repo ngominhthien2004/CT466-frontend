@@ -4,7 +4,6 @@
             <!-- Tiểu thuyết mới -->
             <NovelList 
                 title="Mới"
-                subtitle="Subheading"
                 :novels="newNovels"
                 :loading="loadingNew"
                 :items-per-page="6"
@@ -14,7 +13,6 @@
             <!-- Tiểu thuyết nổi bật -->
             <NovelList 
                 title="Nổi bật"
-                subtitle="Subheading"
                 :novels="featuredNovels"
                 :loading="loadingFeatured"
                 :items-per-page="6"

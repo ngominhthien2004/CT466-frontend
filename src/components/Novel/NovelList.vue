@@ -74,7 +74,7 @@
                 </button>
 
                 <div class="page-info">
-                    Trang {{ currentPage }} / {{ totalPages }} ({{ novels.length }} truyện)
+                    Trang {{ currentPage }} / {{ totalPages }} (Tổng {{ novels.length }})
                 </div>
             </div>
         </template>
