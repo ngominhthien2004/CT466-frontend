@@ -19,9 +19,18 @@
                     <router-link to="/categories" class="nav-link" active-class="active">
                         Thể loại
                     </router-link>
+                    <router-link to="/admin" class="nav-link" active-class="active">
+                        <i class="fas fa-cog"></i>
+                        Quản lý
+                    </router-link>
                 </nav>
 
                 <div class="user-actions">
+                    <router-link to="/novels/add" class="btn-add-novel">
+                        <i class="fas fa-plus"></i>
+                        Thêm truyện
+                    </router-link>
+                    
                     <div v-if="isLoggedIn" class="user-menu">
                         <img :src="getUserAvatar()" 
                              :alt="user?.username" 
@@ -152,6 +161,32 @@ export default {
 .nav-link:hover,
 .nav-link.active {
     background-color: rgba(255, 255, 255, 0.3);
+}
+
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.btn-add-novel {
+    background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
+    color: white;
+    padding: 0.6rem 1.25rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-add-novel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(201, 169, 166, 0.4);
 }
 
 .user-menu {

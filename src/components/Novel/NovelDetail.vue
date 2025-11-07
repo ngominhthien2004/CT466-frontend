@@ -70,6 +70,10 @@
                         <i class="fas fa-bookmark"></i>
                         Đọc tiếp
                     </button>
+                    <button class="btn-edit" @click="editNovel">
+                        <i class="fas fa-edit"></i>
+                        Chỉnh sửa
+                    </button>
                 </div>
             </div>
         </div>
@@ -126,6 +130,9 @@ export default {
         },
         continueReading() {
             this.$emit('read-chapter', this.lastReadChapter.chapterId);
+        },
+        editNovel() {
+            this.$router.push(`/novels/${this.novel._id}/edit`);
         }
     }
 };
@@ -319,6 +326,17 @@ export default {
 
 .btn-continue:hover {
     background: #c9a9a6;
+    color: white;
+}
+
+.btn-edit {
+    background: white;
+    color: #3498db;
+    border: 2px solid #3498db;
+}
+
+.btn-edit:hover {
+    background: #3498db;
     color: white;
 }
 
