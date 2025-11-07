@@ -302,7 +302,7 @@ export default {
             return chapter?.chapterNumber || '?';
         },
         viewNovel(novelId) {
-            this.$router.push(`/novels/${novelId}`);
+            window.location.href = `/novels/${novelId}`;
         },
         confirmDelete(comment) {
             this.commentToDelete = comment;

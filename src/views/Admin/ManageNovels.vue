@@ -11,10 +11,10 @@
                     @input="handleSearch"
                 />
             </div>
-            <router-link to="/novels/add" class="btn-add">
+            <a href="/novels/add" class="btn-add">
                 <i class="fas fa-plus"></i>
                 Thêm Novel mới
-            </router-link>
+            </a>
         </div>
 
         <!-- Filters -->
@@ -52,10 +52,10 @@
             <h3>Không tìm thấy tiểu thuyết nào</h3>
             <p v-if="searchQuery">Thử tìm kiếm với từ khóa khác</p>
             <p v-else>Bắt đầu bằng cách thêm tiểu thuyết mới</p>
-            <router-link to="/novels/add" class="btn-add-empty">
+            <a href="/novels/add" class="btn-add-empty">
                 <i class="fas fa-plus-circle"></i>
                 Thêm Novel
-            </router-link>
+            </a>
         </div>
 
         <!-- Data Table -->
@@ -119,20 +119,20 @@
                         </td>
                         <td>
                             <div class="action-buttons">
-                                <router-link
-                                    :to="`/novels/${novel._id}`"
+                                <a
+                                    :href="`/novels/${novel._id}`"
                                     class="btn-action btn-view"
                                     title="Xem"
                                 >
                                     <i class="fas fa-eye"></i>
-                                </router-link>
-                                <router-link
-                                    :to="`/novels/${novel._id}/edit`"
+                                </a>
+                                <a
+                                    :href="`/novels/${novel._id}/edit`"
                                     class="btn-action btn-edit"
                                     title="Sửa"
                                 >
                                     <i class="fas fa-edit"></i>
-                                </router-link>
+                                </a>
                                 <button
                                     @click="confirmDelete(novel)"
                                     class="btn-action btn-delete"

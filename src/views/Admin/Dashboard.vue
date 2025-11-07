@@ -49,9 +49,9 @@
                                     <i class="fas fa-eye"></i> {{ formatNumber(novel.views || 0) }} lượt xem
                                 </span>
                             </div>
-                            <router-link :to="`/novels/${novel._id}`" class="btn-view">
+                            <a :href="`/novels/${novel._id}`" class="btn-view">
                                 <i class="fas fa-external-link-alt"></i>
-                            </router-link>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -99,10 +99,10 @@
             </div>
             <div class="card-body">
                 <div class="actions-grid">
-                    <router-link to="/novels/add" class="action-btn">
+                    <a href="/novels/add" class="action-btn">
                         <i class="fas fa-plus-circle"></i>
                         <span>Thêm Novel mới</span>
-                    </router-link>
+                    </a>
                     <router-link to="/admin/novels" class="action-btn">
                         <i class="fas fa-list"></i>
                         <span>Quản lý Novels</span>

@@ -23,7 +23,7 @@
                         <i class="fas fa-heart"></i>
                         <span>Yêu thích</span>
                     </router-link>
-                    <router-link to="/history" class="nav-link" active-class="active">
+                    <router-link to="/reading-history" class="nav-link" active-class="active">
                         <i class="fas fa-history"></i>
                         <span>Lịch sử</span>
                     </router-link>
@@ -105,7 +105,7 @@
                     <i class="fas fa-heart"></i>
                     <span>Yêu thích</span>
                 </router-link>
-                <router-link to="/history" class="mobile-nav-link" @click="closeMobileMenu">
+                <router-link to="/reading-history" class="mobile-nav-link" @click="closeMobileMenu">
                     <i class="fas fa-history"></i>
                     <span>Lịch sử</span>
                 </router-link>

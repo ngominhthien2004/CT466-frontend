@@ -3,10 +3,10 @@
         <!-- Sidebar -->
         <aside class="sidebar" :class="{ collapsed: sidebarCollapsed }">
             <div class="sidebar-header">
-                <router-link to="/" class="logo">
+                <a href="/" class="logo">
                     <i class="fas fa-book"></i>
                     <span v-show="!sidebarCollapsed">NovelMT Admin</span>
-                </router-link>
+                </a>
                 <button class="toggle-btn" @click="toggleSidebar">
                     <i class="fas" :class="sidebarCollapsed ? 'fa-bars' : 'fa-times'"></i>
                 </button>
@@ -40,10 +40,10 @@
 
                 <div class="nav-divider"></div>
 
-                <router-link to="/" class="nav-item">
+                <a href="/" class="nav-item">
                     <i class="fas fa-home"></i>
                     <span v-show="!sidebarCollapsed">Về trang chủ</span>
-                </router-link>
+                </a>
             </nav>
 
             <div class="sidebar-footer">

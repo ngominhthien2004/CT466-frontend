@@ -67,12 +67,19 @@ const routes = [
         name: "register",
         component: () => import("@/views/Auth/Register.vue"),
     },
+    // Favorites Route
+    {
+        path: "/favorites",
+        name: "favorites",
+        component: () => import("@/views/Favorite.vue"),
+    },
+    // Reading History Route
+    {
+        path: "/reading-history",
+        name: "reading-history",
+        component: () => import("@/views/ReadingHistory.vue"),
+    },
     // TODO: Thêm các route sau khi tạo file view tương ứng
-    // {
-    //     path: "/favorites",
-    //     name: "favorites",
-    //     component: () => import("@/views/Favorites.vue"),
-    // },
     // {
     //     path: "/history",
     //     name: "history",
