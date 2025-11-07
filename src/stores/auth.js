@@ -29,7 +29,7 @@ export const useAuthStore = defineStore('auth', {
     
     actions: {
         loadUser() {
-            const user = AuthService.getCurrentUser()
+            const user = AuthService.getUser()
             if (user) {
                 this.user = user
                 this.isLoggedIn = true
@@ -39,7 +39,7 @@ export const useAuthStore = defineStore('auth', {
         login(userData) {
             this.user = userData
             this.isLoggedIn = true
-            AuthService.setCurrentUser(userData)
+            AuthService.saveUser(userData)
         },
         
         logout() {
@@ -50,7 +50,7 @@ export const useAuthStore = defineStore('auth', {
         
         updateUser(userData) {
             this.user = { ...this.user, ...userData }
-            AuthService.setCurrentUser(this.user)
+            AuthService.saveUser(this.user)
         }
     }
 })

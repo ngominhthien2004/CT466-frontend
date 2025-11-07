@@ -39,23 +39,33 @@ const routes = [
                 name: "admin-novels",
                 component: () => import("@/views/Admin/ManageNovels.vue"),
             },
-            // TODO: Thêm các route admin khác
-            // {
-            //     path: "chapters",
-            //     name: "admin-chapters",
-            //     component: () => import("@/views/Admin/ManageChapters.vue"),
-            // },
-            // {
-            //     path: "users",
-            //     name: "admin-users",
-            //     component: () => import("@/views/Admin/ManageUsers.vue"),
-            // },
-            // {
-            //     path: "comments",
-            //     name: "admin-comments",
-            //     component: () => import("@/views/Admin/ManageComments.vue"),
-            // },
+            {
+                path: "chapters",
+                name: "admin-chapters",
+                component: () => import("@/views/Admin/ManageChapters.vue"),
+            },
+            {
+                path: "users",
+                name: "admin-users",
+                component: () => import("@/views/Admin/ManageUsers.vue"),
+            },
+            {
+                path: "comments",
+                name: "admin-comments",
+                component: () => import("@/views/Admin/ManageComments.vue"),
+            },
         ]
+    },
+    // Auth Routes
+    {
+        path: "/login",
+        name: "login",
+        component: () => import("@/views/Auth/Login.vue"),
+    },
+    {
+        path: "/register",
+        name: "register",
+        component: () => import("@/views/Auth/Register.vue"),
     },
     // TODO: Thêm các route sau khi tạo file view tương ứng
     // {
@@ -72,16 +82,6 @@ const routes = [
     //     path: "/categories",
     //     name: "categories",
     //     component: () => import("@/views/Categories.vue"),
-    // },
-    // {
-    //     path: "/login",
-    //     name: "login",
-    //     component: () => import("@/views/Login.vue"),
-    // },
-    // {
-    //     path: "/register",
-    //     name: "register",
-    //     component: () => import("@/views/Register.vue"),
     // },
     // {
     //     path: "/profile",

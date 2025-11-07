@@ -1,0 +1,795 @@
+<template>
+    <div class="manage-chapters">
+        <div class="page-header">
+            <div class="header-content">
+                <h1>
+                    <i class="fas fa-book-open"></i>
+                    Quản lý Chapters
+                </h1>
+                <p>Quản lý tất cả các chương truyện trong hệ thống</p>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-section">
+            <div class="filter-group">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input
+                        v-model="searchQuery"
+                        type="text"
+                        placeholder="Tìm kiếm theo tên chương, nội dung..."
+                        @input="applyFilters"
+                    />
+                </div>
+
+                <select v-model="filterNovel" @change="applyFilters" class="filter-select">
+                    <option value="">Tất cả truyện</option>
+                    <option v-for="novel in novels" :key="novel._id" :value="novel._id">
+                        {{ novel.title }}
+                    </option>
+                </select>
+
+                <select v-model="sortBy" @change="applyFilters" class="filter-select">
+                    <option value="createdAt">Mới nhất</option>
+                    <option value="chapterNumber">Số chương</option>
+                    <option value="views">Lượt xem</option>
+                </select>
+
+                <button @click="resetFilters" class="btn-reset">
+                    <i class="fas fa-redo"></i>
+                    Reset
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <i class="fas fa-book"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ totalChapters }}</h3>
+                    <p>Tổng Chapters</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ totalViews }}</h3>
+                    <p>Tổng Lượt Xem</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon purple">
+                    <i class="fas fa-book-reader"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ novels.length }}</h3>
+                    <p>Số Truyện</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chapters Table -->
+        <div class="table-container">
+            <div class="table-header">
+                <h2>Danh sách Chapters ({{ filteredChapters.length }})</h2>
+            </div>
+
+            <div v-if="loading" class="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Đang tải dữ liệu...</p>
+            </div>
+
+            <div v-else-if="paginatedChapters.length === 0" class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <p>Không tìm thấy chapter nào</p>
+            </div>
+
+            <table v-else class="data-table">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Truyện</th>
+                        <th>Tên Chapter</th>
+                        <th>Số Chương</th>
+                        <th>Lượt Xem</th>
+                        <th>Ngày Tạo</th>
+                        <th>Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(chapter, index) in paginatedChapters" :key="chapter._id">
+                        <td>{{ (currentPage - 1) * itemsPerPage + index + 1 }}</td>
+                        <td>
+                            <div class="novel-info">
+                                <span class="novel-title">{{ getNovelTitle(chapter.novelId) }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="chapter-title">{{ chapter.title }}</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-primary">Chương {{ chapter.chapterNumber }}</span>
+                        </td>
+                        <td>
+                            <div class="views-count">
+                                <i class="fas fa-eye"></i>
+                                {{ chapter.views || 0 }}
+                            </div>
+                        </td>
+                        <td>{{ formatDate(chapter.createdAt) }}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button @click="viewChapter(chapter)" class="btn-action btn-view" title="Xem">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button @click="editChapter(chapter)" class="btn-action btn-edit" title="Sửa">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button @click="confirmDelete(chapter)" class="btn-action btn-delete" title="Xóa">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+            <div v-if="totalPages > 1" class="pagination">
+                <button
+                    @click="currentPage--"
+                    :disabled="currentPage === 1"
+                    class="btn-page"
+                >
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <span class="page-info">
+                    Trang {{ currentPage }} / {{ totalPages }}
+                </span>
+                <button
+                    @click="currentPage++"
+                    :disabled="currentPage === totalPages"
+                    class="btn-page"
+                >
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div v-if="showDeleteModal" class="modal-overlay" @click="closeDeleteModal">
+            <div class="modal-content" @click.stop>
+                <div class="modal-header">
+                    <h3>
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Xác nhận xóa
+                    </h3>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn có chắc chắn muốn xóa chapter này?</p>
+                    <div class="chapter-info">
+                        <strong>{{ chapterToDelete?.title }}</strong>
+                        <span>Chương {{ chapterToDelete?.chapterNumber }}</span>
+                    </div>
+                    <p class="warning">Hành động này không thể hoàn tác!</p>
+                </div>
+                <div class="modal-footer">
+                    <button @click="closeDeleteModal" class="btn-cancel">
+                        Hủy
+                    </button>
+                    <button @click="deleteChapter" class="btn-confirm-delete">
+                        <i class="fas fa-trash"></i>
+                        Xóa
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+import { ChapterService, NovelService } from '@/services';
+
+export default {
+    name: 'ManageChapters',
+    data() {
+        return {
+            chapters: [],
+            novels: [],
+            filteredChapters: [],
+            loading: false,
+            searchQuery: '',
+            filterNovel: '',
+            sortBy: 'createdAt',
+            currentPage: 1,
+            itemsPerPage: 10,
+            showDeleteModal: false,
+            chapterToDelete: null
+        };
+    },
+    computed: {
+        totalChapters() {
+            return this.chapters.length;
+        },
+        totalViews() {
+            return this.chapters.reduce((sum, chapter) => sum + (chapter.views || 0), 0);
+        },
+        paginatedChapters() {
+            const start = (this.currentPage - 1) * this.itemsPerPage;
+            const end = start + this.itemsPerPage;
+            return this.filteredChapters.slice(start, end);
+        },
+        totalPages() {
+            return Math.ceil(this.filteredChapters.length / this.itemsPerPage);
+        }
+    },
+    async mounted() {
+        await this.fetchData();
+    },
+    methods: {
+        async fetchData() {
+            this.loading = true;
+            try {
+                // Fetch novels first
+                this.novels = await NovelService.getAll();
+                
+                // Fetch all chapters
+                const allChapters = [];
+                for (const novel of this.novels) {
+                    const chapters = await ChapterService.getByNovelId(novel._id);
+                    allChapters.push(...chapters);
+                }
+                
+                this.chapters = allChapters;
+                this.applyFilters();
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                alert('Không thể tải dữ liệu chapters');
+            } finally {
+                this.loading = false;
+            }
+        },
+        applyFilters() {
+            let filtered = [...this.chapters];
+
+            // Search filter
+            if (this.searchQuery) {
+                const query = this.searchQuery.toLowerCase();
+                filtered = filtered.filter(chapter =>
+                    chapter.title?.toLowerCase().includes(query) ||
+                    chapter.content?.toLowerCase().includes(query)
+                );
+            }
+
+            // Novel filter
+            if (this.filterNovel) {
+                filtered = filtered.filter(chapter => chapter.novelId === this.filterNovel);
+            }
+
+            // Sort
+            filtered.sort((a, b) => {
+                if (this.sortBy === 'createdAt') {
+                    return new Date(b.createdAt) - new Date(a.createdAt);
+                } else if (this.sortBy === 'chapterNumber') {
+                    return a.chapterNumber - b.chapterNumber;
+                } else if (this.sortBy === 'views') {
+                    return (b.views || 0) - (a.views || 0);
+                }
+                return 0;
+            });
+
+            this.filteredChapters = filtered;
+            this.currentPage = 1;
+        },
+        resetFilters() {
+            this.searchQuery = '';
+            this.filterNovel = '';
+            this.sortBy = 'createdAt';
+            this.applyFilters();
+        },
+        getNovelTitle(novelId) {
+            const novel = this.novels.find(n => n._id === novelId);
+            return novel?.title || 'Unknown';
+        },
+        viewChapter(chapter) {
+            this.$router.push(`/novels/${chapter.novelId}/chapters/${chapter._id}`);
+        },
+        editChapter(chapter) {
+            this.$router.push(`/novels/${chapter.novelId}/chapters/${chapter._id}/edit`);
+        },
+        confirmDelete(chapter) {
+            this.chapterToDelete = chapter;
+            this.showDeleteModal = true;
+        },
+        closeDeleteModal() {
+            this.showDeleteModal = false;
+            this.chapterToDelete = null;
+        },
+        async deleteChapter() {
+            if (!this.chapterToDelete) return;
+
+            try {
+                await ChapterService.delete(this.chapterToDelete._id);
+                
+                // Remove from local array
+                this.chapters = this.chapters.filter(c => c._id !== this.chapterToDelete._id);
+                this.applyFilters();
+                
+                this.closeDeleteModal();
+                alert('Đã xóa chapter thành công!');
+            } catch (error) {
+                console.error('Error deleting chapter:', error);
+                alert('Không thể xóa chapter');
+            }
+        },
+        formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('vi-VN');
+        }
+    }
+};
+</script>
+
+<style scoped>
+.manage-chapters {
+    padding: 2rem;
+    background: #f8f9fa;
+    min-height: 100vh;
+}
+
+/* Page Header */
+.page-header {
+    background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
+    padding: 2rem;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.header-content h1 {
+    color: white;
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 2rem;
+}
+
+.header-content p {
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+/* Filters Section */
+.filters-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.filter-group {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.search-box {
+    flex: 1;
+    min-width: 250px;
+    position: relative;
+}
+
+.search-box i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #7f8c8d;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 0.875rem 1rem 0.875rem 3rem;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: #c9a9a6;
+    box-shadow: 0 0 0 4px rgba(201, 169, 166, 0.1);
+}
+
+.filter-select {
+    padding: 0.875rem 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: white;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #c9a9a6;
+}
+
+.btn-reset {
+    padding: 0.875rem 1.5rem;
+    background: #e9ecef;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-reset:hover {
+    background: #dee2e6;
+}
+
+/* Stats Cards */
+.stats-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.stat-icon.blue { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.stat-icon.green { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+.stat-icon.purple { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+
+.stat-info h3 {
+    margin: 0;
+    font-size: 2rem;
+    color: #2c3e50;
+}
+
+.stat-info p {
+    margin: 0.25rem 0 0 0;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+/* Table Container */
+.table-container {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.table-header {
+    margin-bottom: 1.5rem;
+}
+
+.table-header h2 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.5rem;
+}
+
+/* Loading & Empty State */
+.loading,
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #7f8c8d;
+}
+
+.loading i,
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #c9a9a6;
+}
+
+.loading p,
+.empty-state p {
+    font-size: 1.1rem;
+}
+
+/* Table */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table thead {
+    background: #f8f9fa;
+}
+
+.data-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #2c3e50;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.data-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #f1f3f5;
+    color: #495057;
+}
+
+.data-table tbody tr {
+    transition: background 0.2s;
+}
+
+.data-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.novel-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.novel-title {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.chapter-title {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.badge-primary {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.views-count {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #7f8c8d;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-action {
+    padding: 0.5rem 0.75rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: white;
+}
+
+.btn-view {
+    background: #3498db;
+}
+
+.btn-view:hover {
+    background: #2980b9;
+}
+
+.btn-edit {
+    background: #f39c12;
+}
+
+.btn-edit:hover {
+    background: #e67e22;
+}
+
+.btn-delete {
+    background: #e74c3c;
+}
+
+.btn-delete:hover {
+    background: #c0392b;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn-page {
+    padding: 0.5rem 1rem;
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-page:hover:not(:disabled) {
+    border-color: #c9a9a6;
+    color: #c9a9a6;
+}
+
+.btn-page:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.page-info {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #e74c3c;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-body p {
+    margin: 0 0 1rem 0;
+    color: #495057;
+}
+
+.chapter-info {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.warning {
+    color: #e74c3c;
+    font-weight: 600;
+}
+
+.modal-footer {
+    padding: 1.5rem;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+.btn-cancel,
+.btn-confirm-delete {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-cancel {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.btn-cancel:hover {
+    background: #dee2e6;
+}
+
+.btn-confirm-delete {
+    background: #e74c3c;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-confirm-delete:hover {
+    background: #c0392b;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .manage-chapters {
+        padding: 1rem;
+    }
+
+    .filter-group {
+        flex-direction: column;
+    }
+
+    .search-box {
+        min-width: 100%;
+    }
+
+    .data-table {
+        font-size: 0.85rem;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 0.75rem 0.5rem;
+    }
+}
+</style>
