@@ -31,6 +31,19 @@
                     :loading="loadingChapters"
                     @read-chapter="handleReadChapter"
                 />
+
+                <!-- Comments Section (Novel-level comments) -->
+                <CommentSection
+                    :comments="comments"
+                    :is-authenticated="isAuthenticated"
+                    :user-avatar="userAvatar"
+                    :current-user-id="currentUserId"
+                    :is-submitting="submittingComment"
+                    @submit="handleSubmitComment"
+                    @like="handleLikeComment"
+                    @reply="handleReplyComment"
+                    @delete="handleDeleteComment"
+                />
             </template>
         </div>
     </div>
@@ -39,26 +52,44 @@
 <script>
 import NovelDetail from '@/components/Novel/NovelDetail.vue';
 import ChapterList from '@/components/Chapter/ChapterList.vue';
-import { NovelService, ChapterService } from '@/services';
+import CommentSection from '@/components/Comment/CommentSection.vue';
+import { NovelService, ChapterService, CommentService } from '@/services';
+import { useAuthStore } from '@/stores';
 
 export default {
     name: 'NovelView',
     components: {
         NovelDetail,
-        ChapterList
+        ChapterList,
+        CommentSection
     },
     data() {
         return {
             novel: null,
             chapters: [],
+            comments: [],
             loading: false,
             loadingChapters: false,
-            error: null
+            submittingComment: false,
+            error: null,
+            authStore: useAuthStore()
         };
+    },
+    computed: {
+        isAuthenticated() {
+            return this.authStore.isAuthenticated;
+        },
+        userAvatar() {
+            return this.authStore.userAvatar || '/assets/default-avatar.svg';
+        },
+        currentUserId() {
+            return this.authStore.user?._id || null;
+        }
     },
     async mounted() {
         await this.fetchNovelDetail();
         await this.fetchChapters();
+        await this.loadComments();
     },
     methods: {
         async fetchNovelDetail() {
@@ -124,6 +155,53 @@ export default {
             
             // Chuyển đến trang đọc chapter
             this.$router.push(`/chapters/${chapterId}`);
+        },
+        async loadComments() {
+            try {
+                const response = await CommentService.getByNovelId(this.$route.params.id);
+                // Chỉ lấy comments KHÔNG có chapterId (novel-level comments)
+                const allComments = Array.isArray(response) ? response : (response.data || []);
+                this.comments = allComments.filter(comment => !comment.chapterId);
+                console.log('Novel-level comments:', this.comments);
+            } catch (error) {
+                console.error('Error loading comments:', error);
+                this.comments = [];
+            }
+        },
+        async handleSubmitComment(content) {
+            this.submittingComment = true;
+            try {
+                const commentData = {
+                    novelId: this.$route.params.id,
+                    userId: this.authStore.user._id,
+                    userName: this.authStore.user.username,
+                    content: content
+                    // Không có chapterId - đây là comment cho novel
+                };
+                
+                await CommentService.create(commentData);
+                await this.loadComments();
+            } catch (error) {
+                console.error('Error submitting comment:', error);
+                alert('Không thể gửi bình luận. Vui lòng thử lại!');
+            } finally {
+                this.submittingComment = false;
+            }
+        },
+        async handleLikeComment(commentId) {
+            console.log('Like comment:', commentId);
+        },
+        async handleReplyComment(commentId) {
+            console.log('Reply to comment:', commentId);
+        },
+        async handleDeleteComment(commentId) {
+            try {
+                await CommentService.delete(commentId);
+                await this.loadComments();
+            } catch (error) {
+                console.error('Error deleting comment:', error);
+                alert('Không thể xóa bình luận. Vui lòng thử lại!');
+            }
         }
     }
 };

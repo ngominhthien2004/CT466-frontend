@@ -20,6 +20,11 @@ class CommentService {
         return (await this.api.get(`/novel/${novelId}`)).data;
     }
 
+    // Get comments by chapter ID
+    async getByChapterId(chapterId) {
+        return await this.api.get(`/chapter/${chapterId}`);
+    }
+
     // Get comments by user ID
     async getByUserId(userId) {
         return (await this.api.get(`/user/${userId}`)).data;

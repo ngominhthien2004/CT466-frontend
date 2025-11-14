@@ -1,6 +1,6 @@
 import { createWebHistory, createRouter } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
-import NovelView from "@/views/NovelView.vue";
+import NovelView from "@/views/Novel/NovelView.vue";
 import AdminLayout from "@/views/Admin/AdminLayout.vue";
 
 const routes = [
@@ -23,6 +23,16 @@ const routes = [
         path: "/novels/:id",
         name: "novel-detail",
         component: NovelView,
+    },
+    {
+        path: "/novels/:id/chapters/:chapterId",
+        name: "chapter-view",
+        component: () => import("@/views/Chapter/ChapterView.vue"),
+    },
+    {
+        path: "/chapters/:chapterId",
+        name: "chapter-view-short",
+        component: () => import("@/views/Chapter/ChapterView.vue"),
     },
     // Admin Routes
     {
