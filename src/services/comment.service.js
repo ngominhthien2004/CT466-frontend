@@ -59,6 +59,21 @@ class CommentService {
     async deleteByUserId(userId) {
         return (await this.api.delete(`/user/${userId}`)).data;
     }
+
+    // Like a comment
+    async like(id, userId) {
+        return (await this.api.post(`/${id}/like`, { userId })).data;
+    }
+
+    // Unlike a comment
+    async unlike(id, userId) {
+        return (await this.api.post(`/${id}/unlike`, { userId })).data;
+    }
+
+    // Get replies for a comment
+    async getReplies(id) {
+        return (await this.api.get(`/${id}/replies`)).data;
+    }
 }
 
 export default new CommentService();

@@ -353,9 +353,9 @@ export default {
                     allComments = [];
                 }
                 
-                // QUAN TRỌNG: Chỉ lấy comments có chapterId khớp với chapter hiện tại
+                // QUAN TRỌNG: Chỉ lấy comments có chapterId khớp và KHÔNG có parentId (top-level)
                 this.comments = allComments.filter(comment => 
-                    comment.chapterId && comment.chapterId === this.chapterId
+                    comment.chapterId && comment.chapterId === this.chapterId && !comment.parentId
                 );
                 
                 console.log('Filtered comments for chapter:', this.comments);
@@ -402,6 +402,7 @@ export default {
                     chapterId: this.chapterId,
                     userId: this.authStore.user._id,
                     userName: this.authStore.user.username,
+                    userAvatar: this.authStore.user.avatar,
                     content: content
                 };
                 
@@ -417,19 +418,26 @@ export default {
             }
         },
         async handleLikeComment(commentId) {
-            try {
-                // TODO: Implement like functionality
-                console.log('Like comment:', commentId);
-            } catch (error) {
-                console.error('Error liking comment:', error);
-            }
+            // Reload comments to update like count
+            await this.loadComments();
         },
-        async handleReplyComment(commentId) {
+        async handleReplyComment(replyData) {
             try {
-                // TODO: Implement reply functionality
-                console.log('Reply to comment:', commentId);
+                const commentData = {
+                    novelId: this.novelId,
+                    chapterId: this.chapterId,
+                    parentId: replyData.parentId,
+                    userId: this.authStore.user._id,
+                    userName: this.authStore.user.username,
+                    userAvatar: this.authStore.user.avatar,
+                    content: replyData.content
+                };
+                
+                await CommentService.create(commentData);
+                // Không reload toàn bộ comments - CommentItem sẽ tự load replies
             } catch (error) {
                 console.error('Error replying to comment:', error);
+                alert('Không thể gửi phản hồi. Vui lòng thử lại!');
             }
         },
         async handleDeleteComment(commentId) {
