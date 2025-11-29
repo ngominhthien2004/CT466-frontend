@@ -167,9 +167,12 @@ export default {
             if (!this.replyContent.trim()) return;
             
             try {
+                // Thêm @userName vào đầu nội dung reply
+                const replyWithMention = `@${this.comment.userName} ${this.replyContent.trim()}`;
+                
                 this.$emit('reply', {
                     parentId: this.comment._id,
-                    content: this.replyContent
+                    content: replyWithMention
                 });
                 
                 this.replyContent = '';
@@ -277,6 +280,16 @@ export default {
     padding: 1rem;
     background: #f8f9fa;
     border-radius: 8px;
+}
+
+.reply-to {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.reply-to strong {
+    color: #c9a9a6;
 }
 
 .reply-form textarea {
