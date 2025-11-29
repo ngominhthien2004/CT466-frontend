@@ -1,0 +1,268 @@
+<template>
+    <div class="manage-genres">
+        <h1>Quản lý Thể loại</h1>
+        <div class="actions">
+            <button @click="openAddModal" class="btn btn-primary">Thêm thể loại</button>
+        </div>
+        <div v-if="genreStore.loading" class="loading"><i class="fas fa-spinner fa-spin"></i> Đang tải...</div>
+        <div v-if="genreStore.error" class="error">{{ genreStore.error }}</div>
+        <table v-if="!genreStore.loading && genreStore.genres.length" class="genre-table">
+            <thead>
+                <tr>
+                    <th>Tên</th>
+                    <th>Slug</th>
+                    <th>Mô tả</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="genre in genreStore.genres" :key="genre._id">
+                    <td>{{ genre.name }}</td>
+                    <td>{{ genre.slug }}</td>
+                    <td>{{ genre.description }}</td>
+                    <td>
+                        <button @click="editGenre(genre)" class="btn btn-sm btn-warning">Sửa</button>
+                        <button @click="deleteGenre(genre._id)" class="btn btn-sm btn-danger">Xóa</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div v-else-if="!genreStore.loading">Không có thể loại nào.</div>
+    </div>
+
+    <!-- Modal Thêm/Sửa (Teleport to body để tránh bị AdminLayout che) -->
+    <Teleport to="body">
+        <div v-if="showAdd || showEdit" class="genre-modal-overlay" @click.self="closeModal">
+            <div class="genre-modal">
+                <h2>{{ showAdd ? 'Thêm thể loại' : 'Sửa thể loại' }}</h2>
+                <form @submit.prevent="submitForm">
+                    <div class="form-group">
+                        <label for="genre-name">Tên</label>
+                        <input id="genre-name" name="name" v-model="form.name" required @input="autoSlug" autocomplete="off" />
+                    </div>
+                    <div class="form-group">
+                        <label for="genre-description">Mô tả</label>
+                        <textarea id="genre-description" name="description" v-model="form.description" autocomplete="off"></textarea>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                        <button type="button" class="btn" @click="closeModal">Hủy</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </Teleport>
+</template>
+
+<script>
+import { useGenreStore } from '@/stores/genre';
+import { ref } from 'vue';
+
+export default {
+    name: 'ManageGenres',
+    setup() {
+        const genreStore = useGenreStore();
+        const showAdd = ref(false);
+        const showEdit = ref(false);
+        const editId = ref(null);
+        const form = ref({ name: '', slug: '', description: '' });
+
+        // Mở modal thêm mới và reset form
+        function openAddModal() {
+            resetForm();
+            showAdd.value = true;
+        }
+
+        const resetForm = () => {
+            form.value = { name: '', slug: '', description: '' };
+            editId.value = null;
+        };
+
+        // Hàm tự động sinh slug từ tên
+        function autoSlug() {
+            form.value.slug = slugify(form.value.name);
+        }
+
+        // Chuyển tiếng Việt có dấu sang không dấu, lower-case, thay space bằng '-'
+        function slugify(str) {
+            return str
+                .toLowerCase()
+                .normalize('NFD').replace(/\p{Diacritic}/gu, '')
+                .replace(/đ/g, 'd')
+                .replace(/[^a-z0-9\s-]/g, '')
+                .trim()
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-');
+        }
+
+        const closeModal = () => {
+            showAdd.value = false;
+            showEdit.value = false;
+            resetForm();
+        };
+
+        const submitForm = async () => {
+            if (showAdd.value) {
+                await genreStore.addGenre(form.value);
+                await genreStore.fetchGenres(); // Đảm bảo luôn đồng bộ dữ liệu mới nhất
+            } else if (showEdit.value && editId.value) {
+                await genreStore.updateGenre(editId.value, form.value);
+                await genreStore.fetchGenres();
+            }
+            closeModal();
+        };
+
+        const editGenre = (genre) => {
+            form.value = { name: genre.name, slug: genre.slug, description: genre.description };
+            editId.value = genre._id;
+            showEdit.value = true;
+        };
+
+        const deleteGenre = async (id) => {
+            if (confirm('Bạn có chắc muốn xóa thể loại này?')) {
+                await genreStore.deleteGenre(id);
+            }
+        };
+
+        genreStore.fetchGenres();
+
+        return {
+            genreStore,
+            showAdd,
+            showEdit,
+            form,
+            closeModal,
+            submitForm,
+            editGenre,
+            deleteGenre,
+            autoSlug,
+            openAddModal
+        };
+    }
+};
+</script>
+
+<style scoped>
+.manage-genres {
+    max-width: 900px;
+    margin: 2rem auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    padding: 2rem;
+}
+.actions {
+    margin-bottom: 1rem;
+    text-align: right;
+}
+.genre-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+.genre-table th, .genre-table td {
+    border: 1px solid #e9ecef;
+    padding: 0.75rem;
+    text-align: left;
+}
+.genre-table th {
+    background: #f8f9fa;
+}
+.loading, .error {
+    margin: 1rem 0;
+    color: #e74c3c;
+}
+.btn {
+    padding: 0.5rem 1.2rem;
+    border: none;
+    border-radius: 6px;
+    background: #e9ecef;
+    color: #2c3e50;
+    cursor: pointer;
+    margin-right: 0.5rem;
+    font-size: 1rem;
+}
+.btn-primary {
+    background: linear-gradient(135deg, #e8c5c1 0%, #c9a9a6 100%);
+    color: #fff;
+}
+.btn-warning {
+    background: #f1c40f;
+    color: #fff;
+}
+.btn-danger {
+    background: #e74c3c;
+    color: #fff;
+}
+.btn-sm {
+    font-size: 0.9rem;
+    padding: 0.3rem 0.8rem;
+}
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999 !important;
+    opacity: 1 !important;
+}
+.modal {
+    background: #fff;
+    border-radius: 10px;
+    padding: 2rem;
+    min-width: 350px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    border: 3px solid red !important;
+}
+.form-group {
+    margin-bottom: 1rem;
+}
+.form-group label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+.form-group input, .form-group textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+.modal-actions {
+    text-align: right;
+}
+</style>
+
+<style>
+/* Modal styles - không scoped để tránh bị AdminLayout ghi đè */
+.genre-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+}
+
+.genre-modal {
+    background: #fff;
+    border-radius: 10px;
+    padding: 2rem;
+    min-width: 400px;
+    max-width: 90%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.genre-modal h2 {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.5rem;
+    color: #2c3e50;
+}
+</style>

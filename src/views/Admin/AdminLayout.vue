@@ -33,9 +33,15 @@
                     <span v-show="!sidebarCollapsed">Quản lý Users</span>
                 </router-link>
                 
+
                 <router-link to="/admin/comments" class="nav-item" active-class="active">
                     <i class="fas fa-comments"></i>
                     <span v-show="!sidebarCollapsed">Quản lý Comments</span>
+                </router-link>
+
+                <router-link to="/admin/genres" class="nav-item" active-class="active">
+                    <i class="fas fa-th-large"></i>
+                    <span v-show="!sidebarCollapsed">Quản lý Thể loại</span>
                 </router-link>
 
                 <div class="nav-divider"></div>

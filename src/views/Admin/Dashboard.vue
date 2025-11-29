@@ -115,6 +115,10 @@
                         <i class="fas fa-users-cog"></i>
                         <span>Quản lý Users</span>
                     </router-link>
+                    <router-link to="/admin/genres" class="action-btn">
+                        <i class="fas fa-th-large"></i>
+                        <span>Quản lý Thể loại</span>
+                    </router-link>
                     <button class="action-btn" @click="refreshData">
                         <i class="fas fa-sync-alt"></i>
                         <span>Làm mới dữ liệu</span>
