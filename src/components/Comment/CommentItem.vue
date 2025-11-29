@@ -54,7 +54,8 @@
                     :currentUserId="currentUserId"
                     :isReply="true"
                     @like="$emit('like', $event)"
-                    @delete="$emit('delete', $event)"
+                    @reply="$emit('reply', $event)"
+                    @delete="handleDeleteReply"
                 />
             </div>
         </div>
@@ -193,6 +194,14 @@ export default {
                 console.error('Error loading replies:', error);
                 this.replies = [];
             }
+        },
+        async handleDeleteReply(replyId) {
+            // Emit lên parent để xóa (không cần confirmation ở đây vì parent sẽ xử lý)
+            this.$emit('delete', replyId);
+            // Delay rồi reload lại replies
+            setTimeout(async () => {
+                await this.loadReplies();
+            }, 500);
         }
     }
 };

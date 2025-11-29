@@ -73,9 +73,8 @@ export default {
             this.$emit('reply', commentId);
         },
         handleDelete(commentId) {
-            if (confirm('Bạn có chắc muốn xóa bình luận này?')) {
-                this.$emit('delete', commentId);
-            }
+            // Không cần confirm ở đây, parent view sẽ xử lý modal
+            this.$emit('delete', commentId);
         }
     }
 };

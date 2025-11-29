@@ -46,6 +46,17 @@
                 />
             </template>
         </div>
+
+        <!-- Delete Confirmation Modal -->
+        <ConfirmModal
+            v-model:show="showDeleteModal"
+            title="Xóa bình luận"
+            message="Bạn có chắc chắn muốn xóa bình luận này? Hành động này không thể hoàn tác."
+            confirm-text="Xóa"
+            cancel-text="Hủy"
+            confirm-type="danger"
+            @confirm="confirmDelete"
+        />
     </div>
 </template>
 
@@ -53,6 +64,7 @@
 import NovelDetail from '@/components/Novel/NovelDetail.vue';
 import ChapterList from '@/components/Chapter/ChapterList.vue';
 import CommentSection from '@/components/Comment/CommentSection.vue';
+import ConfirmModal from '@/components/Common/ConfirmModal.vue';
 import { NovelService, ChapterService, CommentService } from '@/services';
 import { useAuthStore } from '@/stores';
 
@@ -61,7 +73,8 @@ export default {
     components: {
         NovelDetail,
         ChapterList,
-        CommentSection
+        CommentSection,
+        ConfirmModal
     },
     data() {
         return {
@@ -71,6 +84,9 @@ export default {
             loading: false,
             loadingChapters: false,
             submittingComment: false,
+            deleting: false,
+            showDeleteModal: false,
+            deleteTargetId: null,
             error: null,
             authStore: useAuthStore()
         };
@@ -212,12 +228,26 @@ export default {
             }
         },
         async handleDeleteComment(commentId) {
+            console.log('handleDeleteComment called with:', commentId);
+            this.deleteTargetId = commentId;
+            this.showDeleteModal = true;
+            console.log('showDeleteModal set to:', this.showDeleteModal);
+        },
+        async confirmDelete() {
+            if (this.deleting || !this.deleteTargetId) return;
+            
+            this.deleting = true;
             try {
-                await CommentService.delete(commentId);
+                await CommentService.delete(this.deleteTargetId);
+                // Force reload comments
+                this.comments = [];
                 await this.loadComments();
             } catch (error) {
                 console.error('Error deleting comment:', error);
                 alert('Không thể xóa bình luận. Vui lòng thử lại!');
+            } finally {
+                this.deleting = false;
+                this.deleteTargetId = null;
             }
         }
     }
