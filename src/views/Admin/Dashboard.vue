@@ -103,6 +103,10 @@
                         <i class="fas fa-plus-circle"></i>
                         <span>Thêm Novel mới</span>
                     </a>
+                    <router-link to="/novels/add" class="action-btn">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Thêm Novel mới</span>
+                    </router-link>
                     <router-link to="/admin/novels" class="action-btn">
                         <i class="fas fa-list"></i>
                         <span>Quản lý Novels</span>

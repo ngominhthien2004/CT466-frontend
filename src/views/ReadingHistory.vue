@@ -424,10 +424,10 @@ export default {
             }
         },
         continueReading(item) {
-            window.location.href = `/novels/${item.novelId}/chapters/${item.chapterId}`;
+            this.$router.push(`/novels/${item.novelId}/chapters/${item.chapterId}`);
         },
         goToNovel(novelId) {
-            window.location.href = `/novels/${novelId}`;
+            this.$router.push(`/novels/${novelId}`);
         },
         goToPage(page) {
             if (page >= 1 && page <= this.totalPages) {

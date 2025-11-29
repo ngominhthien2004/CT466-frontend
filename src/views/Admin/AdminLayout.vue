@@ -3,10 +3,10 @@
         <!-- Sidebar -->
         <aside class="sidebar" :class="{ collapsed: sidebarCollapsed }">
             <div class="sidebar-header">
-                <a href="/" class="logo">
+                <router-link to="/" class="logo">
                     <i class="fas fa-book"></i>
                     <span v-show="!sidebarCollapsed">NovelMT Admin</span>
-                </a>
+                </router-link>
                 <button class="toggle-btn" @click="toggleSidebar">
                     <i class="fas" :class="sidebarCollapsed ? 'fa-bars' : 'fa-times'"></i>
                 </button>
@@ -40,10 +40,10 @@
 
                 <div class="nav-divider"></div>
 
-                <a href="/" class="nav-item">
+                <router-link to="/" class="nav-item">
                     <i class="fas fa-home"></i>
                     <span v-show="!sidebarCollapsed">Về trang chủ</span>
-                </a>
+                </router-link>
             </nav>
 
             <div class="sidebar-footer">
@@ -80,7 +80,8 @@
 </template>
 
 <script>
-import AuthService from '@/services/auth.service';
+
+import { useAuthStore } from '@/stores';
 
 export default {
     name: 'AdminLayout',
@@ -88,11 +89,16 @@ export default {
         return {
             sidebarCollapsed: false,
             pageTitle: 'Tổng quan',
-            user: null
+            authStore: useAuthStore()
         };
     },
+    computed: {
+        user() {
+            return this.authStore.currentUser;
+        }
+    },
     mounted() {
-        this.loadUser();
+        this.authStore.loadUser();
         this.updatePageTitle();
     },
     watch: {
@@ -104,21 +110,8 @@ export default {
         toggleSidebar() {
             this.sidebarCollapsed = !this.sidebarCollapsed;
         },
-        loadUser() {
-            this.user = AuthService.getCurrentUser();
-        },
         getUserAvatar() {
-            if (!this.user?.avatar) {
-                return '/assets/default-avatar.svg';
-            }
-            
-            // Nếu avatar là URL đầy đủ
-            if (this.user.avatar.startsWith('http')) {
-                return this.user.avatar;
-            }
-            
-            // Nếu là path tương đối
-            return `/assets/user/${this.user._id}/${this.user.avatar}`;
+            return this.authStore.userAvatar;
         },
         updatePageTitle() {
             const routeNameMap = {
@@ -134,7 +127,7 @@ export default {
             this.$router.go(0);
         },
         handleLogout() {
-            AuthService.logout();
+            this.authStore.logout();
             this.$router.push('/login');
         }
     }

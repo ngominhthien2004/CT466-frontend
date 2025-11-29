@@ -11,10 +11,10 @@
                     @input="handleSearch"
                 />
             </div>
-            <a href="/novels/add" class="btn-add">
-                <i class="fas fa-plus"></i>
-                Thêm Novel mới
-            </a>
+               <router-link to="/novels/add" class="btn-add">
+                   <i class="fas fa-plus"></i>
+                   Thêm Novel mới
+               </router-link>
         </div>
 
         <!-- Filters -->
@@ -52,10 +52,10 @@
             <h3>Không tìm thấy tiểu thuyết nào</h3>
             <p v-if="searchQuery">Thử tìm kiếm với từ khóa khác</p>
             <p v-else>Bắt đầu bằng cách thêm tiểu thuyết mới</p>
-            <a href="/novels/add" class="btn-add-empty">
-                <i class="fas fa-plus-circle"></i>
-                Thêm Novel
-            </a>
+               <router-link to="/novels/add" class="btn-add-empty">
+                   <i class="fas fa-plus-circle"></i>
+                   Thêm Novel
+               </router-link>
         </div>
 
         <!-- Data Table -->

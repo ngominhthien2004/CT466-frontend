@@ -83,6 +83,17 @@ const routes = [
         name: "favorites",
         component: () => import("@/views/Favorite.vue"),
     },
+    // Genre Routes
+    {
+        path: "/genres",
+        name: "genres",
+        component: () => import("@/views/Genre.vue"),
+    },
+    {
+        path: "/genres/:slug",
+        name: "genre-detail",
+        component: () => import("@/views/Genre/GenreDetailView.vue"),
+    },
     // Reading History Route
     {
         path: "/reading-history",

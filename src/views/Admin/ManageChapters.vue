@@ -298,10 +298,10 @@ export default {
             return novel?.title || 'Unknown';
         },
         viewChapter(chapter) {
-            window.location.href = `/novels/${chapter.novelId}/chapters/${chapter._id}`;
+            this.$router.push(`/novels/${chapter.novelId}/chapters/${chapter._id}`);
         },
         editChapter(chapter) {
-            window.location.href = `/novels/${chapter.novelId}/chapters/${chapter._id}/edit`;
+            this.$router.push(`/novels/${chapter.novelId}/chapters/${chapter._id}/edit`);
         },
         confirmDelete(chapter) {
             this.chapterToDelete = chapter;

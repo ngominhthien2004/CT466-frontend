@@ -27,7 +27,7 @@
                         <i class="fas fa-history"></i>
                         <span>Lịch sử</span>
                     </router-link>
-                    <router-link to="/categories" class="nav-link" active-class="active">
+                    <router-link to="/genres" class="nav-link" active-class="active">
                         <i class="fas fa-th-large"></i>
                         <span>Thể loại</span>
                     </router-link>
@@ -109,7 +109,7 @@
                     <i class="fas fa-history"></i>
                     <span>Lịch sử</span>
                 </router-link>
-                <router-link to="/categories" class="mobile-nav-link" @click="closeMobileMenu">
+                <router-link to="/genres" class="mobile-nav-link" @click="closeMobileMenu">
                     <i class="fas fa-th-large"></i>
                     <span>Thể loại</span>
                 </router-link>

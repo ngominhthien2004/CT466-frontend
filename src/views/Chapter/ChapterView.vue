@@ -395,7 +395,6 @@ export default {
             
             try {
                 const historyData = {
-                    userId: this.authStore.user._id,
                     novelId: this.novelId,
                     chapterId: this.chapterId,
                     novelTitle: this.novel?.title,
@@ -405,7 +404,7 @@ export default {
                     lastRead: new Date()
                 };
                 
-                await ReadingHistoryService.addToHistory(historyData);
+                await ReadingHistoryService.addToHistory(this.authStore.user._id, historyData);
             } catch (error) {
                 console.error('Error saving to history:', error);
             }
@@ -496,22 +495,22 @@ export default {
         },
         goToPreviousChapter() {
             if (this.previousChapter) {
-                window.location.href = `/novels/${this.novelId}/chapters/${this.previousChapter._id}`;
+                this.$router.push(`/novels/${this.novelId}/chapters/${this.previousChapter._id}`);
             }
         },
         goToNextChapter() {
             if (this.nextChapter) {
-                window.location.href = `/novels/${this.novelId}/chapters/${this.nextChapter._id}`;
+                this.$router.push(`/novels/${this.novelId}/chapters/${this.nextChapter._id}`);
             }
         },
         goToChapter(chapterId) {
-            window.location.href = `/novels/${this.novelId}/chapters/${chapterId}`;
+            this.$router.push(`/novels/${this.novelId}/chapters/${chapterId}`);
         },
         goToNovel() {
-            window.location.href = `/novels/${this.novelId}`;
+            this.$router.push(`/novels/${this.novelId}`);
         },
         goHome() {
-            window.location.href = '/';
+            this.$router.push('/');
         },
         
         // Reading settings
