@@ -16,8 +16,10 @@
 </template>
 
 <script>
+
 import GenreHeader from '@/components/Genre/GenreHeader.vue';
 import GenreList from '@/components/Genre/GenreList.vue';
+import GenreService from '@/services/genre.service';
 
 export default {
     name: 'GenreView',
@@ -53,40 +55,15 @@ export default {
         async loadGenres() {
             this.loading = true;
             this.error = null;
-            
             try {
-                // TODO: Replace with actual API call when backend is ready
-                // const response = await GenreService.getAll();
-                // this.genres = response;
-                
-                // Mock data for now
-                this.genres = this.getMockGenres();
+                const response = await GenreService.getAll();
+                this.genres = response;
             } catch (error) {
                 console.error('Error loading genres:', error);
                 this.error = 'Không thể tải danh sách thể loại. Vui lòng thử lại!';
             } finally {
                 this.loading = false;
             }
-        },
-        getMockGenres() {
-            return [
-                { slug: 'tien-hiep', name: 'Tiên Hiệp', icon: 'fas fa-yin-yang', novelCount: 245 },
-                { slug: 'huyen-huyen', name: 'Huyền Huyễn', icon: 'fas fa-hat-wizard', novelCount: 189 },
-                { slug: 'khoa-huyen', name: 'Khoa Huyễn', icon: 'fas fa-rocket', novelCount: 156 },
-                { slug: 'do-thi', name: 'Đô Thị', icon: 'fas fa-city', novelCount: 203 },
-                { slug: 'dam-my', name: 'Đam Mỹ', icon: 'fas fa-heart', novelCount: 134 },
-                { slug: 'ngon-tinh', name: 'Ngôn Tình', icon: 'fas fa-kiss-wink-heart', novelCount: 298 },
-                { slug: 'co-dai', name: 'Cổ Đại', icon: 'fas fa-landmark', novelCount: 167 },
-                { slug: 'kiem-hiep', name: 'Kiếm Hiệp', icon: 'fas fa-skull-crossbones', novelCount: 142 },
-                { slug: 'lich-su', name: 'Lịch Sử', icon: 'fas fa-book-open', novelCount: 98 },
-                { slug: 'quan-truong', name: 'Quan Trường', icon: 'fas fa-briefcase', novelCount: 76 },
-                { slug: 'linh-di', name: 'Linh Dị', icon: 'fas fa-ghost', novelCount: 112 },
-                { slug: 'vong-du', name: 'Võng Du', icon: 'fas fa-gamepad', novelCount: 189 },
-                { slug: 'tham-hiem', name: 'Thám Hiểm', icon: 'fas fa-compass', novelCount: 87 },
-                { slug: 'dien-van', name: 'Diễn Văn', icon: 'fas fa-microphone', novelCount: 54 },
-                { slug: 'quan-su', name: 'Quân Sự', icon: 'fas fa-shield-alt', novelCount: 92 },
-                { slug: 'teen', name: 'Teen', icon: 'fas fa-child', novelCount: 213 }
-            ];
         }
     }
 };
