@@ -15,11 +15,6 @@ const routes = [
         component: () => import("@/views/Novel/NovelAdd.vue"),
     },
     {
-        path: "/novels/:id/edit",
-        name: "novel-edit",
-        component: () => import("@/views/Novel/NovelEdit.vue"),
-    },
-    {
         path: "/novels/:id",
         name: "novel-detail",
         component: NovelView,
@@ -50,19 +45,9 @@ const routes = [
                 component: () => import("@/views/Admin/ManageNovels.vue"),
             },
             {
-                path: "chapters",
-                name: "admin-chapters",
-                component: () => import("@/views/Admin/ManageChapters.vue"),
-            },
-            {
                 path: "users",
                 name: "admin-users",
                 component: () => import("@/views/Admin/ManageUsers.vue"),
-            },
-            {
-                path: "comments",
-                name: "admin-comments",
-                component: () => import("@/views/Admin/ManageComments.vue"),
             },
             {
                 path: "genres",

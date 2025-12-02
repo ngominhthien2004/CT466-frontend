@@ -75,12 +75,24 @@
                         Chỉnh sửa
                     </button>
                 </div>
-            </div>
+                </div>
         </div>
+
+        <!-- Edit Modal -->
+        <NovelForm
+            v-if="showEditModal"
+            :novel="novel"
+            :isModal="true"
+            @submit="handleEditSubmit"
+            @close="closeEditModal"
+        />
     </div>
 </template>
 
 <script>
+import NovelForm from '@/components/Novel/NovelForm.vue';
+import NovelService from '@/services/novel.service';
+
 export default {
     name: 'NovelDetail',
     props: {
@@ -89,10 +101,15 @@ export default {
             required: true
         }
     },
+    components: {
+        NovelForm
+    },
     data() {
         return {
             isFavorite: false,
-            lastReadChapter: null
+            lastReadChapter: null,
+            showEditModal: false,
+            isUpdating: false
         };
     },
     mounted() {
@@ -132,7 +149,36 @@ export default {
             this.$emit('read-chapter', this.lastReadChapter.chapterId);
         },
         editNovel() {
-            this.$router.push(`/novels/${this.novel._id}/edit`);
+            this.showEditModal = true;
+        },
+        closeEditModal() {
+            this.showEditModal = false;
+            // Reset updating flag when modal is closed
+            this.isUpdating = false;
+        },
+        async handleEditSubmit(data) {
+            // Prevent duplicate calls
+            if (this.isUpdating) {
+                console.log('Already updating, skipping...');
+                return;
+            }
+            
+            this.isUpdating = true;
+            try {
+                const novelId = this.novel._id;
+                console.log('Updating novel with data:', data);
+                const updated = await NovelService.update(novelId, data);
+                console.log('Updated novel response:', updated);
+                // emit updated novel to parent instead of mutating prop
+                this.$emit('updated', updated);
+                this.showEditModal = false;
+                alert('Cập nhật thành công!');
+            } catch (error) {
+                console.error('Error updating novel from modal:', error);
+                alert('Cập nhật thất bại. Vui lòng thử lại.');
+            } finally {
+                this.isUpdating = false;
+            }
         }
     }
 };

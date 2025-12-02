@@ -23,6 +23,7 @@
                     :novel="novel"
                     @toggle-favorite="handleToggleFavorite"
                     @read-chapter="handleReadChapter"
+                    @updated="handleNovelUpdated"
                 />
 
                 <!-- Chapter List -->
@@ -116,10 +117,13 @@ export default {
                 
                 this.novel = await NovelService.get(novelId);
                 
-                // Tăng view count
+                // Tăng view count chỉ lần đầu load
+                const currentViews = this.novel.views || 0;
                 await NovelService.update(novelId, { 
-                    views: (this.novel.views || 0) + 1 
+                    views: currentViews + 1 
                 });
+                // Update local novel object with new view count
+                this.novel.views = currentViews + 1;
                 
             } catch (error) {
                 console.error('Error fetching novel:', error);
@@ -204,6 +208,12 @@ export default {
             } finally {
                 this.submittingComment = false;
             }
+        },
+        async handleNovelUpdated(updated) {
+            console.log('NovelView received updated novel:', updated);
+            // Simply update local novel with the response from server
+            // No need to fetch again as the updated data is already fresh
+            this.novel = updated;
         },
         async handleLikeComment(commentId) {
             // Reload comments to update like count

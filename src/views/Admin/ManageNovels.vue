@@ -33,13 +33,13 @@
                 <option value="likes">Lượt thích</option>
                 <option value="title">Tên A-Z</option>
             </select>
-
+            
             <button @click="resetFilters" class="btn-reset">
                 <i class="fas fa-redo"></i>
                 Đặt lại
             </button>
         </div>
-
+        
         <!-- Loading State -->
         <div v-if="loading" class="loading-container">
             <div class="spinner"></div>
@@ -119,20 +119,20 @@
                         </td>
                         <td>
                             <div class="action-buttons">
-                                <a
-                                    :href="`/novels/${novel._id}`"
+                                <router-link
+                                    :to="{ name: 'novel-detail', params: { id: novel._id } }"
                                     class="btn-action btn-view"
                                     title="Xem"
                                 >
                                     <i class="fas fa-eye"></i>
-                                </a>
-                                <a
-                                    :href="`/novels/${novel._id}/edit`"
+                                </router-link>
+                                <button
+                                    @click="openEdit(novel)"
                                     class="btn-action btn-edit"
                                     title="Sửa"
                                 >
                                     <i class="fas fa-edit"></i>
-                                </a>
+                                </button>
                                 <button
                                     @click="confirmDelete(novel)"
                                     class="btn-action btn-delete"
@@ -205,18 +205,31 @@
                 </div>
             </div>
         </div>
+
+        <!-- Edit Novel Modal (uses NovelForm component) -->
+        <NovelForm
+            v-if="showEditModal"
+            :isModal="true"
+            :novel="editTarget"
+            @close="closeEditModal"
+            @submit="handleEditSubmit"
+        />
     </div>
 </template>
 
 <script>
 import { useNovelStore } from '@/stores';
+import NovelForm from '@/components/Novel/NovelForm.vue';
 
 export default {
     name: 'ManageNovels',
+    components: { NovelForm },
     data() {
         return {
             novelStore: useNovelStore(),
             filteredNovels: [],
+            showEditModal: false,
+            editTarget: null,
             searchQuery: '',
             filterStatus: '',
             sortBy: 'createdAt',
@@ -333,15 +346,36 @@ export default {
             try {
                 // 👉 Xóa trong store - tự động cập nhật tất cả components
                 await this.novelStore.deleteNovel(this.deleteTarget._id);
-                
+
                 // Close modal
                 this.closeDeleteModal();
-                
+
             } catch (error) {
                 console.error('Error deleting novel:', error);
                 alert('Có lỗi xảy ra khi xóa tiểu thuyết!');
             } finally {
                 this.deleting = false;
+            }
+        },
+        openEdit(novel) {
+            this.editTarget = { ...novel };
+            this.showEditModal = true;
+        },
+        closeEditModal() {
+            this.showEditModal = false;
+            this.editTarget = null;
+        },
+        async handleEditSubmit(formData) {
+            if (!this.editTarget) return;
+            try {
+                // Use the store action to update and keep global state in sync
+                await this.novelStore.updateNovel(this.editTarget._id, formData);
+                this.closeEditModal();
+                // Re-apply filters so table reflects updated data
+                this.applyFilters();
+            } catch (error) {
+                console.error('Error updating novel:', error);
+                alert('Có lỗi xảy ra khi cập nhật tiểu thuyết!');
             }
         },
         getStatusText(status) {

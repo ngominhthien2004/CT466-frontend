@@ -23,10 +23,6 @@
                     <span v-show="!sidebarCollapsed">Quản lý Novels</span>
                 </router-link>
                 
-                <router-link to="/admin/chapters" class="nav-item" active-class="active">
-                    <i class="fas fa-file-alt"></i>
-                    <span v-show="!sidebarCollapsed">Quản lý Chapters</span>
-                </router-link>
                 
                 <router-link to="/admin/users" class="nav-item" active-class="active">
                     <i class="fas fa-users"></i>
@@ -34,10 +30,6 @@
                 </router-link>
                 
 
-                <router-link to="/admin/comments" class="nav-item" active-class="active">
-                    <i class="fas fa-comments"></i>
-                    <span v-show="!sidebarCollapsed">Quản lý Comments</span>
-                </router-link>
 
                 <router-link to="/admin/genres" class="nav-item" active-class="active">
                     <i class="fas fa-th-large"></i>
@@ -123,9 +115,8 @@ export default {
             const routeNameMap = {
                 'admin-dashboard': 'Tổng quan',
                 'admin-novels': 'Quản lý Novels',
-                'admin-chapters': 'Quản lý Chapters',
                 'admin-users': 'Quản lý Users',
-                'admin-comments': 'Quản lý Comments'
+                'admin-genres': 'Quản lý Thể loại'
             };
             this.pageTitle = routeNameMap[this.$route.name] || 'Admin';
         },

@@ -89,43 +89,7 @@
             </div>
         </div>
 
-        <!-- Quick Actions -->
-        <div class="card quick-actions-card">
-            <div class="card-header">
-                <h3>
-                    <i class="fas fa-bolt"></i>
-                    Thao tác nhanh
-                </h3>
-            </div>
-            <div class="card-body">
-                <div class="actions-grid">
-                    <a href="/novels/add" class="action-btn">
-                        <i class="fas fa-plus-circle"></i>
-                        <span>Thêm Novel mới</span>
-                    </a>
-                    <router-link to="/novels/add" class="action-btn">
-                        <i class="fas fa-plus-circle"></i>
-                        <span>Thêm Novel mới</span>
-                    </router-link>
-                    <router-link to="/admin/novels" class="action-btn">
-                        <i class="fas fa-list"></i>
-                        <span>Quản lý Novels</span>
-                    </router-link>
-                    <router-link to="/admin/users" class="action-btn">
-                        <i class="fas fa-users-cog"></i>
-                        <span>Quản lý Users</span>
-                    </router-link>
-                    <router-link to="/admin/genres" class="action-btn">
-                        <i class="fas fa-th-large"></i>
-                        <span>Quản lý Thể loại</span>
-                    </router-link>
-                    <button class="action-btn" @click="refreshData">
-                        <i class="fas fa-sync-alt"></i>
-                        <span>Làm mới dữ liệu</span>
-                    </button>
-                </div>
-            </div>
-        </div>
+        
     </div>
 </template>
 
@@ -146,15 +110,7 @@ export default {
                     change: null,
                     changeType: 'up'
                 },
-                {
-                    title: 'Tổng Chapters',
-                    value: 0,
-                    label: 'Chương',
-                    icon: 'fas fa-file-alt',
-                    color: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-                    change: null,
-                    changeType: 'up'
-                },
+                
                 {
                     title: 'Tổng Users',
                     value: 0,
@@ -190,7 +146,8 @@ export default {
         computedStats() {
             const stats = [...this.stats];
             stats[0].value = this.novelStore.totalNovels;
-            stats[3].value = this.novelStore.totalViews;
+            // views is now at index 2 after removing Chapters stat
+            stats[2].value = this.novelStore.totalViews;
             return stats;
         }
     },
@@ -494,41 +451,7 @@ export default {
 }
 
 /* Quick Actions */
-.actions-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-}
-
-.action-btn {
-    padding: 1.5rem;
-    border: 2px solid #ecf0f1;
-    border-radius: 12px;
-    background: white;
-    color: #2c3e50;
-    text-decoration: none;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.75rem;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.action-btn:hover {
-    border-color: #c9a9a6;
-    background: #f8f9fa;
-    transform: translateY(-3px);
-}
-
-.action-btn i {
-    font-size: 2rem;
-    color: #c9a9a6;
-}
-
-.action-btn span {
-    font-weight: 600;
-}
+/* Quick Actions removed - links available in sidebar */
 
 /* Responsive */
 @media (max-width: 1024px) {
@@ -539,10 +462,6 @@ export default {
 
 @media (max-width: 768px) {
     .stats-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .actions-grid {
         grid-template-columns: 1fr;
     }
 }

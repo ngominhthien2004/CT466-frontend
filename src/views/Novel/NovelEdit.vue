@@ -59,6 +59,7 @@
 <script>
 import NovelForm from '@/components/Novel/NovelForm.vue';
 import NovelService from '@/services/novel.service';
+import { useNovelStore } from '@/stores';
 
 export default {
     name: 'NovelEdit',
@@ -77,6 +78,9 @@ export default {
             }
         };
     },
+    created() {
+        this.novelStore = useNovelStore();
+    },
     mounted() {
         this.fetchNovel();
     },
@@ -84,11 +88,12 @@ export default {
         async fetchNovel() {
             this.loading = true;
             this.error = null;
-            
+
             try {
                 const novelId = this.$route.params.id;
+                // NovelService.get returns the data payload
                 const response = await NovelService.get(novelId);
-                this.novel = response.data;
+                this.novel = response;
             } catch (error) {
                 console.error('Error fetching novel:', error);
                 this.error = error.response?.data?.message || 'Không tìm thấy tiểu thuyết!';
@@ -99,19 +104,23 @@ export default {
         async handleUpdateNovel(data) {
             try {
                 const novelId = this.$route.params.id;
-                await NovelService.update(novelId, data);
-                
+                // Use store action to update and keep local state in sync
+                await this.novelStore.updateNovel(novelId, data);
+
+                // Refresh local novel reference from store
+                this.novel = this.novelStore.novelById(novelId) || this.novelStore.currentNovel || this.novel;
+
                 // Show success message
                 this.showMessage('success', 'Cập nhật tiểu thuyết thành công!');
-                
-                // Redirect to novel detail page after 1.5s
+
+                // Redirect to novel detail page after a short delay
                 setTimeout(() => {
-                    this.$router.push(`/novels/${novelId}`);
-                }, 1500);
-                
+                    this.$router.push({ name: 'novel-detail', params: { id: novelId } });
+                }, 1200);
+
             } catch (error) {
                 console.error('Error updating novel:', error);
-                this.showMessage('error', 
+                this.showMessage('error',
                     error.response?.data?.message || 'Có lỗi xảy ra khi cập nhật tiểu thuyết!'
                 );
             }
