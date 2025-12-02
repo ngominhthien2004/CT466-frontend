@@ -1,398 +1,158 @@
 <template>
-    <div>
-        <!-- Modal overlay version -->
-        <div v-if="isModal" class="form-overlay" @click.self="closeForm">
-            <div class="form-container">
-                <div class="form-header">
-                    <h2>
-                        <i class="fas fa-book"></i>
-                        {{ isEditMode ? 'Cập nhật tiểu thuyết' : 'Thêm tiểu thuyết mới' }}
-                    </h2>
-                    <button class="btn-close" @click="closeForm">
+    <div class="form-overlay" @click.self="closeForm">
+        <div class="form-container">
+            <div class="form-header">
+                <h2>
+                    <i class="fas fa-book"></i>
+                    {{ isEditMode ? 'Cập nhật tiểu thuyết' : 'Thêm tiểu thuyết mới' }}
+                </h2>
+                <button class="btn-close" @click="closeForm">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form @submit.prevent="handleSubmit" class="form-body">
+                <div class="form-grid">
+                    <!-- Tên tiểu thuyết -->
+                    <div class="form-group full-width">
+                        <label for="title">
+                            Tên tiểu thuyết <span class="required">*</span>
+                        </label>
+                        <input
+                            id="title"
+                            v-model="formData.title"
+                            type="text"
+                            placeholder="Nhập tên tiểu thuyết..."
+                            required
+                        />
+                        <span v-if="errors.title" class="error-message">{{ errors.title }}</span>
+                    </div>
+
+                    <!-- Tác giả -->
+                    <div class="form-group">
+                        <label for="author">
+                            Tác giả <span class="required">*</span>
+                        </label>
+                        <input
+                            id="author"
+                            v-model="formData.author"
+                            type="text"
+                            placeholder="Nhập tên tác giả..."
+                            required
+                        />
+                        <span v-if="errors.author" class="error-message">{{ errors.author }}</span>
+                    </div>
+
+                    <!-- Trạng thái -->
+                    <div class="form-group">
+                        <label for="status">
+                            Trạng thái <span class="required">*</span>
+                        </label>
+                        <select id="status" v-model="formData.status" required>
+                            <option value="ongoing">Đang ra</option>
+                            <option value="completed">Hoàn thành</option>
+                            <option value="paused">Tạm dừng</option>
+                            <option value="dropped">Ngưng</option>
+                        </select>
+                    </div>
+
+                    <!-- URL ảnh bìa -->
+                    <div class="form-group full-width">
+                        <label for="coverImage">
+                            URL ảnh bìa
+                        </label>
+                        <input
+                            id="coverImage"
+                            v-model="formData.coverImage"
+                            type="url"
+                            placeholder="https://example.com/cover.jpg"
+                        />
+                        <div v-if="formData.coverImage" class="image-preview">
+                            <img :src="formData.coverImage" alt="Preview" @error="handleImageError" />
+                        </div>
+                    </div>
+
+                    <!-- Thể loại -->
+                    <div class="form-group full-width">
+                        <label for="genres">
+                            Thể loại
+                        </label>
+                        <div class="tags-container">
+                            <div class="tags-list">
+                                <span
+                                    v-for="(genre, index) in formData.genres"
+                                    :key="index"
+                                    class="tag-item"
+                                >
+                                    {{ genre }}
+                                    <button
+                                        type="button"
+                                        class="remove-tag"
+                                        @click="removeGenre(index)"
+                                    >
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </span>
+                            </div>
+                            <div class="add-tag-input">
+                                <input
+                                    id="genres"
+                                    v-model="newGenre"
+                                    type="text"
+                                    placeholder="Tìm hoặc thêm thể loại..."
+                                    @focus="handleGenreFocus"
+                                    @input="handleGenreInput"
+                                    @blur="onGenreBlur"
+                                    @keypress.enter.prevent="addGenre"
+                                />
+                                <button
+                                    type="button"
+                                    class="btn-add-tag"
+                                    @click="addGenre"
+                                >
+                                    <i class="fas fa-plus"></i>
+                                    Thêm
+                                </button>
+
+                                <ul v-if="showSuggestions && suggestionList.length" class="suggestions-list">
+                                    <li v-for="g in suggestionList" :key="g._id" @mousedown.prevent="selectSuggestion(g)">
+                                        {{ g.name }}
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <small class="hint">Nhấn Enter hoặc click "Thêm" để thêm thể loại</small>
+                    </div>
+
+                    <!-- Mô tả -->
+                    <div class="form-group full-width">
+                        <label for="description">
+                            Mô tả
+                        </label>
+                        <textarea
+                            id="description"
+                            v-model="formData.description"
+                            rows="5"
+                            placeholder="Nhập mô tả tiểu thuyết..."
+                        ></textarea>
+                        <small class="char-count">
+                            {{ formData.description?.length || 0 }} ký tự
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" @click="closeForm">
                         <i class="fas fa-times"></i>
+                        Hủy
+                    </button>
+                    <button type="submit" class="btn-submit" :disabled="submitting">
+                        <i class="fas" :class="submitting ? 'fa-spinner fa-spin' : 'fa-check'"></i>
+                        {{ submitting ? 'Đang xử lý...' : (isEditMode ? 'Cập nhật' : 'Thêm mới') }}
                     </button>
                 </div>
-
-                <form @submit.prevent="handleSubmit" class="form-body">
-                    <div class="form-grid">
-                        <!-- Tên tiểu thuyết -->
-                        <div class="form-group full-width">
-                            <label for="title">
-                                Tên tiểu thuyết <span class="required">*</span>
-                            </label>
-                            <input
-                                id="title"
-                                v-model="formData.title"
-                                type="text"
-                                placeholder="Nhập tên tiểu thuyết..."
-                                required
-                            />
-                            <span v-if="errors.title" class="error-message">{{ errors.title }}</span>
-                        </div>
-
-                        <!-- Tác giả -->
-                        <div class="form-group">
-                            <label for="author">
-                                Tác giả <span class="required">*</span>
-                            </label>
-                            <input
-                                id="author"
-                                v-model="formData.author"
-                                type="text"
-                                placeholder="Nhập tên tác giả..."
-                                required
-                            />
-                            <span v-if="errors.author" class="error-message">{{ errors.author }}</span>
-                        </div>
-
-                        <!-- Trạng thái -->
-                        <div class="form-group">
-                            <label for="status">
-                                Trạng thái <span class="required">*</span>
-                            </label>
-                            <select id="status" v-model="formData.status" required>
-                                <option value="ongoing">Đang ra</option>
-                                <option value="completed">Hoàn thành</option>
-                                <option value="paused">Tạm dừng</option>
-                                <option value="dropped">Ngưng</option>
-                            </select>
-                        </div>
-
-                        <!-- URL ảnh bìa -->
-                        <div class="form-group full-width">
-                            <label for="coverImage">
-                                URL ảnh bìa
-                            </label>
-                            <input
-                                id="coverImage"
-                                v-model="formData.coverImage"
-                                type="url"
-                                placeholder="https://example.com/cover.jpg"
-                            />
-                            <div v-if="formData.coverImage" class="image-preview">
-                                <img :src="formData.coverImage" alt="Preview" @error="handleImageError" />
-                            </div>
-                        </div>
-
-                        <!-- Thể loại -->
-                        <div class="form-group full-width">
-                            <label for="genres">
-                                Thể loại
-                            </label>
-                            <div class="tags-container">
-                                <div class="tags-list">
-                                    <span
-                                        v-for="(genre, index) in formData.genres"
-                                        :key="index"
-                                        class="tag-item"
-                                    >
-                                        {{ genre }}
-                                        <button
-                                            type="button"
-                                            class="remove-tag"
-                                            @click="removeGenre(index)"
-                                        >
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                    </span>
-                                </div>
-                                <div class="add-tag-input">
-                                    <input
-                                        id="genres"
-                                        v-model="newGenre"
-                                        type="text"
-                                        placeholder="Tìm hoặc thêm thể loại..."
-                                        @focus="showSuggestions = true"
-                                        @input="showSuggestions = true"
-                                        @blur="onGenreBlur"
-                                        @keypress.enter.prevent="addGenre"
-                                    />
-                                    <button
-                                        type="button"
-                                        class="btn-add-tag"
-                                        @click="addGenre"
-                                    >
-                                        <i class="fas fa-plus"></i>
-                                        Thêm
-                                    </button>
-
-                                    <ul v-if="showSuggestions && suggestionList.length" class="suggestions-list">
-                                        <li v-for="g in suggestionList" :key="g._id" @mousedown.prevent="selectSuggestion(g)">
-                                            {{ g.name }}
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <small class="hint">Nhấn Enter hoặc click "Thêm" để thêm thể loại</small>
-                        </div>
-
-                        <!-- Mô tả -->
-                        <div class="form-group full-width">
-                            <label for="description">
-                                Mô tả
-                            </label>
-                            <textarea
-                                id="description"
-                                v-model="formData.description"
-                                rows="5"
-                                placeholder="Nhập mô tả tiểu thuyết..."
-                            ></textarea>
-                            <small class="char-count">
-                                {{ formData.description?.length || 0 }} ký tự
-                            </small>
-                        </div>
-
-                        <!-- Số lượt xem -->
-                        <div v-if="!isEditMode" class="form-group">
-                            <label for="views">
-                                Lượt xem
-                            </label>
-                            <input
-                                id="views"
-                                v-model.number="formData.views"
-                                type="number"
-                                min="0"
-                                placeholder="0"
-                            />
-                        </div>
-
-                        <!-- Số lượt thích -->
-                        <div v-if="!isEditMode" class="form-group">
-                            <label for="likes">
-                                Lượt thích
-                            </label>
-                            <input
-                                id="likes"
-                                v-model.number="formData.likes"
-                                type="number"
-                                min="0"
-                                placeholder="0"
-                            />
-                        </div>
-
-                        <!-- Yêu thích -->
-                        <div v-if="!isEditMode" class="form-group full-width">
-                            <label class="checkbox-label">
-                                <input
-                                    v-model="formData.favorite"
-                                    type="checkbox"
-                                />
-                                <span class="checkmark"></span>
-                                Đánh dấu là yêu thích
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Buttons -->
-                    <div class="form-actions">
-                        <button type="button" class="btn-cancel" @click="closeForm">
-                            <i class="fas fa-times"></i>
-                            Hủy
-                        </button>
-                        <button type="submit" class="btn-submit" :disabled="submitting">
-                            <i class="fas" :class="submitting ? 'fa-spinner fa-spin' : 'fa-check'"></i>
-                            {{ submitting ? 'Đang xử lý...' : (isEditMode ? 'Cập nhật' : 'Thêm mới') }}
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Inline / embedded version -->
-        <div v-else class="form-inline">
-            <div class="form-container inline-container">
-                <div class="form-header">
-                    <h2>
-                        <i class="fas fa-book"></i>
-                        {{ isEditMode ? 'Cập nhật tiểu thuyết' : 'Thêm tiểu thuyết mới' }}
-                    </h2>
-                </div>
-
-                <form @submit.prevent="handleSubmit" class="form-body">
-                    <div class="form-grid">
-                        <!-- Tên tiểu thuyết -->
-                        <div class="form-group full-width">
-                            <label for="title">
-                                Tên tiểu thuyết <span class="required">*</span>
-                            </label>
-                            <input
-                                id="title"
-                                v-model="formData.title"
-                                type="text"
-                                placeholder="Nhập tên tiểu thuyết..."
-                                required
-                            />
-                            <span v-if="errors.title" class="error-message">{{ errors.title }}</span>
-                        </div>
-
-                        <!-- Tác giả -->
-                        <div class="form-group">
-                            <label for="author">
-                                Tác giả <span class="required">*</span>
-                            </label>
-                            <input
-                                id="author"
-                                v-model="formData.author"
-                                type="text"
-                                placeholder="Nhập tên tác giả..."
-                                required
-                            />
-                            <span v-if="errors.author" class="error-message">{{ errors.author }}</span>
-                        </div>
-
-                        <!-- Trạng thái -->
-                        <div class="form-group">
-                            <label for="status">
-                                Trạng thái <span class="required">*</span>
-                            </label>
-                            <select id="status" v-model="formData.status" required>
-                                <option value="ongoing">Đang ra</option>
-                                <option value="completed">Hoàn thành</option>
-                                <option value="paused">Tạm dừng</option>
-                                <option value="dropped">Ngưng</option>
-                            </select>
-                        </div>
-
-                        <!-- URL ảnh bìa -->
-                        <div class="form-group full-width">
-                            <label for="coverImage">
-                                URL ảnh bìa
-                            </label>
-                            <input
-                                id="coverImage"
-                                v-model="formData.coverImage"
-                                type="url"
-                                placeholder="https://example.com/cover.jpg"
-                            />
-                            <div v-if="formData.coverImage" class="image-preview">
-                                <img :src="formData.coverImage" alt="Preview" @error="handleImageError" />
-                            </div>
-                        </div>
-
-                        <!-- Thể loại -->
-                        <div class="form-group full-width">
-                            <label for="genres">
-                                Thể loại
-                            </label>
-                            <div class="tags-container">
-                                <div class="tags-list">
-                                    <span
-                                        v-for="(genre, index) in formData.genres"
-                                        :key="index"
-                                        class="tag-item"
-                                    >
-                                        {{ genre }}
-                                        <button
-                                            type="button"
-                                            class="remove-tag"
-                                            @click="removeGenre(index)"
-                                        >
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                    </span>
-                                </div>
-                                <div class="add-tag-input">
-                                    <input
-                                        id="genres"
-                                        v-model="newGenre"
-                                        type="text"
-                                        placeholder="Tìm hoặc thêm thể loại..."
-                                        @focus="showSuggestions = true"
-                                        @input="showSuggestions = true"
-                                        @blur="onGenreBlur"
-                                        @keypress.enter.prevent="addGenre"
-                                    />
-                                    <button
-                                        type="button"
-                                        class="btn-add-tag"
-                                        @click="addGenre"
-                                    >
-                                        <i class="fas fa-plus"></i>
-                                        Thêm
-                                    </button>
-
-                                    <ul v-if="showSuggestions && suggestionList.length" class="suggestions-list">
-                                        <li v-for="g in suggestionList" :key="g._id" @mousedown.prevent="selectSuggestion(g)">
-                                            {{ g.name }}
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <small class="hint">Nhấn Enter hoặc click "Thêm" để thêm thể loại</small>
-                        </div>
-
-                        <!-- Mô tả -->
-                        <div class="form-group full-width">
-                            <label for="description">
-                                Mô tả
-                            </label>
-                            <textarea
-                                id="description"
-                                v-model="formData.description"
-                                rows="5"
-                                placeholder="Nhập mô tả tiểu thuyết..."
-                            ></textarea>
-                            <small class="char-count">
-                                {{ formData.description?.length || 0 }} ký tự
-                            </small>
-                        </div>
-
-                        <div v-if="!isEditMode">
-                            <!-- Số lượt xem -->
-                            <div class="form-group">
-                                <label for="views">
-                                    Lượt xem
-                                </label>
-                                <input
-                                    id="views"
-                                    v-model.number="formData.views"
-                                    type="number"
-                                    min="0"
-                                    placeholder="0"
-                                />
-                            </div>
-
-                            <!-- Số lượt thích -->
-                            <div class="form-group">
-                                <label for="likes">
-                                    Lượt thích
-                                </label>
-                                <input
-                                    id="likes"
-                                    v-model.number="formData.likes"
-                                    type="number"
-                                    min="0"
-                                    placeholder="0"
-                                />
-                            </div>
-
-                            <!-- Yêu thích -->
-                            <div class="form-group full-width">
-                                <label class="checkbox-label">
-                                    <input
-                                        v-model="formData.favorite"
-                                        type="checkbox"
-                                    />
-                                    <span class="checkmark"></span>
-                                    Đánh dấu là yêu thích
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Buttons -->
-                    <div class="form-actions">
-                        <button type="button" class="btn-cancel" @click="closeForm">
-                            <i class="fas fa-times"></i>
-                            Hủy
-                        </button>
-                        <button type="submit" class="btn-submit" :disabled="submitting">
-                            <i class="fas" :class="submitting ? 'fa-spinner fa-spin' : 'fa-check'"></i>
-                            {{ submitting ? 'Đang xử lý...' : (isEditMode ? 'Cập nhật' : 'Thêm mới') }}
-                        </button>
-                    </div>
-                </form>
-            </div>
+            </form>
         </div>
     </div>
 </template>
@@ -406,10 +166,6 @@ export default {
         novel: {
             type: Object,
             default: null
-        },
-        isModal: {
-            type: Boolean,
-            default: true
         }
     },
     data() {
@@ -457,7 +213,8 @@ export default {
         },
         suggestionList() {
             const q = (this.newGenre || '').toLowerCase().trim();
-            if (!q) return (this.genreStore.genres || []).filter(g => !this.formData.genres.includes(g.name));
+            // Chỉ hiện suggestions khi có text input
+            if (!q) return [];
             return (this.genreStore.genres || [])
                 .filter(g => !this.formData.genres.includes(g.name))
                 .filter(g => g.name.toLowerCase().includes(q));
@@ -484,6 +241,16 @@ export default {
             }
             this.newGenre = '';
             this.showSuggestions = false;
+        },
+        handleGenreFocus() {
+            // Hiện suggestions nếu đang có text
+            if (this.newGenre && this.newGenre.length > 0) {
+                this.showSuggestions = true;
+            }
+        },
+        handleGenreInput() {
+            // Hiện suggestions ngay khi user bắt đầu gõ
+            this.showSuggestions = this.newGenre && this.newGenre.length > 0;
         },
         onGenreBlur() {
             // delay hiding so mousedown on suggestion can register
@@ -525,7 +292,7 @@ export default {
                         title: this.formData.title.trim(),
                         author: this.formData.author.trim(),
                         description: this.formData.description?.trim() || '',
-                        genres: this.formData.genres,
+                        genres: [...this.formData.genres], // Convert to plain array
                         coverImage: this.formData.coverImage,
                         status: this.formData.status
                     };
@@ -534,7 +301,8 @@ export default {
                         ...this.formData,
                         title: this.formData.title.trim(),
                         author: this.formData.author.trim(),
-                        description: this.formData.description?.trim() || ''
+                        description: this.formData.description?.trim() || '',
+                        genres: [...this.formData.genres] // Convert to plain array
                     };
                 }
 
@@ -557,25 +325,35 @@ export default {
 <style scoped>
 @import '@/assets/form.css';
 
-/* Specific styles for NovelForm (nếu cần thêm style riêng) */
+/* Specific styles for NovelForm */
+.add-tag-input {
+    position: relative;
+}
+
 .suggestions-list {
     position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
     background: white;
     border: 1px solid #e6e6e6;
     border-radius: 8px;
     margin-top: 0.5rem;
     max-height: 200px;
-    overflow: auto;
+    overflow-y: auto;
     width: 100%;
     z-index: 3000;
     box-shadow: 0 6px 20px rgba(0,0,0,0.08);
     padding: 0.25rem 0;
 }
+
 .suggestions-list li {
     list-style: none;
     padding: 0.5rem 0.75rem;
     cursor: pointer;
+    transition: background 0.2s;
 }
+
 .suggestions-list li:hover {
     background: #f6f6f6;
 }

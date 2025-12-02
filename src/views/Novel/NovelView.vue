@@ -211,9 +211,14 @@ export default {
         },
         async handleNovelUpdated(updated) {
             console.log('NovelView received updated novel:', updated);
-            // Simply update local novel with the response from server
-            // No need to fetch again as the updated data is already fresh
-            this.novel = updated;
+            // Update all fields from server response
+            // But preserve the current view count (which was incremented on page load)
+            this.novel = {
+                ...updated,
+                views: this.novel.views || updated.views,
+                likes: this.novel.likes || updated.likes,
+                favorite: this.novel.favorite !== undefined ? this.novel.favorite : updated.favorite
+            };
         },
         async handleLikeComment(commentId) {
             // Reload comments to update like count

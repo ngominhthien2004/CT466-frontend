@@ -82,7 +82,6 @@
         <NovelForm
             v-if="showEditModal"
             :novel="novel"
-            :isModal="true"
             @submit="handleEditSubmit"
             @close="closeEditModal"
         />
