@@ -10,7 +10,6 @@
             <thead>
                 <tr>
                     <th>Tên</th>
-                    <th>Slug</th>
                     <th>Mô tả</th>
                     <th>Hành động</th>
                 </tr>
@@ -18,7 +17,6 @@
             <tbody>
                 <tr v-for="genre in genreStore.genres" :key="genre._id">
                     <td>{{ genre.name }}</td>
-                    <td>{{ genre.slug }}</td>
                     <td>{{ genre.description }}</td>
                     <td>
                         <button @click="editGenre(genre)" class="btn btn-sm btn-warning">Sửa</button>
@@ -30,28 +28,31 @@
         <div v-else-if="!genreStore.loading">Không có thể loại nào.</div>
     </div>
 
-    <!-- Modal Thêm/Sửa (Teleport to body để tránh bị AdminLayout che) -->
+    <!-- Modal Thêm/Sửa (componentized) -->
     <Teleport to="body">
         <div v-if="showAdd || showEdit" class="genre-modal-overlay" @click.self="closeModal">
             <div class="genre-modal">
                 <h2>{{ showAdd ? 'Thêm thể loại' : 'Sửa thể loại' }}</h2>
-                <form @submit.prevent="submitForm">
-                    <div class="form-group">
-                        <label for="genre-name">Tên</label>
-                        <input id="genre-name" name="name" v-model="form.name" required @input="autoSlug" autocomplete="off" />
-                    </div>
-                    <div class="form-group">
-                        <label for="genre-description">Mô tả</label>
-                        <textarea id="genre-description" name="description" v-model="form.description" autocomplete="off"></textarea>
-                    </div>
-                    <div class="modal-actions">
-                        <button type="submit" class="btn btn-primary">Lưu</button>
-                        <button type="button" class="btn" @click="closeModal">Hủy</button>
-                    </div>
-                </form>
+                <GenreForm
+                    :initial="formInitial"
+                    :mode="showAdd ? 'add' : 'edit'"
+                    @save="onSave"
+                    @cancel="closeModal"
+                />
             </div>
         </div>
     </Teleport>
+
+    <ConfirmModal
+        :show="confirmVisible"
+        title="Xóa thể loại"
+        message="Khi xóa thể loại, hệ thống sẽ bỏ thể loại khỏi các truyện liên quan. Bạn có chắc muốn tiếp tục?"
+        confirmText="Xóa"
+        cancelText="Hủy"
+        confirmType="danger"
+        @confirm="onConfirmDelete"
+        @update:show="(v) => (confirmVisible = v)"
+    />
 </template>
 
 <script>

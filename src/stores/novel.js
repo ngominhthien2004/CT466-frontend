@@ -34,7 +34,8 @@ export const useNovelStore = defineStore('novel', {
             this.error = null
             try {
                 const response = await NovelService.getAll()
-                this.novels = response.data || []
+                // NovelService returns the data payload directly
+                this.novels = response || []
             } catch (error) {
                 this.error = error.message
                 console.error('Error fetching novels:', error)
@@ -48,8 +49,8 @@ export const useNovelStore = defineStore('novel', {
             this.error = null
             try {
                 const response = await NovelService.get(id)
-                this.currentNovel = response.data
-                return response.data
+                this.currentNovel = response
+                return response
             } catch (error) {
                 this.error = error.message
                 console.error('Error fetching novel:', error)
@@ -64,8 +65,8 @@ export const useNovelStore = defineStore('novel', {
             this.error = null
             try {
                 const response = await NovelService.create(data)
-                this.novels.push(response.data)
-                return response.data
+                this.novels.push(response)
+                return response
             } catch (error) {
                 this.error = error.message
                 console.error('Error creating novel:', error)
@@ -82,12 +83,12 @@ export const useNovelStore = defineStore('novel', {
                 const response = await NovelService.update(id, data)
                 const index = this.novels.findIndex(n => n._id === id)
                 if (index !== -1) {
-                    this.novels[index] = response.data
+                    this.novels[index] = response
                 }
                 if (this.currentNovel?._id === id) {
-                    this.currentNovel = response.data
+                    this.currentNovel = response
                 }
-                return response.data
+                return response
             } catch (error) {
                 this.error = error.message
                 console.error('Error updating novel:', error)
