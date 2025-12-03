@@ -54,72 +54,7 @@ export default {
 </script>
 
 <style scoped>
-.chapter-card {
-    background: white;
-    padding: 1rem 1.5rem;
-    border-radius: 8px;
-    border: 1px solid #ecf0f1;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.chapter-card:hover {
-    border-color: #c9a9a6;
-    background: #fafafa;
-    transform: translateX(5px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.chapter-info {
-    flex: 1;
-}
-
-.chapter-title {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #2c3e50;
-    margin: 0 0 0.25rem 0;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.chapter-number {
-    background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
-    color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    white-space: nowrap;
-}
-
-.chapter-date {
-    font-size: 0.85rem;
-    color: #95a5a6;
-    margin: 0;
-}
-
-.chapter-meta {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.views {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    color: #7f8c8d;
-    font-size: 0.9rem;
-}
-
-.views i {
-    color: #c9a9a6;
-}
+/* Card styles moved to cards.css */
 
 /* Custom transparent edit button for this component */
 .btn-edit {
@@ -139,13 +74,5 @@ export default {
     background: #f0f0f0;
     color: #c9a9a6;
     transform: scale(1.1);
-}
-
-@media (max-width: 768px) {
-    .chapter-card {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-    }
 }
 </style>

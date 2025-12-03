@@ -2,6 +2,7 @@ import './assets/main.css'
 import './assets/buttons.css'
 import './assets/utilities.css'
 import './assets/modals.css'
+import './assets/cards.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'

@@ -23,53 +23,5 @@ export default {
 </script>
 
 <style scoped>
-.genre-card {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.5rem;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease;
-    text-decoration: none;
-    color: inherit;
-}
-
-.genre-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(201, 169, 166, 0.2);
-}
-
-.genre-content {
-    flex: 1;
-}
-
-.genre-name {
-    margin: 0 0 0.25rem 0;
-    font-size: 1.125rem;
-    font-weight: 700;
-    color: #2c3e50;
-}
-
-.genre-count {
-    margin: 0;
-    font-size: 0.9rem;
-    color: #7f8c8d;
-}
-
-.genre-arrow {
-    color: #c9a9a6;
-    font-size: 1.25rem;
-}
-
-@media (max-width: 768px) {
-    .genre-card {
-        padding: 1rem;
-    }
-    
-    .genre-name {
-        font-size: 1rem;
-    }
-}
+/* Card styles moved to cards.css */
 </style>
