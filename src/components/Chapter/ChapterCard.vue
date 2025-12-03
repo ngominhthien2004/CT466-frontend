@@ -121,6 +121,7 @@ export default {
     color: #c9a9a6;
 }
 
+/* Custom transparent edit button for this component */
 .btn-edit {
     background: transparent;
     border: none;

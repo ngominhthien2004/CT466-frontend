@@ -1,12 +1,12 @@
 <template>
-    <div class="manage-comments">
+    <div class="manage-chapters">
         <div class="page-header">
             <div class="header-content">
                 <h1>
-                    <i class="fas fa-comments"></i>
-                    Quản lý Comments
+                    <i class="fas fa-book-open"></i>
+                    Quản lý Chapters
                 </h1>
-                <p>Quản lý tất cả bình luận trong hệ thống</p>
+                <p>Quản lý tất cả các chương truyện trong hệ thống</p>
             </div>
         </div>
 
@@ -18,7 +18,7 @@
                     <input
                         v-model="searchQuery"
                         type="text"
-                        placeholder="Tìm kiếm theo nội dung..."
+                        placeholder="Tìm kiếm theo tên chương, nội dung..."
                         @input="applyFilters"
                     />
                 </div>
@@ -32,7 +32,8 @@
 
                 <select v-model="sortBy" @change="applyFilters" class="filter-select">
                     <option value="createdAt">Mới nhất</option>
-                    <option value="oldest">Cũ nhất</option>
+                    <option value="chapterNumber">Số chương</option>
+                    <option value="views">Lượt xem</option>
                 </select>
 
                 <button @click="resetFilters" class="btn-reset">
@@ -46,93 +47,114 @@
         <div class="stats-cards">
             <div class="stat-card">
                 <div class="stat-icon blue">
-                    <i class="fas fa-comments"></i>
+                    <i class="fas fa-book"></i>
                 </div>
                 <div class="stat-info">
-                    <h3>{{ totalComments }}</h3>
-                    <p>Tổng Comments</p>
+                    <h3>{{ totalChapters }}</h3>
+                    <p>Tổng Chapters</p>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon green">
-                    <i class="fas fa-calendar-day"></i>
+                    <i class="fas fa-eye"></i>
                 </div>
                 <div class="stat-info">
-                    <h3>{{ todayComments }}</h3>
-                    <p>Hôm Nay</p>
+                    <h3>{{ totalViews }}</h3>
+                    <p>Tổng Lượt Xem</p>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon purple">
-                    <i class="fas fa-users"></i>
+                    <i class="fas fa-book-reader"></i>
                 </div>
                 <div class="stat-info">
-                    <h3>{{ uniqueUsers }}</h3>
-                    <p>Người Dùng</p>
+                    <h3>{{ novels.length }}</h3>
+                    <p>Số Truyện</p>
                 </div>
             </div>
         </div>
 
-        <!-- Comments Table -->
+        <!-- Chapters Table -->
         <div class="table-container">
             <div class="table-header">
-                <h2>Danh sách Comments ({{ filteredComments.length }})</h2>
+                <h2>Danh sách Chapters ({{ filteredChapters.length }})</h2>
             </div>
 
             <LoadingSpinner v-if="loading" />
 
             <EmptyState
-                v-else-if="paginatedComments.length === 0"
-                icon="fa-comment-slash"
-                title="Không tìm thấy comment nào"
+                v-else-if="paginatedChapters.length === 0"
+                icon="fa-inbox"
+                title="Không tìm thấy chapter nào"
             />
 
-            <div v-else class="comments-list">
-                <div
-                    v-for="comment in paginatedComments"
-                    :key="comment._id"
-                    class="comment-card"
-                >
-                    <div class="comment-header">
-                        <div class="user-info">
-                            <img :src="getUserAvatar(comment.userId)" alt="Avatar" class="user-avatar" />
-                            <div class="user-details">
-                                <strong>{{ getUserName(comment.userId) }}</strong>
-                                <span class="comment-time">
-                                    <i class="fas fa-clock"></i>
-                                    {{ formatDateTime(comment.createdAt) }}
-                                </span>
+            <table v-else class="data-table">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Truyện</th>
+                        <th>Tên Chapter</th>
+                        <th>Số Chương</th>
+                        <th>Lượt Xem</th>
+                        <th>Ngày Tạo</th>
+                        <th>Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(chapter, index) in paginatedChapters" :key="chapter._id">
+                        <td>{{ (currentPage - 1) * itemsPerPage + index + 1 }}</td>
+                        <td>
+                            <div class="novel-info">
+                                <span class="novel-title">{{ getNovelTitle(chapter.novelId) }}</span>
                             </div>
-                        </div>
-                        <div class="comment-actions">
-                            <button @click="viewNovel(comment.novelId)" class="btn-view-novel" title="Xem truyện">
-                                <i class="fas fa-book"></i>
-                                {{ getNovelTitle(comment.novelId) }}
-                            </button>
-                            <button @click="confirmDelete(comment)" class="btn-delete" title="Xóa">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="comment-content">
-                        <p>{{ comment.content }}</p>
-                    </div>
-                    <div class="comment-footer">
-                        <span class="comment-chapter">
-                            <i class="fas fa-bookmark"></i>
-                            Chương {{ getChapterNumber(comment.chapterId) }}
-                        </span>
-                    </div>
-                </div>
-            </div>
+                        </td>
+                        <td>
+                            <div class="chapter-title">{{ chapter.title }}</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-primary">Chương {{ chapter.chapterNumber }}</span>
+                        </td>
+                        <td>
+                            <div class="views-count">
+                                <i class="fas fa-eye"></i>
+                                {{ chapter.views || 0 }}
+                            </div>
+                        </td>
+                        <td>{{ formatDate(chapter.createdAt) }}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button @click="viewChapter(chapter)" class="btn-action btn-view" title="Xem">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button @click="editChapter(chapter)" class="btn-action btn-edit" title="Sửa">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button @click="confirmDelete(chapter)" class="btn-action btn-delete" title="Xóa">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 
             <!-- Pagination -->
             <div v-if="totalPages > 1" class="pagination">
-                <button @click="currentPage--" :disabled="currentPage === 1" class="btn-page">
+                <button
+                    @click="currentPage--"
+                    :disabled="currentPage === 1"
+                    class="btn-page"
+                >
                     <i class="fas fa-chevron-left"></i>
                 </button>
-                <span class="page-info">Trang {{ currentPage }} / {{ totalPages }}</span>
-                <button @click="currentPage++" :disabled="currentPage === totalPages" class="btn-page">
+                <span class="page-info">
+                    Trang {{ currentPage }} / {{ totalPages }}
+                </span>
+                <button
+                    @click="currentPage++"
+                    :disabled="currentPage === totalPages"
+                    class="btn-page"
+                >
                     <i class="fas fa-chevron-right"></i>
                 </button>
             </div>
@@ -148,16 +170,18 @@
                     </h3>
                 </div>
                 <div class="modal-body">
-                    <p>Bạn có chắc chắn muốn xóa comment này?</p>
-                    <div class="comment-preview">
-                        <strong>{{ getUserName(commentToDelete?.userId) }}</strong>
-                        <p>{{ commentToDelete?.content }}</p>
+                    <p>Bạn có chắc chắn muốn xóa chapter này?</p>
+                    <div class="chapter-info">
+                        <strong>{{ chapterToDelete?.title }}</strong>
+                        <span>Chương {{ chapterToDelete?.chapterNumber }}</span>
                     </div>
                     <p class="warning">Hành động này không thể hoàn tác!</p>
                 </div>
                 <div class="modal-footer">
-                    <button @click="closeDeleteModal" class="btn-cancel">Hủy</button>
-                    <button @click="deleteComment" class="btn-confirm-delete">
+                    <button @click="closeDeleteModal" class="btn-cancel">
+                        Hủy
+                    </button>
+                    <button @click="deleteChapter" class="btn-confirm-delete">
                         <i class="fas fa-trash"></i>
                         Xóa
                     </button>
@@ -168,21 +192,18 @@
 </template>
 
 <script>
-import { CommentService, NovelService, ChapterService } from '@/services';
-import UserService from '@/services/user.service';
+import { ChapterService, NovelService } from '@/services';
 import LoadingSpinner from '@/components/Common/LoadingSpinner.vue';
 import EmptyState from '@/components/Common/EmptyState.vue';
 
 export default {
-    name: 'ManageComments',
+    name: 'ManageChapters',
     components: { LoadingSpinner, EmptyState },
     data() {
         return {
-            comments: [],
-            novels: [],
             chapters: [],
-            users: [],
-            filteredComments: [],
+            novels: [],
+            filteredChapters: [],
             loading: false,
             searchQuery: '',
             filterNovel: '',
@@ -190,28 +211,23 @@ export default {
             currentPage: 1,
             itemsPerPage: 10,
             showDeleteModal: false,
-            commentToDelete: null
+            chapterToDelete: null
         };
     },
     computed: {
-        totalComments() {
-            return this.comments.length;
+        totalChapters() {
+            return this.chapters.length;
         },
-        todayComments() {
-            const today = new Date().toDateString();
-            return this.comments.filter(c => new Date(c.createdAt).toDateString() === today).length;
+        totalViews() {
+            return this.chapters.reduce((sum, chapter) => sum + (chapter.views || 0), 0);
         },
-        uniqueUsers() {
-            const userIds = new Set(this.comments.map(c => c.userId));
-            return userIds.size;
-        },
-        paginatedComments() {
+        paginatedChapters() {
             const start = (this.currentPage - 1) * this.itemsPerPage;
             const end = start + this.itemsPerPage;
-            return this.filteredComments.slice(start, end);
+            return this.filteredChapters.slice(start, end);
         },
         totalPages() {
-            return Math.ceil(this.filteredComments.length / this.itemsPerPage);
+            return Math.ceil(this.filteredChapters.length / this.itemsPerPage);
         }
     },
     async mounted() {
@@ -221,9 +237,8 @@ export default {
         async fetchData() {
             this.loading = true;
             try {
-                // Fetch all data
+                // Fetch novels first
                 this.novels = await NovelService.getAll();
-                this.users = await UserService.getAll();
                 
                 // Fetch all chapters
                 const allChapters = [];
@@ -231,51 +246,46 @@ export default {
                     const chapters = await ChapterService.getByNovelId(novel._id);
                     allChapters.push(...chapters);
                 }
-                this.chapters = allChapters;
-
-                // Fetch all comments
-                const allComments = [];
-                for (const novel of this.novels) {
-                    const comments = await CommentService.getByNovelId(novel._id);
-                    allComments.push(...comments);
-                }
                 
-                this.comments = allComments;
+                this.chapters = allChapters;
                 this.applyFilters();
             } catch (error) {
                 console.error('Error fetching data:', error);
-                alert('Không thể tải dữ liệu comments');
+                alert('Không thể tải dữ liệu chapters');
             } finally {
                 this.loading = false;
             }
         },
         applyFilters() {
-            let filtered = [...this.comments];
+            let filtered = [...this.chapters];
 
             // Search filter
             if (this.searchQuery) {
                 const query = this.searchQuery.toLowerCase();
-                filtered = filtered.filter(comment =>
-                    comment.content?.toLowerCase().includes(query)
+                filtered = filtered.filter(chapter =>
+                    chapter.title?.toLowerCase().includes(query) ||
+                    chapter.content?.toLowerCase().includes(query)
                 );
             }
 
             // Novel filter
             if (this.filterNovel) {
-                filtered = filtered.filter(comment => comment.novelId === this.filterNovel);
+                filtered = filtered.filter(chapter => chapter.novelId === this.filterNovel);
             }
 
             // Sort
             filtered.sort((a, b) => {
                 if (this.sortBy === 'createdAt') {
                     return new Date(b.createdAt) - new Date(a.createdAt);
-                } else if (this.sortBy === 'oldest') {
-                    return new Date(a.createdAt) - new Date(b.createdAt);
+                } else if (this.sortBy === 'chapterNumber') {
+                    return a.chapterNumber - b.chapterNumber;
+                } else if (this.sortBy === 'views') {
+                    return (b.views || 0) - (a.views || 0);
                 }
                 return 0;
             });
 
-            this.filteredComments = filtered;
+            this.filteredChapters = filtered;
             this.currentPage = 1;
         },
         resetFilters() {
@@ -284,62 +294,52 @@ export default {
             this.sortBy = 'createdAt';
             this.applyFilters();
         },
-        getUserName(userId) {
-            const user = this.users.find(u => u._id === userId);
-            return user?.username || 'Unknown User';
-        },
-        getUserAvatar(userId) {
-            const user = this.users.find(u => u._id === userId);
-            if (!user?.avatar) return '/assets/default-avatar.svg';
-            if (user.avatar.startsWith('http')) return user.avatar;
-            return `/assets/user/${userId}/${user.avatar}`;
-        },
         getNovelTitle(novelId) {
             const novel = this.novels.find(n => n._id === novelId);
             return novel?.title || 'Unknown';
         },
-        getChapterNumber(chapterId) {
-            const chapter = this.chapters.find(c => c._id === chapterId);
-            return chapter?.chapterNumber || '?';
+        viewChapter(chapter) {
+            this.$router.push(`/novels/${chapter.novelId}/chapters/${chapter._id}`);
         },
-        viewNovel(novelId) {
-            this.$router.push(`/novels/${novelId}`);
+        editChapter(chapter) {
+            this.$router.push(`/novels/${chapter.novelId}/chapters/${chapter._id}/edit`);
         },
-        confirmDelete(comment) {
-            this.commentToDelete = comment;
+        confirmDelete(chapter) {
+            this.chapterToDelete = chapter;
             this.showDeleteModal = true;
         },
         closeDeleteModal() {
             this.showDeleteModal = false;
-            this.commentToDelete = null;
+            this.chapterToDelete = null;
         },
-        async deleteComment() {
-            if (!this.commentToDelete) return;
+        async deleteChapter() {
+            if (!this.chapterToDelete) return;
 
             try {
-                await CommentService.delete(this.commentToDelete._id);
+                await ChapterService.delete(this.chapterToDelete._id);
                 
-                this.comments = this.comments.filter(c => c._id !== this.commentToDelete._id);
+                // Remove from local array
+                this.chapters = this.chapters.filter(c => c._id !== this.chapterToDelete._id);
                 this.applyFilters();
                 
                 this.closeDeleteModal();
-                alert('Đã xóa comment thành công!');
+                alert('Đã xóa chapter thành công!');
             } catch (error) {
-                console.error('Error deleting comment:', error);
-                alert('Không thể xóa comment');
+                console.error('Error deleting chapter:', error);
+                alert('Không thể xóa chapter');
             }
         },
-        formatDateTime(dateString) {
+        formatDate(dateString) {
             if (!dateString) return '-';
             const date = new Date(dateString);
-            return date.toLocaleString('vi-VN');
+            return date.toLocaleDateString('vi-VN');
         }
     }
 };
 </script>
 
 <style scoped>
-.manage-comments {
+.manage-chapters {
     padding: 2rem;
     background: #f8f9fa;
     min-height: 100vh;
@@ -347,7 +347,7 @@ export default {
 
 /* Page Header */
 .page-header {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
     padding: 2rem;
     border-radius: 15px;
     margin-bottom: 2rem;
@@ -409,8 +409,8 @@ export default {
 
 .search-box input:focus {
     outline: none;
-    border-color: #f093fb;
-    box-shadow: 0 0 0 4px rgba(240, 147, 251, 0.1);
+    border-color: #c9a9a6;
+    box-shadow: 0 0 0 4px rgba(201, 169, 166, 0.1);
 }
 
 .filter-select {
@@ -425,7 +425,7 @@ export default {
 
 .filter-select:focus {
     outline: none;
-    border-color: #f093fb;
+    border-color: #c9a9a6;
 }
 
 .btn-reset {
@@ -480,7 +480,7 @@ export default {
 }
 
 .stat-icon.blue { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-.stat-icon.green { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+.stat-icon.green { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
 .stat-icon.purple { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
 
 .stat-info h3 {
@@ -513,114 +513,97 @@ export default {
     font-size: 1.5rem;
 }
 
-/* Comments List */
-.comments-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+/* Table */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
 }
 
-.comment-card {
+.data-table thead {
     background: #f8f9fa;
-    border-radius: 12px;
-    padding: 1.5rem;
-    transition: all 0.3s;
 }
 
-.comment-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+.data-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #2c3e50;
+    border-bottom: 2px solid #e9ecef;
 }
 
-.comment-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
+.data-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #f1f3f5;
+    color: #495057;
 }
 
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+.data-table tbody tr {
+    transition: background 0.2s;
 }
 
-.user-avatar {
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid white;
+.data-table tbody tr:hover {
+    background: #f8f9fa;
 }
 
-.user-details {
+.novel-info {
     display: flex;
     flex-direction: column;
 }
 
-.user-details strong {
+.novel-title {
+    font-weight: 600;
     color: #2c3e50;
-    font-size: 1rem;
 }
 
-.comment-time {
+.chapter-title {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
     font-size: 0.85rem;
-    color: #7f8c8d;
+    font-weight: 600;
+}
+
+.badge-primary {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.views-count {
     display: flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: 0.5rem;
+    color: #7f8c8d;
 }
 
-.comment-actions {
+/* Action Buttons */
+.action-buttons {
     display: flex;
     gap: 0.5rem;
 }
 
-.btn-view-novel {
-    background: #3498db;
-    color: white;
+.btn-action {
+    padding: 0.5rem 0.75rem;
     border: none;
-    padding: 0.5rem 1rem;
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 500;
+    color: white;
 }
 
-.btn-view-novel:hover {
+.btn-view {
+    background: #3498db;
+}
+
+.btn-view:hover {
     background: #2980b9;
 }
 
 /* Button styles moved to buttons.css */
-
-.comment-content {
-    margin-bottom: 1rem;
-}
-
-.comment-content p {
-    margin: 0;
-    color: #495057;
-    line-height: 1.6;
-}
-
-.comment-footer {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.comment-chapter {
-    background: white;
-    padding: 0.35rem 0.75rem;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    color: #7f8c8d;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
 
 /* Pagination */
 .pagination {
@@ -641,8 +624,8 @@ export default {
 }
 
 .btn-page:hover:not(:disabled) {
-    border-color: #f093fb;
-    color: #f093fb;
+    border-color: #c9a9a6;
+    color: #c9a9a6;
 }
 
 .btn-page:disabled {
@@ -699,23 +682,14 @@ export default {
     color: #495057;
 }
 
-.comment-preview {
+.chapter-info {
     background: #f8f9fa;
     padding: 1rem;
     border-radius: 8px;
     margin: 1rem 0;
-}
-
-.comment-preview strong {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #2c3e50;
-}
-
-.comment-preview p {
-    margin: 0;
-    color: #495057;
-    font-style: italic;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 .warning {
@@ -764,7 +738,7 @@ export default {
 
 /* Responsive */
 @media (max-width: 768px) {
-    .manage-comments {
+    .manage-chapters {
         padding: 1rem;
     }
 
@@ -776,15 +750,13 @@ export default {
         min-width: 100%;
     }
 
-    .comment-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
+    .data-table {
+        font-size: 0.85rem;
     }
 
-    .comment-actions {
-        width: 100%;
-        justify-content: space-between;
+    .data-table th,
+    .data-table td {
+        padding: 0.75rem 0.5rem;
     }
 }
 </style>

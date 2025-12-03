@@ -185,17 +185,7 @@ export default {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.message-banner.success {
-    background: #d4edda;
-    color: #155724;
-    border: 2px solid #c3e6cb;
-}
-
-.message-banner.error {
-    background: #f8d7da;
-    color: #721c24;
-    border: 2px solid #f5c6cb;
-}
+/* Message banner styles moved to utilities.css */
 
 .message-banner i:first-child {
     font-size: 1.5rem;

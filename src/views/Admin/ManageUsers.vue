@@ -647,21 +647,7 @@ export default {
     color: white;
 }
 
-.btn-edit {
-    background: #f39c12;
-}
-
-.btn-edit:hover {
-    background: #e67e22;
-}
-
-.btn-delete {
-    background: #95a5a6;
-}
-
-.btn-delete:hover {
-    background: #7f8c8d;
-}
+/* Button styles moved to buttons.css */
 
 /* Pagination */
 .pagination {

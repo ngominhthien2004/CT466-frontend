@@ -396,25 +396,6 @@ export default {
     align-items: center;
 }
 
-.btn-add {
-    background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s;
-    white-space: nowrap;
-}
-
-.btn-add:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(201, 169, 166, 0.4);
-}
-
 /* Empty State */
 .table-container {
     background: white;
@@ -545,26 +526,6 @@ export default {
 
 .btn-view:hover {
     background: #2980b9;
-    transform: scale(1.1);
-}
-
-.btn-edit {
-    background: #f39c12;
-    color: white;
-}
-
-.btn-edit:hover {
-    background: #e67e22;
-    transform: scale(1.1);
-}
-
-.btn-delete {
-    background: #e74c3c;
-    color: white;
-}
-
-.btn-delete:hover {
-    background: #c0392b;
     transform: scale(1.1);
 }
 

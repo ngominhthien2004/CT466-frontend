@@ -205,16 +205,7 @@ export default {
     transform: translateY(-2px);
 }
 
-.btn-delete {
-    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-    color: white;
-    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
-}
-
-.btn-delete:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
-}
+/* Button styles moved to buttons.css */
 
 /* Responsive */
 @media (max-width: 576px) {

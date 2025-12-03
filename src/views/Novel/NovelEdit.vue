@@ -208,42 +208,13 @@ export default {
     font-size: 1rem;
 }
 
-/* Loading State */
-.loading-container {
+/* Utility styles moved to utilities.css */
+
+/* Custom container styling */
+.loading-container,
+.error-container {
     max-width: 800px;
     margin: 4rem auto;
-    text-align: center;
-    padding: 3rem;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.spinner {
-    width: 60px;
-    height: 60px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #c9a9a6;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 0 auto 1.5rem;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.loading-container p {
-    color: #7f8c8d;
-    font-size: 1.1rem;
-}
-
-/* Error State */
-.error-container {
-    max-width: 600px;
-    margin: 4rem auto;
-    text-align: center;
     padding: 3rem;
     background: white;
     border-radius: 16px;

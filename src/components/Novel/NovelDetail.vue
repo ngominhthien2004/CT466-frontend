@@ -389,6 +389,7 @@ export default {
     color: white;
 }
 
+/* Custom blue outline button for this component */
 .btn-edit {
     background: white;
     color: #3498db;

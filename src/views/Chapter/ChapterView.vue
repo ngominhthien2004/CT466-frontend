@@ -600,38 +600,7 @@ export default {
     background: #f8f9fa;
 }
 
-/* Loading & Error */
-.loading-container,
-.error-container {
-    text-align: center;
-    padding: 4rem 2rem;
-    min-height: 60vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.spinner {
-    width: 50px;
-    height: 50px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #c9a9a6;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-bottom: 1rem;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.error-container i {
-    font-size: 4rem;
-    color: #e74c3c;
-    margin-bottom: 1rem;
-}
+/* Utility styles moved to utilities.css */
 
 .btn-retry {
     background: #c9a9a6;

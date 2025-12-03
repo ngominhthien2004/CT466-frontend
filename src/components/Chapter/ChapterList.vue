@@ -124,6 +124,7 @@ export default {
     gap: 0.5rem;
 }
 
+/* Custom green outline button for this component */
 .btn-add-chapter {
     padding: 0.5rem 1rem;
     background: white;
@@ -170,23 +171,7 @@ export default {
     color: white;
 }
 
-.loading,
-.empty {
-    text-align: center;
-    padding: 3rem 0;
-    color: #95a5a6;
-}
-
-.empty i {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    color: #dfe6e9;
-}
-
-.empty p {
-    font-size: 1.1rem;
-    margin: 0;
-}
+/* Utility styles moved to utilities.css */
 
 .chapters-grid {
     display: flex;

@@ -297,33 +297,15 @@ export default {
     padding: 0 2rem;
 }
 
+/* Utility styles moved to utilities.css */
+
+/* Custom container styling */
 .loading,
 .error {
     background: white;
     border-radius: 12px;
     padding: 3rem;
-    text-align: center;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.loading p {
-    color: #7f8c8d;
-    font-size: 1.1rem;
-    margin: 0;
-}
-
-.error {
-    color: #e74c3c;
-}
-
-.error i {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-}
-
-.error p {
-    font-size: 1.1rem;
-    margin: 0 0 1.5rem 0;
 }
 
 .btn-back {

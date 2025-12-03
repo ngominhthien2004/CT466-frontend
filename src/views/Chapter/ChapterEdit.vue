@@ -192,34 +192,14 @@ export default {
     padding: 0 2rem;
 }
 
+/* Utility styles moved to utilities.css */
+
+/* Custom container styling */
 .loading-state,
 .error-state {
-    text-align: center;
-    padding: 4rem 2rem;
     background: white;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.loading-state i,
-.error-state i {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-}
-
-.loading-state i {
-    color: #c9a9a6;
-}
-
-.error-state i {
-    color: #e74c3c;
-}
-
-.loading-state p,
-.error-state p {
-    margin: 0;
-    color: #7f8c8d;
-    font-size: 1.1rem;
 }
 
 @media (max-width: 768px) {

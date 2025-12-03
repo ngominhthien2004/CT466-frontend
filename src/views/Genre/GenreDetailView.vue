@@ -1,40 +1,47 @@
 <template>
     <div class="genre-detail-view">
-        <div class="container">
-            <!-- Breadcrumb -->
-            <nav class="breadcrumb">
-                <router-link to="/">
-                    <i class="fas fa-home"></i>
-                    Trang chủ
-                </router-link>
-                <i class="fas fa-chevron-right"></i>
-                <router-link to="/genres">Thể loại</router-link>
-                <i class="fas fa-chevron-right"></i>
-                <span>{{ genreName }}</span>
-            </nav>
+        <!-- Breadcrumb Bar -->
+        <div class="breadcrumb-bar">
+            <div class="container">
+                <nav class="breadcrumb">
+                    <router-link to="/">
+                        <i class="fas fa-home"></i>
+                        Trang chủ
+                    </router-link>
+                    <i class="fas fa-chevron-right"></i>
+                    <router-link to="/genres">Thể loại</router-link>
+                    <i class="fas fa-chevron-right"></i>
+                    <span>{{ genreName }}</span>
+                </nav>
+            </div>
+        </div>
 
-            <!-- Genre Header -->
-            <div class="genre-header">
-                <div class="genre-info">
-                    <h1 class="genre-title">{{ genreName }}</h1>
-                    <p class="genre-description">{{ genreDescription }}</p>
-                    <div class="genre-stats">
-                        <span>
-                            <i class="fas fa-book"></i>
-                            {{ novels.length }} truyện
-                        </span>
-                        <span>
-                            <i class="fas fa-eye"></i>
-                            {{ totalViews.toLocaleString() }} lượt xem
-                        </span>
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="header-content">
+                <h1>{{ genreName }}</h1>
+                <p class="subtitle">{{ genreDescription }}</p>
+                <div class="genre-stats">
+                    <div class="stat-badge">
+                        <i class="fas fa-book"></i>
+                        <span>{{ novels.length }} truyện</span>
+                    </div>
+                    <div class="stat-badge">
+                        <i class="fas fa-eye"></i>
+                        <span>{{ totalViews.toLocaleString() }} lượt xem</span>
                     </div>
                 </div>
             </div>
+        </div>
 
+        <div class="container">
             <!-- Filters -->
-            <div class="filters">
+            <div class="filters-section">
                 <div class="filter-group">
-                    <label>Sắp xếp:</label>
+                    <label>
+                        <i class="fas fa-sort"></i>
+                        Sắp xếp
+                    </label>
                     <select v-model="sortBy" class="filter-select">
                         <option value="latest">Mới nhất</option>
                         <option value="popular">Phổ biến</option>
@@ -44,13 +51,20 @@
                 </div>
                 
                 <div class="filter-group">
-                    <label>Trạng thái:</label>
+                    <label>
+                        <i class="fas fa-filter"></i>
+                        Trạng thái
+                    </label>
                     <select v-model="statusFilter" class="filter-select">
                         <option value="all">Tất cả</option>
                         <option value="ongoing">Đang ra</option>
                         <option value="completed">Hoàn thành</option>
                     </select>
                 </div>
+
+                <button @click="resetFilters" class="btn-reset" title="Đặt lại bộ lọc">
+                    <i class="fas fa-redo"></i>
+                </button>
             </div>
 
             <!-- Novels Grid -->
@@ -166,6 +180,10 @@ export default {
             if (novel) {
                 novel.favorite = isFavorite;
             }
+        },
+        resetFilters() {
+            this.sortBy = 'latest';
+            this.statusFilter = 'all';
         }
     }
 };
@@ -174,25 +192,20 @@ export default {
 <style scoped>
 .genre-detail-view {
     min-height: 100vh;
-    background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
-    padding: 2rem 0;
+    background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
 }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1rem;
+/* Breadcrumb Bar */
+.breadcrumb-bar {
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 1rem 0;
 }
 
-/* Breadcrumb */
 .breadcrumb {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin-bottom: 2rem;
-    padding: 0.75rem 1rem;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 8px;
     font-size: 0.9rem;
 }
 
@@ -202,6 +215,7 @@ export default {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    transition: color 0.3s;
 }
 
 .breadcrumb a:hover {
@@ -218,58 +232,84 @@ export default {
     font-weight: 600;
 }
 
-/* Genre Header */
-.genre-header {
-    padding: 2rem;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+/* Page Header */
+.page-header {
+    background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
+    padding: 3rem 0;
     margin-bottom: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-.genre-info {
-    width: 100%;
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    text-align: center;
 }
 
-.genre-title {
-    margin: 0 0 0.5rem 0;
-    font-size: 2rem;
+.header-content h1 {
+    font-size: 2.5rem;
     font-weight: 700;
-    color: #2c3e50;
+    color: white;
+    margin: 0 0 0.75rem 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.genre-description {
-    margin: 0 0 1rem 0;
-    color: #7f8c8d;
-    line-height: 1.6;
+.subtitle {
+    font-size: 1.125rem;
+    color: rgba(255, 255, 255, 0.95);
+    margin: 0 0 1.5rem 0;
+    font-weight: 300;
 }
 
 .genre-stats {
     display: flex;
-    gap: 2rem;
-    font-size: 0.95rem;
-    color: #95a5a6;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
 }
 
-.genre-stats span {
+.stat-badge {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    color: white;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.3s;
 }
 
-.genre-stats i {
-    color: #c9a9a6;
+.stat-badge:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
 }
 
-/* Filters */
-.filters {
+.stat-badge i {
+    font-size: 1rem;
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem 3rem;
+}
+
+/* Filters Section */
+.filters-section {
     display: flex;
+    align-items: center;
     gap: 1.5rem;
     margin-bottom: 2rem;
-    padding: 1.5rem;
+    padding: 1.5rem 2rem;
     background: white;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    flex-wrap: wrap;
 }
 
 .filter-group {
@@ -281,19 +321,56 @@ export default {
 .filter-group label {
     font-weight: 600;
     color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.filter-group label i {
+    color: #c9a9a6;
 }
 
 .filter-select {
-    padding: 0.5rem 1rem;
+    padding: 0.625rem 1.25rem;
     border: 2px solid #e9ecef;
     border-radius: 8px;
     font-size: 0.95rem;
     cursor: pointer;
     transition: all 0.3s;
+    background: white;
+    min-width: 150px;
 }
 
 .filter-select:focus {
     outline: none;
+    border-color: #c9a9a6;
+    box-shadow: 0 0 0 3px rgba(201, 169, 166, 0.1);
+}
+
+.filter-select:hover {
+    border-color: #c9a9a6;
+}
+
+.btn-reset {
+    margin-left: auto;
+    padding: 0.625rem 1.25rem;
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    color: #7f8c8d;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.btn-reset:hover {
+    background: #c9a9a6;
+    color: white;
     border-color: #c9a9a6;
 }
 
@@ -304,10 +381,54 @@ export default {
     gap: 1.5rem;
 }
 
+/* Responsive */
 @media (max-width: 768px) {
-    .filters {
+    .page-header {
+        padding: 2rem 0;
+    }
+
+    .header-content h1 {
+        font-size: 1.75rem;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+    }
+
+    .genre-stats {
         flex-direction: column;
-        gap: 1rem;
+        gap: 0.75rem;
+    }
+
+    .stat-badge {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .container {
+        padding: 0 1rem 2rem;
+    }
+
+    .filters-section {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 1rem;
+    }
+
+    .filter-group {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+    }
+
+    .filter-select {
+        width: 100%;
+    }
+
+    .btn-reset {
+        margin-left: 0;
+        width: 100%;
+        justify-content: center;
     }
     
     .novels-grid {

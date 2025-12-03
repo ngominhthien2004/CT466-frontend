@@ -194,7 +194,7 @@
                 </button>
 
                 <span class="pagination-info">
-                    Trang {{ currentPage }} / {{ totalPages }}
+                    Trang {{ currentPage }} &#47; {{ totalPages }}
                 </span>
             </div>
         </div>
@@ -633,31 +633,10 @@ export default {
     color: #667eea;
 }
 
-/* Loading */
-.loading-container {
-    text-align: center;
-    padding: 4rem 2rem;
-}
+/* Utility styles moved to utilities.css */
 
-.spinner {
-    width: 50px;
-    height: 50px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #667eea;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 0 auto 1rem;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* Empty State */
+/* Custom empty state styling */
 .empty-state {
-    text-align: center;
-    padding: 4rem 2rem;
     background: white;
     border-radius: 12px;
     max-width: 600px;
@@ -667,20 +646,10 @@ export default {
 
 .empty-state i {
     font-size: 5rem;
-    color: #667eea;
-    margin-bottom: 1.5rem;
 }
 
 .empty-state h3 {
-    margin: 0 0 1rem 0;
-    color: #2c3e50;
     font-size: 1.75rem;
-}
-
-.empty-state p {
-    color: #7f8c8d;
-    margin-bottom: 2rem;
-    font-size: 1.1rem;
 }
 
 .btn-login,

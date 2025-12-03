@@ -213,12 +213,7 @@ export default {
     width: 100%;
 }
 
-.loading,
-.empty {
-    text-align: center;
-    padding: 3rem 0;
-    color: #95a5a6;
-}
+/* Utility styles moved to utilities.css */
 
 /* Pagination Styles */
 .pagination {

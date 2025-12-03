@@ -1,0 +1,452 @@
+/* ============================================
+   UTILITY CLASSES
+   Common utility classes for states, loading, etc.
+   ============================================ */
+
+/* ==================== LOADING STATES ==================== */
+
+.loading-container,
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    min-height: 300px;
+    text-align: center;
+}
+
+.loading-container p,
+.loading-state p {
+    margin: 1rem 0 0 0;
+    font-size: 1.125rem;
+    color: #7f8c8d;
+}
+
+/* Spinner Animation */
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #c9a9a6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-container i,
+.loading-state i {
+    font-size: 3rem;
+    color: #c9a9a6;
+    animation: spin 1s linear infinite;
+}
+
+/* Small Spinner Variant */
+.spinner-sm {
+    width: 20px;
+    height: 20px;
+    border-width: 2px;
+}
+
+/* Inline Loading */
+.loading-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #7f8c8d;
+}
+
+.loading-inline .spinner {
+    width: 16px;
+    height: 16px;
+    border-width: 2px;
+}
+
+/* ==================== EMPTY STATES ==================== */
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    text-align: center;
+    min-height: 300px;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #c9a9a6;
+    margin-bottom: 1rem;
+    opacity: 0.7;
+}
+
+.empty-state h3 {
+    margin: 0 0 0.75rem 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.empty-state p {
+    margin: 0 0 1.5rem 0;
+    font-size: 1rem;
+    color: #7f8c8d;
+    max-width: 400px;
+}
+
+.empty-state .btn {
+    margin-top: 0.5rem;
+}
+
+/* ==================== ERROR STATES ==================== */
+
+.error,
+.error-container,
+.error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    text-align: center;
+    background: #fff5f5;
+    border: 2px solid #feb2b2;
+    border-radius: 12px;
+    color: #c53030;
+}
+
+.error i,
+.error-container i,
+.error-state i {
+    font-size: 3rem;
+    color: #e74c3c;
+    margin-bottom: 1rem;
+}
+
+.error p,
+.error-container p,
+.error-state p {
+    margin: 0;
+    font-size: 1rem;
+    color: #c53030;
+    font-weight: 500;
+}
+
+/* Inline Error */
+.error-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #fff5f5;
+    border-left: 4px solid #e74c3c;
+    border-radius: 4px;
+    color: #c53030;
+    font-size: 0.875rem;
+}
+
+/* Error Message (for forms) */
+.error-message {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: #e74c3c;
+    font-weight: 500;
+}
+
+.input-error {
+    border-color: #e74c3c !important;
+}
+
+.input-error:focus {
+    border-color: #e74c3c !important;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1) !important;
+}
+
+/* ==================== SUCCESS STATES ==================== */
+
+.success,
+.success-container,
+.success-state {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    background: #f0fff4;
+    border: 2px solid #9ae6b4;
+    border-radius: 12px;
+    color: #22543d;
+}
+
+.success i,
+.success-container i,
+.success-state i {
+    font-size: 1.5rem;
+    color: #38a169;
+}
+
+.success p,
+.success-container p,
+.success-state p {
+    margin: 0;
+    font-size: 1rem;
+    color: #22543d;
+    font-weight: 500;
+}
+
+/* Inline Success */
+.success-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #f0fff4;
+    border-left: 4px solid #38a169;
+    border-radius: 4px;
+    color: #22543d;
+    font-size: 0.875rem;
+}
+
+/* ==================== WARNING STATES ==================== */
+
+.warning,
+.warning-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    background: #fffbeb;
+    border: 2px solid #fbd38d;
+    border-radius: 12px;
+    color: #744210;
+}
+
+.warning i,
+.warning-container i {
+    font-size: 1.5rem;
+    color: #ed8936;
+}
+
+.warning p,
+.warning-container p {
+    margin: 0;
+    font-size: 1rem;
+    color: #744210;
+    font-weight: 500;
+}
+
+/* ==================== INFO STATES ==================== */
+
+.info,
+.info-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    background: #ebf8ff;
+    border: 2px solid #90cdf4;
+    border-radius: 12px;
+    color: #2c5282;
+}
+
+.info i,
+.info-container i {
+    font-size: 1.5rem;
+    color: #3182ce;
+}
+
+.info p,
+.info-container p {
+    margin: 0;
+    font-size: 1rem;
+    color: #2c5282;
+    font-weight: 500;
+}
+
+/* ==================== MESSAGE BANNERS ==================== */
+
+.message-banner {
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 500;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message-banner.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.message-banner.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.message-banner.warning {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
+.message-banner.info {
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+/* ==================== BADGES ==================== */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.badge-primary {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.badge-success {
+    background: #e8f5e9;
+    color: #388e3c;
+}
+
+.badge-danger {
+    background: #ffebee;
+    color: #d32f2f;
+}
+
+.badge-warning {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.badge-info {
+    background: #e0f7fa;
+    color: #0097a7;
+}
+
+.badge-secondary {
+    background: #f5f5f5;
+    color: #616161;
+}
+
+/* ==================== OVERLAYS ==================== */
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9000;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.overlay.fade-out {
+    animation: fadeOut 0.3s ease;
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+/* ==================== DIVIDERS ==================== */
+
+.divider {
+    height: 1px;
+    background: #e9ecef;
+    margin: 1.5rem 0;
+}
+
+.divider-thick {
+    height: 2px;
+    background: #dee2e6;
+}
+
+.divider-text {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #7f8c8d;
+    font-size: 0.875rem;
+    margin: 1.5rem 0;
+}
+
+.divider-text::before,
+.divider-text::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e9ecef;
+}
+
+.divider-text:not(:empty)::before {
+    margin-right: 1rem;
+}
+
+.divider-text:not(:empty)::after {
+    margin-left: 1rem;
+}
+
+/* ==================== RESPONSIVE ==================== */
+
+@media (max-width: 768px) {
+    .loading-container,
+    .loading-state,
+    .empty-state {
+        min-height: 200px;
+        padding: 2rem 1rem;
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+    }
+
+    .empty-state h3 {
+        font-size: 1.25rem;
+    }
+
+    .message-banner {
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+    }
+}

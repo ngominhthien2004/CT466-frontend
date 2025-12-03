@@ -326,6 +326,7 @@ export default {
     gap: 1rem;
 }
 
+/* Custom white button with shadow for header */
 .btn-add-novel {
     background: white;
     color: #c9a9a6;

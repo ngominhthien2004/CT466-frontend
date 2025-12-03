@@ -61,32 +61,7 @@ export default {
     gap: 1.5rem;
 }
 
-.loading,
-.error,
-.empty {
-    text-align: center;
-    padding: 3rem 1rem;
-}
-
-.loading i,
-.error i,
-.empty i {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    color: #c9a9a6;
-}
-
-.loading p,
-.error p,
-.empty p {
-    margin: 0;
-    font-size: 1.125rem;
-    color: #7f8c8d;
-}
-
-.error i {
-    color: #e74c3c;
-}
+/* Utility styles moved to utilities.css */
 
 @media (max-width: 768px) {
     .genre-grid {

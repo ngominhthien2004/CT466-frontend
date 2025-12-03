@@ -130,8 +130,5 @@ export default {
   margin-right: 0.5rem;
   font-size: 1rem;
 }
-.btn-primary {
-  background: linear-gradient(135deg, #e8c5c1 0%, #c9a9a6 100%);
-  color: #fff;
-}
+/* Button styles moved to buttons.css */
 </style>

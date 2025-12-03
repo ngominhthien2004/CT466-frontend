@@ -208,20 +208,7 @@ export default {
     background: #dee2e6;
 }
 
-.btn-primary {
-    background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
-    color: white;
-}
-
-.btn-primary:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(201, 169, 166, 0.4);
-}
-
-.btn-primary:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
+/* Button styles moved to buttons.css */
 
 @media (max-width: 768px) {
     .chapter-form {
