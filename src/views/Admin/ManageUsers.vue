@@ -1,84 +1,36 @@
 <template>
     <div class="manage-users">
-        <div class="page-header">
-            <div class="header-content">
-                <h1>
-                    <i class="fas fa-users"></i>
-                    Quản lý Users
-                </h1>
-                <p>Quản lý tất cả người dùng trong hệ thống</p>
-            </div>
-        </div>
+        <PageHeader
+            title="Quản lý Users"
+            subtitle="Quản lý tất cả người dùng trong hệ thống"
+            icon="fas fa-users"
+        />
 
         <!-- Filters -->
-        <div class="filters-section">
-            <div class="filter-group">
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input
-                        v-model="searchQuery"
-                        type="text"
-                        placeholder="Tìm kiếm theo tên, email..."
-                        @input="applyFilters"
-                    />
-                </div>
+        <SearchFilter
+            v-model="searchQuery"
+            placeholder="Tìm kiếm theo tên, email..."
+            @update:modelValue="applyFilters"
+            @reset="resetFilters"
+        >
+            <select v-model="filterRole" @change="applyFilters" class="filter-select">
+                <option value="">Tất cả vai trò</option>
+                <option value="admin">Admin</option>
+                <option value="user">User</option>
+            </select>
 
-                <select v-model="filterRole" @change="applyFilters" class="filter-select">
-                    <option value="">Tất cả vai trò</option>
-                    <option value="admin">Admin</option>
-                    <option value="user">User</option>
-                </select>
-
-                <select v-model="filterStatus" @change="applyFilters" class="filter-select">
-                    <option value="">Tất cả trạng thái</option>
-                    <option value="active">Hoạt động</option>
-                    <option value="inactive">Đã khóa</option>
-                </select>
-
-                <button @click="resetFilters" class="btn-reset">
-                    <i class="fas fa-redo"></i>
-                    Reset
-                </button>
-            </div>
-        </div>
+            <select v-model="filterStatus" @change="applyFilters" class="filter-select">
+                <option value="">Tất cả trạng thái</option>
+                <option value="active">Hoạt động</option>
+                <option value="inactive">Đã khóa</option>
+            </select>
+        </SearchFilter>
 
         <!-- Stats Cards -->
-        <div class="stats-cards">
-            <div class="stat-card">
-                <div class="stat-icon blue">
-                    <i class="fas fa-users"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>{{ totalUsers }}</h3>
-                    <p>Tổng Users</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon green">
-                    <i class="fas fa-user-check"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>{{ activeUsers }}</h3>
-                    <p>Đang Hoạt Động</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon orange">
-                    <i class="fas fa-user-shield"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>{{ adminUsers }}</h3>
-                    <p>Admins</p>
-                </div>
-            </div>
-        </div>
+        <StatsCards :stats="statsData" />
 
         <!-- Users Table -->
         <div class="table-container">
-            <div class="table-header">
-                <h2>Danh sách Users ({{ filteredUsers.length }})</h2>
-            </div>
-
             <LoadingSpinner v-if="loading" />
 
             <EmptyState
@@ -107,7 +59,7 @@
                             <img :src="getUserAvatar(user)" :alt="user.username" class="user-avatar" />
                         </td>
                         <td>
-                            <div class="user-info">
+                            <div class="table-user-info">
                                 <strong>{{ user.username }}</strong>
                                 <span v-if="user.fullName" class="full-name">{{ user.fullName }}</span>
                             </div>
@@ -185,11 +137,22 @@ import LoadingSpinner from '@/components/Common/LoadingSpinner.vue';
 import EmptyState from '@/components/Common/EmptyState.vue';
 import DeleteModal from '@/components/Common/DeleteModal.vue';
 import UserForm from '@/components/User/UserForm.vue';
+import PageHeader from '@/components/Admin/PageHeader.vue';
+import StatsCards from '@/components/Admin/StatsCards.vue';
+import SearchFilter from '@/components/Admin/SearchFilter.vue';
 import { useAuthStore } from '@/stores';
 
 export default {
     name: 'ManageUsers',
-    components: { LoadingSpinner, EmptyState, DeleteModal, UserForm },
+    components: { 
+        LoadingSpinner, 
+        EmptyState, 
+        DeleteModal, 
+        UserForm,
+        PageHeader,
+        StatsCards,
+        SearchFilter
+    },
     data() {
         return {
             users: [],
@@ -221,6 +184,28 @@ export default {
         },
         adminUsers() {
             return this.users.filter(u => u.role === 'admin').length;
+        },
+        statsData() {
+            return [
+                {
+                    icon: 'fas fa-users',
+                    value: this.totalUsers,
+                    label: 'Tổng Users',
+                    color: 'blue'
+                },
+                {
+                    icon: 'fas fa-user-check',
+                    value: this.activeUsers,
+                    label: 'Đang Hoạt Động',
+                    color: 'green'
+                },
+                {
+                    icon: 'fas fa-user-shield',
+                    value: this.adminUsers,
+                    label: 'Admins',
+                    color: 'orange'
+                }
+            ];
         },
         paginatedUsers() {
             const start = (this.currentPage - 1) * this.itemsPerPage;

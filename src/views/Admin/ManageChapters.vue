@@ -1,85 +1,37 @@
 <template>
     <div class="manage-chapters">
-        <div class="page-header">
-            <div class="header-content">
-                <h1>
-                    <i class="fas fa-book-open"></i>
-                    Quản lý Chapters
-                </h1>
-                <p>Quản lý tất cả các chương truyện trong hệ thống</p>
-            </div>
-        </div>
+        <PageHeader
+            title="Quản lý Chapters"
+            subtitle="Quản lý tất cả các chương truyện trong hệ thống"
+            icon="fas fa-book-open"
+        />
 
         <!-- Filters -->
-        <div class="filters-section">
-            <div class="filter-group">
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input
-                        v-model="searchQuery"
-                        type="text"
-                        placeholder="Tìm kiếm theo tên chương, nội dung..."
-                        @input="applyFilters"
-                    />
-                </div>
+        <SearchFilter
+            v-model="searchQuery"
+            placeholder="Tìm kiếm theo tên chương, nội dung..."
+            @update:modelValue="applyFilters"
+            @reset="resetFilters"
+        >
+            <select v-model="filterNovel" @change="applyFilters" class="filter-select">
+                <option value="">Tất cả truyện</option>
+                <option v-for="novel in novels" :key="novel._id" :value="novel._id">
+                    {{ novel.title }}
+                </option>
+            </select>
 
-                <select v-model="filterNovel" @change="applyFilters" class="filter-select">
-                    <option value="">Tất cả truyện</option>
-                    <option v-for="novel in novels" :key="novel._id" :value="novel._id">
-                        {{ novel.title }}
-                    </option>
-                </select>
-
-                <select v-model="sortBy" @change="applyFilters" class="filter-select">
-                    <option value="createdAt">Mới nhất</option>
-                    <option value="chapterNumber">Số chương</option>
-                    <option value="views">Lượt xem</option>
-                </select>
-
-                <button @click="resetFilters" class="btn-reset">
-                    <i class="fas fa-redo"></i>
-                    Reset
-                </button>
-            </div>
-        </div>
+            <select v-model="sortBy" @change="applyFilters" class="filter-select">
+                <option value="createdAt">Mới nhất</option>
+                <option value="chapterNumber">Số chương</option>
+                <option value="views">Lượt xem</option>
+            </select>
+        </SearchFilter>
 
         <!-- Stats Cards -->
-        <div class="stats-cards">
-            <div class="stat-card">
-                <div class="stat-icon blue">
-                    <i class="fas fa-book"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>{{ totalChapters }}</h3>
-                    <p>Tổng Chapters</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon green">
-                    <i class="fas fa-eye"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>{{ totalViews }}</h3>
-                    <p>Tổng Lượt Xem</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon purple">
-                    <i class="fas fa-book-reader"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>{{ novels.length }}</h3>
-                    <p>Số Truyện</p>
-                </div>
-            </div>
-        </div>
+        <StatsCards :stats="statsData" />
 
         <!-- Chapters Table -->
         <div class="table-container">
-            <div class="table-header">
-                <h2>Danh sách Chapters ({{ filteredChapters.length }})</h2>
-            </div>
-
             <LoadingSpinner v-if="loading" />
 
             <EmptyState
@@ -195,10 +147,19 @@
 import { ChapterService, NovelService } from '@/services';
 import LoadingSpinner from '@/components/Common/LoadingSpinner.vue';
 import EmptyState from '@/components/Common/EmptyState.vue';
+import PageHeader from '@/components/Admin/PageHeader.vue';
+import StatsCards from '@/components/Admin/StatsCards.vue';
+import SearchFilter from '@/components/Admin/SearchFilter.vue';
 
 export default {
     name: 'ManageChapters',
-    components: { LoadingSpinner, EmptyState },
+    components: { 
+        LoadingSpinner, 
+        EmptyState,
+        PageHeader,
+        StatsCards,
+        SearchFilter
+    },
     data() {
         return {
             chapters: [],
@@ -220,6 +181,28 @@ export default {
         },
         totalViews() {
             return this.chapters.reduce((sum, chapter) => sum + (chapter.views || 0), 0);
+        },
+        statsData() {
+            return [
+                {
+                    icon: 'fas fa-book',
+                    value: this.totalChapters,
+                    label: 'Tổng Chapters',
+                    color: 'blue'
+                },
+                {
+                    icon: 'fas fa-eye',
+                    value: this.totalViews,
+                    label: 'Tổng Lượt Xem',
+                    color: 'green'
+                },
+                {
+                    icon: 'fas fa-book-reader',
+                    value: this.novels.length,
+                    label: 'Số Truyện',
+                    color: 'purple'
+                }
+            ];
         },
         paginatedChapters() {
             const start = (this.currentPage - 1) * this.itemsPerPage;
@@ -428,72 +411,7 @@ export default {
     border-color: #c9a9a6;
 }
 
-.btn-reset {
-    padding: 0.875rem 1.5rem;
-    background: #e9ecef;
-    border: none;
-    border-radius: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.btn-reset:hover {
-    background: #dee2e6;
-}
-
-/* Stats Cards */
-.stats-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-.stat-card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 15px;
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s;
-}
-
-.stat-card:hover {
-    transform: translateY(-5px);
-}
-
-.stat-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    color: white;
-}
-
-.stat-icon.blue { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-.stat-icon.green { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
-.stat-icon.purple { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
-
-.stat-info h3 {
-    margin: 0;
-    font-size: 2rem;
-    color: #2c3e50;
-}
-
-.stat-info p {
-    margin: 0.25rem 0 0 0;
-    color: #7f8c8d;
-    font-size: 0.9rem;
-}
+/* Page Header, Filters, Stats Cards - moved to reusable components */
 
 /* Table styles moved to tables.css */
 

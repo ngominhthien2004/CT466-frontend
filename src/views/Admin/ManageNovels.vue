@@ -1,5 +1,13 @@
 <template>
     <div class="manage-novels">
+        <PageHeader
+            title="Quản lý Novels"
+            subtitle="Quản lý tất cả tiểu thuyết trong hệ thống"
+            icon="fas fa-book"
+        />
+
+        <StatsCards :stats="statsData" />
+
         <!-- Header Actions -->
         <div class="page-actions">
             <SearchNovel
@@ -177,6 +185,8 @@
 
 <script>
 import { useNovelStore } from '@/stores';
+import PageHeader from '@/components/Admin/PageHeader.vue';
+import StatsCards from '@/components/Admin/StatsCards.vue';
 import NovelForm from '@/components/Novel/NovelForm.vue';
 import DeleteModal from '@/components/Common/DeleteModal.vue';
 import SearchNovel from '@/components/Novel/SearchNovel.vue';
@@ -186,7 +196,7 @@ import EmptyState from '@/components/Common/EmptyState.vue';
 
 export default {
     name: 'ManageNovels',
-    components: { NovelForm, DeleteModal, SearchNovel, FilterBar, LoadingSpinner, EmptyState },
+    components: { PageHeader, StatsCards, NovelForm, DeleteModal, SearchNovel, FilterBar, LoadingSpinner, EmptyState },
     data() {
         return {
             novelStore: useNovelStore(),
@@ -224,6 +234,18 @@ export default {
         //  Lấy data từ store
         novels() {
             return this.novelStore.allNovels;
+        },
+        statsData() {
+            const totalViews = this.novels.reduce((sum, novel) => sum + (novel.views || 0), 0);
+            const totalLikes = this.novels.reduce((sum, novel) => sum + (novel.likes || 0), 0);
+            const avgViews = this.novels.length > 0 ? Math.round(totalViews / this.novels.length) : 0;
+            
+            return [
+                { icon: 'fas fa-book', value: this.novels.length, label: 'Tổng Novels', color: 'blue' },
+                { icon: 'fas fa-eye', value: totalViews, label: 'Tổng Lượt xem', color: 'green' },
+                { icon: 'fas fa-heart', value: totalLikes, label: 'Tổng Lượt thích', color: 'red' },
+                { icon: 'fas fa-chart-line', value: avgViews, label: 'Trung bình Views', color: 'purple' }
+            ];
         },
         loading() {
             return this.novelStore.loading;

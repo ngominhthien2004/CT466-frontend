@@ -364,7 +364,7 @@ export default {
     align-items: center;
     gap: 0.75rem;
     cursor: pointer;
-    padding: 0.5rem 1rem;
+    padding: 0.4rem 0.85rem; /* Giảm padding để compact hơn */
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(10px);
@@ -378,41 +378,43 @@ export default {
 }
 
 .user-avatar {
-    width: 40px;
-    height: 40px;
+    width: 36px; /* Giảm từ 40px */
+    height: 36px;
     border-radius: 50%;
     border: 2px solid white;
     object-fit: cover;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    flex-shrink: 0;
 }
 
 .user-details {
     display: flex;
     flex-direction: column;
-    min-width: 0;
+    gap: 0.1rem; /* Giảm khoảng cách giữa tên và role */
+    line-height: 1;
 }
 
 .user-name {
     color: white;
     font-weight: 600;
-    font-size: 0.95rem;
-    line-height: 1.2;
+    font-size: 0.9rem; /* Giảm nhẹ font size */
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    line-height: 1.1;
 }
 
 .user-role {
     color: rgba(255, 255, 255, 0.8);
-    font-size: 0.75rem;
+    font-size: 0.7rem; /* Giảm từ 0.75rem */
     text-transform: capitalize;
     white-space: nowrap;
+    line-height: 1.1;
 }
 
 .dropdown-icon {
     color: white;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     transition: transform 0.3s;
+    flex-shrink: 0;
 }
 
 .user-menu:hover .dropdown-icon {

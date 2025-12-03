@@ -1,5 +1,11 @@
 <template>
     <div class="dashboard">
+        <PageHeader
+            title="Tổng quan"
+            subtitle="Theo dõi thống kê và hoạt động của hệ thống"
+            icon="fas fa-chart-line"
+        />
+
         <!-- Stats Cards -->
         <div class="stats-grid">
             <div class="stat-card" v-for="stat in computedStats" :key="stat.title">
@@ -95,9 +101,11 @@
 
 <script>
 import { useNovelStore } from '@/stores';
+import PageHeader from '@/components/Admin/PageHeader.vue';
 
 export default {
     name: 'Dashboard',
+    components: { PageHeader },
     data() {
         return {
             novelStore: useNovelStore(),

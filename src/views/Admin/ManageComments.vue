@@ -75,10 +75,6 @@
 
         <!-- Comments Table -->
         <div class="table-container">
-            <div class="table-header">
-                <h2>Danh sách Comments ({{ filteredComments.length }})</h2>
-            </div>
-
             <LoadingSpinner v-if="loading" />
 
             <EmptyState

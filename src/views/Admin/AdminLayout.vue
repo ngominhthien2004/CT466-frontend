@@ -61,17 +61,8 @@
 
         <!-- Main Content -->
         <div class="main-content">
-            <header class="content-header">
-                <h1>{{ pageTitle }}</h1>
-                <div class="header-actions">
-                    <button class="btn-refresh" @click="refreshPage">
-                        <i class="fas fa-sync-alt"></i>
-                    </button>
-                </div>
-            </header>
-
             <div class="content-body">
-                <router-view @update-title="updatePageTitle" />
+                <router-view />
             </div>
         </div>
     </div>
@@ -86,7 +77,6 @@ export default {
     data() {
         return {
             sidebarCollapsed: false,
-            pageTitle: 'Tổng quan',
             authStore: useAuthStore()
         };
     },
@@ -97,12 +87,6 @@ export default {
     },
     mounted() {
         this.authStore.loadUser();
-        this.updatePageTitle();
-    },
-    watch: {
-        '$route'() {
-            this.updatePageTitle();
-        }
     },
     methods: {
         toggleSidebar() {
@@ -110,18 +94,6 @@ export default {
         },
         getUserAvatar() {
             return this.authStore.userAvatar;
-        },
-        updatePageTitle() {
-            const routeNameMap = {
-                'admin-dashboard': 'Tổng quan',
-                'admin-novels': 'Quản lý Novels',
-                'admin-users': 'Quản lý Users',
-                'admin-genres': 'Quản lý Thể loại'
-            };
-            this.pageTitle = routeNameMap[this.$route.name] || 'Admin';
-        },
-        refreshPage() {
-            this.$router.go(0);
         },
         handleLogout() {
             this.authStore.logout();
@@ -306,46 +278,6 @@ export default {
 
 .sidebar.collapsed ~ .main-content {
     margin-left: 80px;
-}
-
-.content-header {
-    background: white;
-    padding: 1.5rem 2rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.content-header h1 {
-    margin: 0;
-    font-size: 1.75rem;
-    color: #2c3e50;
-}
-
-.header-actions {
-    display: flex;
-    gap: 1rem;
-}
-
-.btn-refresh {
-    background: white;
-    border: 2px solid #dfe6e9;
-    color: #7f8c8d;
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.btn-refresh:hover {
-    border-color: #c9a9a6;
-    color: #c9a9a6;
-    transform: rotate(180deg);
 }
 
 .content-body {

@@ -104,18 +104,18 @@
     white-space: nowrap;
 }
 
-/* User Info */
-.user-info {
+/* User Info in Table */
+.table-user-info {
     display: flex;
     flex-direction: column;
 }
 
-.user-info strong {
+.table-user-info strong {
     color: #2c3e50;
     margin-bottom: 0.25rem;
 }
 
-.user-info .full-name {
+.table-user-info .full-name {
     font-size: 0.85rem;
     color: #7f8c8d;
 }

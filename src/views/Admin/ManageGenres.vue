@@ -32,10 +32,6 @@
 
         <!-- Genres Table -->
         <div class="table-container">
-            <div class="table-header">
-                <h2>Danh sách Thể loại ({{ filteredGenres.length }})</h2>
-            </div>
-
             <LoadingSpinner v-if="genreStore.loading" />
 
             <EmptyState
