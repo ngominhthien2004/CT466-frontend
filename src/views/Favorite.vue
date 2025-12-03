@@ -122,6 +122,7 @@
                     v-for="novel in paginatedNovels"
                     :key="novel._id"
                     :novel="novel"
+                    :is-favorite="isNovelFavorited(novel)"
                     @toggle-favorite="handleToggleFavorite"
                 />
             </div>
@@ -285,10 +286,24 @@ export default {
         }
     },
     methods: {
+        isNovelFavorited(novel) {
+            // In Favorite page, all novels are favorited by definition
+            // But check properly in case of race conditions
+            const userId = this.authStore.user?._id;
+            if (!userId || !novel) return true; // Default to true in favorite page
+            return novel.favoritedBy?.includes(userId) ?? true;
+        },
         async loadFavorites() {
             this.loading = true;
             try {
-                const response = await NovelService.getFavorites();
+                const userId = this.authStore.user?._id;
+                if (!userId) {
+                    this.favoriteNovels = [];
+                    return;
+                }
+                
+                // Get novels favorited by current user
+                const response = await NovelService.getFavoritesByUserId(userId);
                 this.favoriteNovels = response.data || response || [];
                 this.applyFilters();
             } catch (error) {
@@ -365,8 +380,12 @@ export default {
                 alert('Không thể bỏ yêu thích. Vui lòng thử lại!');
             }
         },
-        handleToggleFavorite(novel) {
-            this.toggleFavorite(novel);
+        handleToggleFavorite(novelId) {
+            // Find the novel object by id
+            const novel = this.favoriteNovels.find(n => n._id === novelId);
+            if (novel) {
+                this.toggleFavorite(novel);
+            }
         },
         goToPage(page) {
             if (page >= 1 && page <= this.totalPages) {
