@@ -3,6 +3,10 @@
         <div class="list-header">
             <h2>Danh sách chương</h2>
             <div class="list-controls">
+                <button class="btn-add-chapter" @click="addChapter">
+                    <i class="fas fa-plus"></i>
+                    Thêm chương
+                </button>
                 <button 
                     class="sort-btn" 
                     :class="{ active: sortOrder === 'asc' }"
@@ -50,6 +54,10 @@ export default {
         loading: {
             type: Boolean,
             default: false
+        },
+        novelId: {
+            type: String,
+            required: true
         }
     },
     data() {
@@ -71,6 +79,9 @@ export default {
     methods: {
         toggleSort() {
             this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+        },
+        addChapter() {
+            this.$router.push(`/chapters/add?novelId=${this.novelId}`);
         },
         handleReadChapter(chapterId) {
             this.$emit('read-chapter', chapterId);
@@ -102,12 +113,31 @@ export default {
     font-size: 1.5rem;
     font-weight: 700;
     color: #2c3e50;
-    margin: 0;
 }
 
 .list-controls {
     display: flex;
     gap: 0.5rem;
+}
+
+.btn-add-chapter {
+    padding: 0.5rem 1rem;
+    background: white;
+    border: 2px solid #27ae60;
+    color: #27ae60;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-add-chapter:hover {
+    background: #27ae60;
+    color: white;
 }
 
 .sort-btn {

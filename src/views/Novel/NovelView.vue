@@ -30,6 +30,7 @@
                 <ChapterList 
                     :chapters="chapters"
                     :loading="loadingChapters"
+                    :novel-id="novelId"
                     @read-chapter="handleReadChapter"
                 />
 
@@ -93,6 +94,9 @@ export default {
         };
     },
     computed: {
+        novelId() {
+            return this.$route.params.id;
+        },
         isAuthenticated() {
             return this.authStore.isAuthenticated;
         },
