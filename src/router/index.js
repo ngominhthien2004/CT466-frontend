@@ -101,6 +101,12 @@ const routes = [
         name: "reading-history",
         component: () => import("@/views/ReadingHistory.vue"),
     },
+    // Account Route
+    {
+        path: "/account/:userId",
+        name: "account",
+        component: () => import("@/views/Account.vue"),
+    },
     // TODO: Thêm các route sau khi tạo file view tương ứng
     // {
     //     path: "/history",

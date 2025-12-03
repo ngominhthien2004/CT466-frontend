@@ -46,7 +46,7 @@
                     
                     <!-- User Menu (Logged In) -->
                     <div v-if="isLoggedIn" class="user-menu">
-                        <div class="user-info">
+                        <div class="user-info" @click="toggleDropdown">
                             <img :src="getUserAvatar()" 
                                  :alt="username" 
                                  class="user-avatar" 
@@ -55,14 +55,14 @@
                                 <span class="user-name">{{ username }}</span>
                                 <span class="user-role">{{ authStore.userRole }}</span>
                             </div>
-                            <i class="fas fa-chevron-down dropdown-icon"></i>
+                            <i class="fas fa-chevron-down dropdown-icon" :class="{ rotated: dropdownOpen }"></i>
                         </div>
-                        <div class="dropdown">
-                            <router-link to="/profile" class="dropdown-item">
+                        <div class="dropdown" :class="{ show: dropdownOpen }">
+                            <router-link :to="`/account/${authStore.user?._id}`" class="dropdown-item" @click="closeDropdown">
                                 <i class="fas fa-user"></i>
                                 Trang cá nhân
                             </router-link>
-                            <router-link to="/settings" class="dropdown-item">
+                            <router-link to="/settings" class="dropdown-item" @click="closeDropdown">
                                 <i class="fas fa-cog"></i>
                                 Cài đặt
                             </router-link>
@@ -133,7 +133,7 @@
                     </router-link>
                 </template>
                 <template v-else>
-                    <router-link to="/profile" class="mobile-nav-link" @click="closeMobileMenu">
+                    <router-link :to="`/account/${authStore.user?._id}`" class="mobile-nav-link" @click="closeMobileMenu">
                         <i class="fas fa-user"></i>
                         <span>Trang cá nhân</span>
                     </router-link>
@@ -155,7 +155,8 @@ export default {
     data() {
         return {
             authStore: useAuthStore(),
-            mobileMenuActive: false
+            mobileMenuActive: false,
+            dropdownOpen: false
         };
     },
     computed: {
@@ -172,6 +173,13 @@ export default {
     mounted() {
         // Load user from localStorage when component mounts
         this.authStore.loadUser();
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', this.handleClickOutside);
+    },
+    beforeUnmount() {
+        // Clean up event listener
+        document.removeEventListener('click', this.handleClickOutside);
     },
     methods: {
         getUserAvatar() {
@@ -185,7 +193,20 @@ export default {
         handleLogout() {
             this.authStore.logout();
             this.closeMobileMenu();
+            this.closeDropdown();
             this.$router.push('/');
+        },
+        toggleDropdown() {
+            this.dropdownOpen = !this.dropdownOpen;
+        },
+        closeDropdown() {
+            this.dropdownOpen = false;
+        },
+        handleClickOutside(event) {
+            const userMenu = this.$el.querySelector('.user-menu');
+            if (userMenu && !userMenu.contains(event.target)) {
+                this.closeDropdown();
+            }
         },
         toggleMobileMenu() {
             this.mobileMenuActive = !this.mobileMenuActive;
@@ -417,27 +438,11 @@ export default {
     flex-shrink: 0;
 }
 
-.user-menu:hover .dropdown-icon {
+.dropdown-icon.rotated {
     transform: rotate(180deg);
 }
 
 /* Dropdown */
-.user-menu:hover .dropdown {
-    display: block;
-    animation: fadeInDown 0.3s ease;
-}
-
-@keyframes fadeInDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 .dropdown {
     display: none;
     position: absolute;
@@ -449,6 +454,15 @@ export default {
     min-width: 220px;
     overflow: hidden;
     z-index: 1000;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.dropdown.show {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .dropdown::before {
