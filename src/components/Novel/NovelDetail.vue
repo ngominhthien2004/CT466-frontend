@@ -92,6 +92,7 @@
 <script>
 import NovelForm from '@/components/Novel/NovelForm.vue';
 import NovelService from '@/services/novel.service';
+import { useAuthStore } from '@/stores/auth';
 
 export default {
     name: 'NovelDetail',
@@ -106,20 +107,30 @@ export default {
     },
     data() {
         return {
-            isFavorite: false,
             lastReadChapter: null,
             showEditModal: false,
             isUpdating: false
         };
     },
+    computed: {
+        authStore() {
+            return useAuthStore();
+        },
+        currentUserId() {
+            return this.authStore.user?.id;
+        },
+        isFavorite() {
+            // Check if current user ID is in the favoritedBy array
+            return this.novel.favoritedBy?.includes(this.currentUserId) || false;
+        }
+    },
     mounted() {
-        this.isFavorite = this.novel.favorite || false;
         this.loadLastReadChapter();
     },
     methods: {
         toggleFavorite() {
-            this.isFavorite = !this.isFavorite;
-            this.$emit('toggle-favorite', this.novel._id, this.isFavorite);
+            // Emit to parent - parent will handle the API call
+            this.$emit('toggle-favorite', this.novel._id);
         },
         getStatusText(status) {
             const statusMap = {

@@ -39,6 +39,16 @@ class NovelService {
     async getFavorites() {
         return (await this.api.get("/favorite")).data;
     }
+
+    // Toggle favorite for a user
+    async toggleFavorite(novelId, userId) {
+        return (await this.api.post(`/${novelId}/favorite`, { userId })).data;
+    }
+
+    // Get novels favorited by a user
+    async getFavoritesByUserId(userId) {
+        return (await this.api.get(`/favorites/${userId}`)).data;
+    }
 }
 
 export default new NovelService();

@@ -153,8 +153,18 @@ export default {
         },
         async handleToggleFavorite(novelId, isFavorite) {
             try {
-                await NovelService.update(novelId, { favorite: isFavorite });
-                this.novel.favorite = isFavorite;
+                const userId = this.authStore.user?._id;
+                if (!userId) {
+                    alert('Vui lòng đăng nhập để yêu thích truyện');
+                    return;
+                }
+
+                // Call backend to toggle favorite
+                const updatedNovel = await NovelService.toggleFavorite(novelId, userId);
+                
+                // Update local state with response from server
+                this.novel.favoritedBy = updatedNovel.favoritedBy || [];
+                this.novel.likes = updatedNovel.likes || 0;
             } catch (error) {
                 console.error('Error updating favorite:', error);
                 alert('Không thể cập nhật yêu thích');

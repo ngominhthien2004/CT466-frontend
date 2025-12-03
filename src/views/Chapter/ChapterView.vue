@@ -280,6 +280,19 @@ export default {
             );
         }
     },
+    watch: {
+        // Watch for route changes (when navigating between chapters)
+        '$route.params.chapterId': {
+            handler(newChapterId) {
+                if (newChapterId && newChapterId !== this.chapterId) {
+                    this.chapterId = newChapterId;
+                    this.loadChapter();
+                    // Scroll to top when changing chapter
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }
+        }
+    },
     async mounted() {
         await this.loadChapter();
         this.loadSettings();
