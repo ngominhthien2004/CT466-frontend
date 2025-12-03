@@ -21,6 +21,7 @@
                 <!-- Novel Detail -->
                 <NovelDetail 
                     :novel="novel"
+                    :is-favorite="isNovelFavorited"
                     @toggle-favorite="handleToggleFavorite"
                     @read-chapter="handleReadChapter"
                     @updated="handleNovelUpdated"
@@ -68,7 +69,7 @@ import ChapterList from '@/components/Chapter/ChapterList.vue';
 import CommentSection from '@/components/Comment/CommentSection.vue';
 import ConfirmModal from '@/components/Common/ConfirmModal.vue';
 import { NovelService, ChapterService, CommentService } from '@/services';
-import { useAuthStore } from '@/stores';
+import { useAuthStore, useNovelStore } from '@/stores';
 
 export default {
     name: 'NovelView',
@@ -90,7 +91,8 @@ export default {
             showDeleteModal: false,
             deleteTargetId: null,
             error: null,
-            authStore: useAuthStore()
+            authStore: useAuthStore(),
+            novelStore: useNovelStore()
         };
     },
     computed: {
@@ -105,6 +107,11 @@ export default {
         },
         currentUserId() {
             return this.authStore.user?._id || null;
+        },
+        isNovelFavorited() {
+            const userId = this.authStore.user?._id;
+            if (!userId || !this.novel) return false;
+            return this.novel.favoritedBy?.includes(userId) || false;
         }
     },
     async mounted() {
@@ -151,7 +158,7 @@ export default {
                 this.loadingChapters = false;
             }
         },
-        async handleToggleFavorite(novelId, isFavorite) {
+        async handleToggleFavorite(novelId) {
             try {
                 const userId = this.authStore.user?._id;
                 if (!userId) {
@@ -159,8 +166,8 @@ export default {
                     return;
                 }
 
-                // Call backend to toggle favorite
-                const updatedNovel = await NovelService.toggleFavorite(novelId, userId);
+                // Use store to toggle favorite - this will update all pages
+                const updatedNovel = await this.novelStore.toggleFavoriteWithApi(novelId, userId);
                 
                 // Update local state with response from server
                 this.novel.favoritedBy = updatedNovel.favoritedBy || [];

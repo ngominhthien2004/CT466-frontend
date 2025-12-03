@@ -19,6 +19,7 @@
                     v-for="novel in paginatedNovels" 
                     :key="novel._id" 
                     :novel="novel"
+                    :is-favorite="isNovelFavorited(novel)"
                     @toggle-favorite="handleToggleFavorite"
                 />
             </div>
@@ -83,6 +84,7 @@
 
 <script>
 import NovelCard from './NovelCard.vue';
+import { useAuthStore } from '@/stores';
 
 export default {
     name: 'NovelList',
@@ -113,7 +115,8 @@ export default {
     },
     data() {
         return {
-            currentPage: 1
+            currentPage: 1,
+            authStore: useAuthStore()
         };
     },
     computed: {
@@ -166,8 +169,13 @@ export default {
         }
     },
     methods: {
-        handleToggleFavorite(novelId, isFavorite) {
-            this.$emit('toggle-favorite', novelId, isFavorite);
+        isNovelFavorited(novel) {
+            const userId = this.authStore.user?._id;
+            if (!userId || !novel) return false;
+            return novel.favoritedBy?.includes(userId) || false;
+        },
+        handleToggleFavorite(novelId) {
+            this.$emit('toggle-favorite', novelId);
         },
         goToPage(page) {
             if (page >= 1 && page <= this.totalPages) {

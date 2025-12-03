@@ -132,6 +132,7 @@ import SearchNovel from '@/components/Novel/SearchNovel.vue';
 import FilterBar from '@/components/Common/FilterBar.vue';
 import EmptyState from '@/components/Common/EmptyState.vue';
 import { NovelService } from '@/services';
+import { useNovelStore, useAuthStore } from '@/stores';
 
 export default {
     name: 'HomeView',
@@ -143,8 +144,8 @@ export default {
     },
     data() {
         return {
-            newNovels: [],
-            featuredNovels: [],
+            novelStore: useNovelStore(),
+            authStore: useAuthStore(),
             loadingNew: false,
             loadingFeatured: false,
             searchResults: [],
@@ -171,11 +172,20 @@ export default {
         };
     },
     computed: {
+        // Get novels from store - reactive to store changes
+        newNovels() {
+            return [...this.novelStore.novels]
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        },
+        featuredNovels() {
+            return [...this.novelStore.novels]
+                .sort((a, b) => (b.views || 0) - (a.views || 0));
+        },
         totalNovels() {
-            return this.newNovels.length;
+            return this.novelStore.novels.length;
         },
         totalViews() {
-            const total = this.newNovels.reduce((sum, novel) => sum + (novel.views || 0), 0);
+            const total = this.novelStore.novels.reduce((sum, novel) => sum + (novel.views || 0), 0);
             return total > 1000 ? `${(total / 1000).toFixed(1)}K` : total;
         }
     },
@@ -188,16 +198,8 @@ export default {
                 this.loadingNew = true;
                 this.loadingFeatured = true;
 
-                // Lấy tất cả novels
-                const allNovels = await NovelService.getAll();
-
-                // Novels mới (sắp xếp theo createdAt)
-                this.newNovels = allNovels
-                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-                // Novels nổi bật (sắp xếp theo views)
-                this.featuredNovels = allNovels
-                    .sort((a, b) => (b.views || 0) - (a.views || 0));
+                // Fetch novels into store - computed properties will auto-update
+                await this.novelStore.fetchNovels();
 
             } catch (error) {
                 console.error('Error fetching novels:', error);
@@ -207,22 +209,19 @@ export default {
                 this.loadingFeatured = false;
             }
         },
-        async handleToggleFavorite(novelId, isFavorite) {
+        async handleToggleFavorite(novelId) {
             try {
-                await NovelService.update(novelId, { favorite: isFavorite });
+                const userId = this.authStore.user?._id;
+                if (!userId) {
+                    alert('Vui lòng đăng nhập để yêu thích truyện');
+                    return;
+                }
                 
-                // Update local data
-                this.updateNovelFavorite(this.newNovels, novelId, isFavorite);
-                this.updateNovelFavorite(this.featuredNovels, novelId, isFavorite);
+                // Store updates novels array - computed properties auto-sync
+                await this.novelStore.toggleFavoriteWithApi(novelId, userId);
             } catch (error) {
                 console.error('Error updating favorite:', error);
                 alert('Không thể cập nhật yêu thích');
-            }
-        },
-        updateNovelFavorite(novels, novelId, isFavorite) {
-            const novel = novels.find(n => n._id === novelId);
-            if (novel) {
-                novel.favorite = isFavorite;
             }
         },
         handleSearch(query) {

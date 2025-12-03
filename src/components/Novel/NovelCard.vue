@@ -20,17 +20,23 @@
 </template>
 
 <script>
+import { useAuthStore } from '@/stores';
+
 export default {
     name: 'NovelCard',
     props: {
         novel: {
             type: Object,
             required: true
+        },
+        isFavorite: {
+            type: Boolean,
+            default: false
         }
     },
     data() {
         return {
-            isFavorite: false
+            authStore: useAuthStore()
         };
     },
     computed: {
@@ -41,16 +47,12 @@ export default {
                 : this.novel.description;
         }
     },
-    mounted() {
-        this.isFavorite = this.novel.favorite || false;
-    },
     methods: {
         goToDetail() {
             this.$router.push(`/novels/${this.novel._id}`);
         },
         toggleFavorite() {
-            this.isFavorite = !this.isFavorite;
-            this.$emit('toggle-favorite', this.novel._id, this.isFavorite);
+            this.$emit('toggle-favorite', this.novel._id);
         },
         formatViews(views) {
             if (views >= 1000000) return (views / 1000000).toFixed(1) + 'M';

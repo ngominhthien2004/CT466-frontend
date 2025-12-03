@@ -123,6 +123,37 @@ export const useNovelStore = defineStore('novel', {
             }
         },
         
+        async toggleFavoriteWithApi(novelId, userId) {
+            try {
+                // Call API to toggle favorite
+                const updatedNovel = await NovelService.toggleFavorite(novelId, userId)
+                
+                // Update novel in novels array
+                const index = this.novels.findIndex(n => n._id === novelId)
+                if (index !== -1) {
+                    this.novels[index] = {
+                        ...this.novels[index],
+                        favoritedBy: updatedNovel.favoritedBy || [],
+                        likes: updatedNovel.likes || 0
+                    }
+                }
+                
+                // Update current novel if it matches
+                if (this.currentNovel?._id === novelId) {
+                    this.currentNovel = {
+                        ...this.currentNovel,
+                        favoritedBy: updatedNovel.favoritedBy || [],
+                        likes: updatedNovel.likes || 0
+                    }
+                }
+                
+                return updatedNovel
+            } catch (error) {
+                console.error('Error toggling favorite:', error)
+                throw error
+            }
+        },
+        
         toggleFavorite(novelId) {
             const index = this.favorites.indexOf(novelId)
             if (index === -1) {

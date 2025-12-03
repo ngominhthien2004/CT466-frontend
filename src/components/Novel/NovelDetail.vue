@@ -100,6 +100,10 @@ export default {
         novel: {
             type: Object,
             required: true
+        },
+        isFavorite: {
+            type: Boolean,
+            default: false
         }
     },
     components: {
@@ -118,10 +122,6 @@ export default {
         },
         currentUserId() {
             return this.authStore.user?.id;
-        },
-        isFavorite() {
-            // Check if current user ID is in the favoritedBy array
-            return this.novel.favoritedBy?.includes(this.currentUserId) || false;
         }
     },
     mounted() {

@@ -222,7 +222,7 @@
 
 <script>
 import { NovelService } from '@/services';
-import { useAuthStore } from '@/stores';
+import { useAuthStore, useNovelStore } from '@/stores';
 import NovelCard from '@/components/Novel/NovelCard.vue';
 
 export default {
@@ -241,7 +241,8 @@ export default {
             viewMode: 'grid', // 'grid' or 'list'
             currentPage: 1,
             itemsPerPage: 12,
-            authStore: useAuthStore()
+            authStore: useAuthStore(),
+            novelStore: useNovelStore()
         };
     },
     computed: {
@@ -339,28 +340,33 @@ export default {
             this.sortBy = 'addedDate';
             this.applyFilters();
         },
-        async toggleFavorite(novelId) {
+        async toggleFavorite(novel) {
             // Remove from favorites
-            const novel = this.favoriteNovels.find(n => n._id === novelId);
-            if (!novel) return;
+            if (!novel || !novel._id) return;
             
             const confirmed = confirm(`Bạn có chắc muốn bỏ yêu thích "${novel.title}"?`);
             if (!confirmed) return;
 
             try {
-                // Call API to toggle favorite
-                await NovelService.toggleFavorite(novelId, this.authStore.user.id);
+                const userId = this.authStore.user?._id;
+                if (!userId) {
+                    alert('Vui lòng đăng nhập');
+                    return;
+                }
+                
+                // Use store to toggle favorite - this will update all pages
+                await this.novelStore.toggleFavoriteWithApi(novel._id, userId);
                 
                 // Remove from local list
-                this.favoriteNovels = this.favoriteNovels.filter(n => n._id !== novelId);
+                this.favoriteNovels = this.favoriteNovels.filter(n => n._id !== novel._id);
                 this.applyFilters();
             } catch (error) {
                 console.error('Error removing from favorites:', error);
                 alert('Không thể bỏ yêu thích. Vui lòng thử lại!');
             }
         },
-        handleToggleFavorite(novelId) {
-            this.toggleFavorite(novelId);
+        handleToggleFavorite(novel) {
+            this.toggleFavorite(novel);
         },
         goToPage(page) {
             if (page >= 1 && page <= this.totalPages) {
