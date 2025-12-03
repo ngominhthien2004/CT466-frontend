@@ -1,12 +1,13 @@
 <template>
-    <div class="form-overlay" @click.self="closeForm">
+    <!-- Wrapper with conditional overlay -->
+    <div :class="isModal ? 'form-overlay' : 'form-page'" @click.self="isModal && closeForm()">
         <div class="form-container">
             <div class="form-header">
                 <h2>
                     <i class="fas fa-book"></i>
                     {{ isEditMode ? 'Cập nhật tiểu thuyết' : 'Thêm tiểu thuyết mới' }}
                 </h2>
-                <button class="btn-close" @click="closeForm">
+                <button v-if="isModal" class="btn-close" @click="closeForm">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -56,9 +57,9 @@
                         </select>
                     </div>
 
-                    <!-- URL ảnh bìa -->
+                    <!-- Ảnh bìa -->
                     <div class="form-group full-width">
-                        <label for="coverImage">
+                        <label for="coverImageFile">
                             Ảnh bìa
                         </label>
                         <div class="file-input-wrapper">
@@ -186,6 +187,10 @@ export default {
         novel: {
             type: Object,
             default: null
+        },
+        isModal: {
+            type: Boolean,
+            default: false
         }
     },
     data() {
@@ -363,7 +368,7 @@ export default {
                 }
 
                 console.log('NovelForm emitting submit with data:', data);
-                this.$emit('submit', data);
+                this.$emit('create-novel', data);
             } catch (error) {
                 console.error('Form submission error:', error);
                 this.submitting = false;
@@ -380,6 +385,21 @@ export default {
 
 <style scoped>
 @import '@/assets/form.css';
+
+/* Page mode (not modal) */
+.form-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+.form-page .form-container {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-height: none;
+    overflow: visible;
+}
 
 /* Specific styles for NovelForm */
 .add-tag-input {

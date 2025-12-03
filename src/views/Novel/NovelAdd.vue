@@ -30,7 +30,9 @@
 
         <!-- Novel Form -->
         <NovelForm
-            @submit="handleCreateNovel"
+            ref="novelForm"
+            :isModal="false"
+            @create-novel="handleCreateNovel"
             @close="goBack"
         />
     </div>
@@ -56,22 +58,35 @@ export default {
     },
     methods: {
         async handleCreateNovel(data) {
+            console.log('NovelAdd handleCreateNovel received data:', data);
+            console.log('Data keys:', Object.keys(data));
+            console.log('Title value:', data.title);
+            
             try {
-                const response = await NovelService.create(data);
+                const novel = await NovelService.create(data);
                 
                 // Show success message
                 this.showMessage('success', 'Thêm tiểu thuyết thành công!');
                 
                 // Redirect to novel detail page after 1.5s
                 setTimeout(() => {
-                    this.$router.push(`/novels/${response.data._id}`);
+                    this.$router.push(`/novels/${novel._id}`);
                 }, 1500);
                 
             } catch (error) {
                 console.error('Error creating novel:', error);
+                console.error('Response data:', error.response?.data);
+                console.error('Response status:', error.response?.status);
+                console.error('Response headers:', error.response?.headers);
+                
                 this.showMessage('error', 
                     error.response?.data?.message || 'Có lỗi xảy ra khi thêm tiểu thuyết!'
                 );
+                
+                // Reset submitting state in form
+                if (this.$refs.novelForm) {
+                    this.$refs.novelForm.submitting = false;
+                }
             }
         },
         showMessage(type, text) {
