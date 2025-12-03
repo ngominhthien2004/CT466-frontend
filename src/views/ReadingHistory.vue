@@ -211,48 +211,26 @@
         </div>
 
         <!-- Confirm Delete Modal -->
-        <div v-if="showDeleteModal" class="modal-overlay" @click.self="closeDeleteModal">
-            <div class="modal">
-                <div class="modal-header">
-                    <h3>
-                        <i class="fas fa-exclamation-triangle"></i>
-                        {{ deleteAll ? 'Xóa toàn bộ lịch sử?' : 'Xóa khỏi lịch sử?' }}
-                    </h3>
-                </div>
-                <div class="modal-body">
-                    <p v-if="deleteAll">
-                        Bạn có chắc chắn muốn xóa toàn bộ lịch sử đọc truyện?
-                    </p>
-                    <p v-else>
-                        Bạn có chắc muốn xóa <strong>{{ itemToDelete?.novelTitle }}</strong> khỏi lịch sử?
-                    </p>
-                    <p class="warning">Hành động này không thể hoàn tác!</p>
-                </div>
-                <div class="modal-actions">
-                    <button @click="closeDeleteModal" class="btn-cancel">
-                        <i class="fas fa-times"></i>
-                        Hủy
-                    </button>
-                    <button 
-                        @click="deleteAll ? handleClearAll() : handleRemove()" 
-                        class="btn-confirm-delete"
-                        :disabled="deleting"
-                    >
-                        <i class="fas" :class="deleting ? 'fa-spinner fa-spin' : 'fa-trash'"></i>
-                        {{ deleting ? 'Đang xóa...' : 'Xóa' }}
-                    </button>
-                </div>
-            </div>
-        </div>
+        <DeleteModal
+            :show="showDeleteModal"
+            :title="deleteAll ? 'Xóa toàn bộ lịch sử?' : 'Xóa khỏi lịch sử?'"
+            :message="deleteAll ? 'Bạn có chắc chắn muốn xóa toàn bộ lịch sử đọc truyện?' : 'Bạn có chắc muốn xóa truyện này khỏi lịch sử?'"
+            :item-name="deleteAll ? '' : itemToDelete?.novelTitle"
+            :loading="deleting"
+            @confirm="deleteAll ? handleClearAll() : handleRemove()"
+            @cancel="closeDeleteModal"
+        />
     </div>
 </template>
 
 <script>
 import { ReadingHistoryService } from '@/services';
 import { useAuthStore } from '@/stores';
+import DeleteModal from '@/components/Common/DeleteModal.vue';
 
 export default {
     name: 'ReadingHistoryPage',
+    components: { DeleteModal },
     data() {
         return {
             historyList: [],
@@ -927,106 +905,6 @@ export default {
     margin-left: 1rem;
     color: #7f8c8d;
     font-size: 0.9rem;
-}
-
-/* Modal */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2000;
-}
-
-.modal {
-    background: white;
-    border-radius: 16px;
-    width: 90%;
-    max-width: 500px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-}
-
-.modal-header {
-    padding: 1.5rem;
-    border-bottom: 2px solid #ecf0f1;
-}
-
-.modal-header h3 {
-    margin: 0;
-    color: #e74c3c;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-size: 1.25rem;
-}
-
-.modal-body {
-    padding: 2rem 1.5rem;
-}
-
-.modal-body p {
-    margin: 0 0 1rem 0;
-    color: #2c3e50;
-}
-
-.warning {
-    color: #e74c3c;
-    font-size: 0.9rem;
-    font-style: italic;
-}
-
-.modal-actions {
-    padding: 1.5rem;
-    border-top: 2px solid #ecf0f1;
-    display: flex;
-    gap: 1rem;
-    justify-content: flex-end;
-}
-
-.btn-cancel {
-    background: white;
-    border: 2px solid #dfe6e9;
-    color: #7f8c8d;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s;
-}
-
-.btn-cancel:hover {
-    background: #f8f9fa;
-}
-
-.btn-confirm-delete {
-    background: #e74c3c;
-    border: none;
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s;
-}
-
-.btn-confirm-delete:hover:not(:disabled) {
-    background: #c0392b;
-}
-
-.btn-confirm-delete:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
 }
 
 /* Responsive */
