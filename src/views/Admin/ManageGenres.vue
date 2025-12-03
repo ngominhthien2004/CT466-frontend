@@ -84,27 +84,16 @@
         </div>
     </div>
 
-    <!-- Modal Thêm/Sửa (componentized) -->
-    <Teleport to="body">
-        <div v-if="showAdd || showEdit" class="modal-overlay" @click.self="closeModal">
-            <div class="modal-dialog modal-sm">
-                <div class="modal-header">
-                    <h2>
-                        <i class="fas fa-tags"></i>
-                        {{ showAdd ? 'Thêm thể loại' : 'Sửa thể loại' }}
-                    </h2>
-                </div>
-                <div class="modal-body">
-                    <GenreForm
-                        :initial="formInitial()"
-                        :mode="showAdd ? 'add' : 'edit'"
-                        @save="onSave"
-                        @cancel="closeModal"
-                    />
-                </div>
-            </div>
-        </div>
-    </Teleport>
+    <!-- Modal Thêm/Sửa -->
+    <GenreForm
+        v-if="showAdd || showEdit"
+        :initial="formInitial()"
+        :mode="showAdd ? 'add' : 'edit'"
+        :title="showAdd ? 'Thêm thể loại' : 'Sửa thể loại'"
+        :submitting="submitting"
+        @save="onSave"
+        @cancel="closeModal"
+    />
 
     <ConfirmModal
         :show="confirmVisible"
@@ -150,6 +139,7 @@ export default {
         const confirmVisible = ref(false);
         const deleteTargetId = ref(null);
         const searchQuery = ref('');
+        const submitting = ref(false);
 
         // Computed properties for stats
         const totalNovels = computed(() => {
@@ -238,14 +228,21 @@ export default {
         };
 
         const onSave = async (data) => {
-            if (showAdd.value) {
-                await genreStore.addGenre(data);
-                await genreStore.fetchGenres();
-            } else if (showEdit.value && editId.value) {
-                await genreStore.updateGenre(editId.value, data);
-                await genreStore.fetchGenres();
+            try {
+                submitting.value = true;
+                if (showAdd.value) {
+                    await genreStore.addGenre(data);
+                    await genreStore.fetchGenres();
+                } else if (showEdit.value && editId.value) {
+                    await genreStore.updateGenre(editId.value, data);
+                    await genreStore.fetchGenres();
+                }
+                closeModal();
+            } catch (error) {
+                console.error('Error saving genre:', error);
+            } finally {
+                submitting.value = false;
             }
-            closeModal();
         };
 
         const submitForm = async () => {
@@ -297,7 +294,8 @@ export default {
             onSave,
             statsData,
             searchQuery,
-            filteredGenres
+            filteredGenres,
+            submitting
         };
     }
 };

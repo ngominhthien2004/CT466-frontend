@@ -1,7 +1,7 @@
 <template>
-    <div class="modal-overlay" @click.self="$emit('close')">
-        <div class="modal-dialog">
-            <div class="modal-header">
+    <div class="form-overlay" @click.self="$emit('close')">
+        <div class="form-container">
+            <div class="form-header">
                 <h2>
                     <i class="fas fa-user-edit"></i>
                     Chỉnh sửa User
@@ -11,7 +11,7 @@
                 </button>
             </div>
 
-            <form @submit.prevent="handleSubmit" class="modal-body">
+            <form @submit.prevent="handleSubmit" class="form-body">
                 <div class="info-section">
                     <div class="info-row">
                         <span class="info-label">Username:</span>
@@ -52,13 +52,13 @@
                     </div>
                 </div>
 
-                <div class="modal-footer">
+                <div class="form-actions">
                     <button type="button" @click="$emit('close')" class="btn-cancel">
                         <i class="fas fa-times"></i>
                         Hủy
                     </button>
-                    <button type="submit" class="btn-submit" :disabled="loading || submitting">
-                        <i :class="(loading || submitting) ? 'fas fa-spinner fa-spin' : 'fas fa-save'"></i>
+                    <button type="submit" class="btn-submit" :disabled="submitting">
+                        <i :class="submitting ? 'fas fa-spinner fa-spin' : 'fas fa-save'"></i>
                         Cập nhật
                     </button>
                 </div>
@@ -74,6 +74,10 @@ export default {
         user: {
             type: Object,
             required: true
+        },
+        submitting: {
+            type: Boolean,
+            default: false
         }
     },
     data() {
@@ -81,9 +85,7 @@ export default {
             form: {
                 role: 'user',
                 isActive: true
-            },
-            loading: false,
-            submitting: false
+            }
         };
     },
     mounted() {
@@ -101,7 +103,7 @@ export default {
 </script>
 
 <style scoped>
-/* Modal styles moved to modals.css */
+@import '@/assets/form.css';
 
 /* Custom modal header styling */
 .modal-header {

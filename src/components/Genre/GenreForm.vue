@@ -1,36 +1,54 @@
 <template>
-  <div class="genre-form">
-    <form @submit.prevent="onSubmit">
-      <div class="form-group">
-        <label for="genre-name">Tên</label>
-        <input
-          id="genre-name"
-          v-model="local.name"
-          @input="onNameInput"
-          required
-          autocomplete="off"
-        />
-      </div>
-
-      <div class="form-group">
-        <label for="genre-description">Mô tả</label>
-        <textarea
-          id="genre-description"
-          v-model="local.description"
-          autocomplete="off"
-        ></textarea>
-      </div>
-
-      <!-- slug hidden, kept in local and auto-generated -->
-      <input type="hidden" v-model="local.slug" />
-
-      <div class="modal-actions">
-        <button type="submit" class="btn btn-primary">
-          {{ mode === 'add' ? 'Thêm' : 'Lưu' }}
+  <div class="form-overlay" @click.self="$emit('cancel')">
+    <div class="form-container" style="max-width: 500px;">
+      <div class="form-header">
+        <h2>
+          <i class="fas fa-tags"></i>
+          {{ title }}
+        </h2>
+        <button @click="$emit('cancel')" class="btn-close">
+          <i class="fas fa-times"></i>
         </button>
-        <button type="button" class="btn" @click="$emit('cancel')">Hủy</button>
       </div>
-    </form>
+
+      <form @submit.prevent="onSubmit">
+        <div class="form-body">
+          <div class="form-group">
+            <label for="genre-name">Tên</label>
+            <input
+              id="genre-name"
+              v-model="local.name"
+              @input="onNameInput"
+              required
+              autocomplete="off"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="genre-description">Mô tả</label>
+            <textarea
+              id="genre-description"
+              v-model="local.description"
+              autocomplete="off"
+            ></textarea>
+          </div>
+
+          <!-- slug hidden, kept in local and auto-generated -->
+          <input type="hidden" v-model="local.slug" />
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" @click="$emit('cancel')" :disabled="submitting">
+            <i class="fas fa-times"></i>
+            Hủy
+          </button>
+          <button type="submit" class="btn-submit" :disabled="submitting">
+            <i :class="submitting ? 'fas fa-spinner fa-spin' : 'fas fa-save'"></i>
+            {{ mode === 'add' ? 'Thêm' : 'Lưu' }}
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -47,6 +65,14 @@ export default {
     mode: {
       type: String,
       default: 'add'
+    },
+    title: {
+      type: String,
+      default: 'Thể loại'
+    },
+    submitting: {
+      type: Boolean,
+      default: false
     }
   },
   emits: ['save', 'cancel'],
@@ -100,35 +126,43 @@ export default {
 </script>
 
 <style scoped>
-.form-group {
-  margin-bottom: 1rem;
+@import '@/assets/form.css';
+
+/* Custom form header styling */
+.form-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
 }
-.form-group label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
+
+.form-header h2 {
+    margin: 0;
+    color: white;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }
-.form-group input,
-.form-group textarea {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #e9ecef;
-  border-radius: 6px;
-  font-size: 1rem;
+
+.form-header i {
+    color: white;
 }
-.modal-actions {
-  text-align: right;
-  margin-top: 1rem;
+
+.btn-close {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
 }
-.btn {
-  padding: 0.5rem 1.2rem;
-  border: none;
-  border-radius: 6px;
-  background: #e9ecef;
-  color: #2c3e50;
-  cursor: pointer;
-  margin-right: 0.5rem;
-  font-size: 1rem;
+
+.btn-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
 }
-/* Button styles moved to buttons.css */
 </style>

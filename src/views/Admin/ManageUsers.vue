@@ -125,6 +125,7 @@
         <UserForm
             v-if="showEditModal && editTarget"
             :user="editTarget"
+            :submitting="submitting"
             @close="closeEditModal"
             @submit="handleEditUser"
         />
@@ -299,6 +300,9 @@ export default {
                 }
                 this.applyFilters();
                 
+                // Close modal after successful update
+                this.closeEditModal();
+                
                 // Check if role changed for currently logged-in user
                 const currentUser = this.authStore.user;
                 if (currentUser && currentUser._id === userId && oldRole !== formData.role) {
@@ -314,7 +318,6 @@ export default {
                 alert(error.response?.data?.message || 'Không thể cập nhật user');
             } finally {
                 this.submitting = false;
-                this.closeEditModal();
             }
         },
         confirmDelete(user) {
