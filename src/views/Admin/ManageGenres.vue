@@ -35,15 +35,22 @@
 
     <!-- Modal Thêm/Sửa (componentized) -->
     <Teleport to="body">
-        <div v-if="showAdd || showEdit" class="genre-modal-overlay" @click.self="closeModal">
-            <div class="genre-modal">
-                <h2>{{ showAdd ? 'Thêm thể loại' : 'Sửa thể loại' }}</h2>
-                <GenreForm
-                    :initial="formInitial()"
-                    :mode="showAdd ? 'add' : 'edit'"
-                    @save="onSave"
-                    @cancel="closeModal"
-                />
+        <div v-if="showAdd || showEdit" class="modal-overlay" @click.self="closeModal">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-header">
+                    <h2>
+                        <i class="fas fa-tags"></i>
+                        {{ showAdd ? 'Thêm thể loại' : 'Sửa thể loại' }}
+                    </h2>
+                </div>
+                <div class="modal-body">
+                    <GenreForm
+                        :initial="formInitial()"
+                        :mode="showAdd ? 'add' : 'edit'"
+                        @save="onSave"
+                        @cancel="closeModal"
+                    />
+                </div>
             </div>
         </div>
     </Teleport>
@@ -228,20 +235,15 @@ export default {
     font-size: 1rem;
 }
 /* Button styles moved to buttons.css */
+
 .btn-sm {
     font-size: 0.9rem;
     padding: 0.3rem 0.8rem;
 }
-.modal-overlay {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 99999 !important;
-    opacity: 1 !important;
-}
+
+/* Modal styles moved to modals.css */
+
+/* Custom modal and form styling for genres */
 .modal {
     background: #fff;
     border-radius: 10px;
@@ -265,38 +267,24 @@ export default {
     border-radius: 6px;
     font-size: 1rem;
 }
+
 .modal-actions {
     text-align: right;
 }
-</style>
 
-<style>
-/* Modal styles - không scoped để tránh bị AdminLayout ghi đè */
-.genre-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 99999;
+/* Modal styles moved to modals.css */
+
+/* Custom modal form styling */
+.modal-header {
+    background: linear-gradient(135deg, #c9a9a6 0%, #a88884 100%);
 }
 
-.genre-modal {
-    background: #fff;
-    border-radius: 10px;
-    padding: 2rem;
-    min-width: 400px;
-    max-width: 90%;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+.modal-header h2 {
+    color: white;
 }
 
-.genre-modal h2 {
-    margin: 0 0 1.5rem 0;
-    font-size: 1.5rem;
-    color: #2c3e50;
+.modal-header i {
+    color: white;
 }
 </style>
+

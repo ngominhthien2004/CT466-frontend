@@ -1,6 +1,6 @@
 <template>
-    <div class="user-form-overlay" @click.self="$emit('close')">
-        <div class="user-form-modal">
+    <div class="modal-overlay" @click.self="$emit('close')">
+        <div class="modal-dialog">
             <div class="modal-header">
                 <h2>
                     <i class="fas fa-user-edit"></i>
@@ -81,7 +81,9 @@ export default {
             form: {
                 role: 'user',
                 isActive: true
-            }
+            },
+            loading: false,
+            submitting: false
         };
     },
     mounted() {
@@ -99,54 +101,12 @@ export default {
 </script>
 
 <style scoped>
-.user-form-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 5000;
-    animation: fadeIn 0.2s;
-}
+/* Modal styles moved to modals.css */
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-.user-form-modal {
-    background: white;
-    border-radius: 16px;
-    width: 90%;
-    max-width: 500px;
-    max-height: 90vh;
-    overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    animation: slideUp 0.3s;
-}
-
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
+/* Custom modal header styling */
 .modal-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 1.5rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
 }
 
 .modal-header h2 {
@@ -176,12 +136,7 @@ export default {
     transform: rotate(90deg);
 }
 
-.modal-body {
-    padding: 2rem;
-    max-height: calc(90vh - 140px);
-    overflow-y: auto;
-}
-
+/* Custom info section styling */
 .info-section {
     background: #f8f9fa;
     padding: 1.5rem;
@@ -223,6 +178,7 @@ export default {
     gap: 1rem;
 }
 
+/* Form group styling */
 .form-group {
     margin-bottom: 1.5rem;
 }
@@ -252,6 +208,7 @@ export default {
     box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
 }
 
+/* Switch styling */
 .switch-container {
     display: flex;
     align-items: center;
@@ -309,37 +266,9 @@ input:checked + .slider:before {
     color: #2c3e50;
 }
 
-.modal-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    padding-top: 1.5rem;
-    border-top: 2px solid #f8f9fa;
-}
+/* Modal footer and button styles moved to modals.css and buttons.css */
 
-.btn-cancel,
-.btn-submit {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s;
-    font-size: 1rem;
-}
-
-.btn-cancel {
-    background: #e9ecef;
-    color: #495057;
-}
-
-.btn-cancel:hover {
-    background: #dee2e6;
-}
-
+/* Custom button styling for user form */
 .btn-submit {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;

@@ -69,81 +69,11 @@ export default {
 </script>
 
 <style scoped>
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    backdrop-filter: blur(4px);
-}
+/* Modal styles moved to modals.css */
 
-.modal-container {
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-    max-width: 450px;
-    width: 90%;
-    overflow: hidden;
-    animation: slideUp 0.3s ease-out;
-}
-
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.modal-header {
-    padding: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    border-bottom: 1px solid #e9ecef;
-}
-
-.modal-header i {
-    font-size: 1.5rem;
-    color: #e74c3c;
-}
-
-.modal-header h3 {
-    margin: 0;
-    font-size: 1.25rem;
-    color: #2c3e50;
-}
-
-.modal-body {
-    padding: 1.5rem;
-}
-
-.modal-body p {
-    margin: 0;
-    line-height: 1.6;
-    color: #495057;
-    font-size: 1rem;
-}
-
-.modal-footer {
-    padding: 1rem 1.5rem;
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.75rem;
-    background: #f8f9fa;
-}
-
-.btn-cancel,
+/* Custom button confirm variants */
 .btn-confirm {
+    color: white;
     padding: 0.625rem 1.5rem;
     border: none;
     border-radius: 8px;
@@ -151,19 +81,6 @@ export default {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s;
-}
-
-.btn-cancel {
-    background: #e9ecef;
-    color: #495057;
-}
-
-.btn-cancel:hover {
-    background: #dee2e6;
-}
-
-.btn-confirm {
-    color: white;
 }
 
 .btn-confirm.danger {
