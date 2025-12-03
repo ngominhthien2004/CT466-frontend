@@ -5,10 +5,10 @@
             <div class="header-content">
                 <h1>
                     <i class="fas fa-layer-group"></i>
-                    Thể loại truyện
+                    Thể loại tiểu thuyết
                 </h1>
                 <p class="subtitle">
-                    Khám phá thế giới truyện chữ đa dạng theo từng thể loại
+                    Khám phá thế giới tiểu thuyết đa dạng theo từng thể loại
                 </p>
             </div>
         </div>
@@ -18,22 +18,8 @@
             <div class="stat-item">
                 <i class="fas fa-layer-group"></i>
                 <div class="stat-content">
-                    <span class="stat-value">{{ filteredGenres.length }}</span>
-                    <span class="stat-label">Thể loại</span>
-                </div>
-            </div>
-            <div class="stat-item">
-                <i class="fas fa-book"></i>
-                <div class="stat-content">
-                    <span class="stat-value">{{ totalNovels }}</span>
-                    <span class="stat-label">Truyện</span>
-                </div>
-            </div>
-            <div class="stat-item">
-                <i class="fas fa-fire"></i>
-                <div class="stat-content">
                     <span class="stat-value">{{ genres.length }}</span>
-                    <span class="stat-label">Tổng số thể loại</span>
+                    <span class="stat-label">Thể loại</span>
                 </div>
             </div>
         </div>
@@ -89,9 +75,6 @@ export default {
                 genre.name.toLowerCase().includes(query) ||
                 genre.description?.toLowerCase().includes(query)
             );
-        },
-        totalNovels() {
-            return this.genres.reduce((sum, genre) => sum + (genre.novelCount || 0), 0);
         }
     },
     async mounted() {

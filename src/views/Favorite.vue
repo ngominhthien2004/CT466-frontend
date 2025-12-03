@@ -22,20 +22,6 @@
                     <span class="stat-label">Truyện yêu thích</span>
                 </div>
             </div>
-            <div class="stat-item">
-                <i class="fas fa-eye"></i>
-                <div class="stat-content">
-                    <span class="stat-value">{{ formatNumber(totalViews) }}</span>
-                    <span class="stat-label">Tổng lượt xem</span>
-                </div>
-            </div>
-            <div class="stat-item">
-                <i class="fas fa-fire"></i>
-                <div class="stat-content">
-                    <span class="stat-value">{{ completedCount }}</span>
-                    <span class="stat-label">Đã hoàn thành</span>
-                </div>
-            </div>
         </div>
 
         <!-- Filters & Sort -->
@@ -249,12 +235,6 @@ export default {
     computed: {
         isAuthenticated() {
             return this.authStore.isAuthenticated;
-        },
-        totalViews() {
-            return this.favoriteNovels.reduce((sum, novel) => sum + (novel.views || 0), 0);
-        },
-        completedCount() {
-            return this.favoriteNovels.filter(novel => novel.status === 'completed').length;
         },
         paginatedNovels() {
             const start = (this.currentPage - 1) * this.itemsPerPage;

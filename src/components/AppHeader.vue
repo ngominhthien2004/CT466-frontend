@@ -9,7 +9,7 @@
                     </div>
                     <div class="logo-text">
                         <h1>NovelMT</h1>
-                        <span class="logo-tagline">Đọc truyện mọi lúc</span>
+                        <span class="logo-tagline">Đọc tiểu thuyết mọi lúc</span>
                     </div>
                 </router-link>
 
@@ -41,7 +41,7 @@
                 <div class="user-actions">
                     <router-link to="/novels/add" class="btn-add-novel">
                         <i class="fas fa-plus-circle"></i>
-                        <span>Thêm truyện</span>
+                        <span>Thêm tiểu thuyết</span>
                     </router-link>
                     
                     <!-- User Menu (Logged In) -->
@@ -120,7 +120,7 @@
                 <div class="mobile-divider"></div>
                 <router-link to="/novels/add" class="mobile-nav-link" @click="closeMobileMenu">
                     <i class="fas fa-plus-circle"></i>
-                    <span>Thêm truyện</span>
+                    <span>Thêm tiểu thuyết</span>
                 </router-link>
                 <template v-if="!isLoggedIn">
                     <router-link to="/login" class="mobile-nav-link" @click="closeMobileMenu">
