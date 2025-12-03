@@ -78,8 +78,12 @@ export default {
             this.loading = true;
             try {
                 await ChapterService.create(chapterData);
-                alert('Đã thêm chương thành công!');
+                // Redirect first, then show success message
                 this.$router.push(`/novels/${this.novelId}`);
+                // Show success message after a brief delay
+                setTimeout(() => {
+                    alert('Đã thêm chương thành công!');
+                }, 300);
             } catch (error) {
                 console.error('Error creating chapter:', error);
                 alert(error.response?.data?.message || 'Không thể thêm chương');

@@ -50,28 +50,29 @@ export default {
     },
     data() {
         return {
+            chapterId: '',
             chapter: null,
             novelTitle: '',
             loading: false,
-            loadingChapter: true
+            loadingChapter: true,
+            submitting: false
         };
     },
     async mounted() {
+        this.chapterId = this.$route.params.id;
         await this.fetchChapter();
     },
     methods: {
         async fetchChapter() {
-            const chapterId = this.$route.params.id;
-            
-            if (!chapterId) {
+            if (!this.chapterId) {
                 alert('Không tìm thấy ID chương');
-                this.$router.push('/admin/chapters');
+                this.$router.push('/');
                 return;
             }
 
             try {
                 this.loadingChapter = true;
-                this.chapter = await ChapterService.get(chapterId);
+                this.chapter = await ChapterService.get(this.chapterId);
                 
                 // Fetch novel info
                 if (this.chapter.novelId) {
@@ -90,23 +91,38 @@ export default {
             }
         },
         async handleSubmit(chapterData) {
+            // Prevent double submission
+            if (this.submitting) return;
+            
+            // Check if chapterData is valid (not an event object)
+            if (!chapterData || !chapterData.title) {
+                console.warn('Invalid chapter data received, ignoring');
+                return;
+            }
+            
+            this.submitting = true;
             this.loading = true;
             try {
-                await ChapterService.update(this.chapter._id, chapterData);
-                alert('Đã cập nhật chương thành công!');
+                await ChapterService.update(this.chapterId, chapterData);
+                // Redirect first, then show success message
                 this.$router.push(`/novels/${this.chapter.novelId}`);
+                // Show success message after a brief delay
+                setTimeout(() => {
+                    alert('Đã cập nhật chương thành công!');
+                }, 300);
             } catch (error) {
                 console.error('Error updating chapter:', error);
                 alert(error.response?.data?.message || 'Không thể cập nhật chương');
             } finally {
                 this.loading = false;
+                this.submitting = false;
             }
         },
         goBack() {
             if (this.chapter?.novelId) {
                 this.$router.push(`/novels/${this.chapter.novelId}`);
             } else {
-                this.$router.push('/admin/chapters');
+                this.$router.push('/');
             }
         }
     }

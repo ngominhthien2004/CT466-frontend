@@ -1,6 +1,6 @@
 <template>
-    <div class="chapter-card" @click="readChapter">
-        <div class="chapter-info">
+    <div class="chapter-card">
+        <div class="chapter-info" @click="readChapter">
             <h4 class="chapter-title">{{ chapter.title }}</h4>
             <p class="chapter-date">{{ formatDate(chapter.createdAt) }}</p>
         </div>
@@ -9,6 +9,9 @@
                 <i class="fas fa-eye"></i>
                 {{ formatNumber(chapter.views || 0) }}
             </span>
+            <button class="btn-edit" @click.stop="editChapter" title="Chỉnh sửa">
+                <i class="fas fa-edit"></i>
+            </button>
         </div>
     </div>
 </template>
@@ -25,6 +28,9 @@ export default {
     methods: {
         readChapter() {
             this.$emit('read', this.chapter._id);
+        },
+        editChapter() {
+            this.$emit('edit', this.chapter._id);
         },
         formatDate(date) {
             if (!date) return '';
@@ -97,6 +103,25 @@ export default {
 
 .views i {
     color: #c9a9a6;
+}
+
+.btn-edit {
+    background: transparent;
+    border: none;
+    color: #7f8c8d;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-edit:hover {
+    background: #f0f0f0;
+    color: #c9a9a6;
+    transform: scale(1.1);
 }
 
 @media (max-width: 768px) {

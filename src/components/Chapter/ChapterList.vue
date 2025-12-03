@@ -33,6 +33,7 @@
                 :key="chapter._id"
                 :chapter="chapter"
                 @read="handleReadChapter"
+                @edit="handleEditChapter"
             />
         </div>
     </div>
@@ -85,6 +86,9 @@ export default {
         },
         handleReadChapter(chapterId) {
             this.$emit('read-chapter', chapterId);
+        },
+        handleEditChapter(chapterId) {
+            this.$router.push(`/chapters/edit/${chapterId}`);
         }
     }
 };
