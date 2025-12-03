@@ -1,50 +1,28 @@
 <template>
     <div class="manage-genres">
         <!-- Page Header -->
-        <div class="page-header">
-            <div class="header-content">
-                <h1>
-                    <i class="fas fa-tags"></i>
-                    Quản lý Thể loại
-                </h1>
-                <p>Quản lý tất cả thể loại truyện trong hệ thống</p>
-            </div>
-            <button @click="openAddModal" class="btn-add">
-                <i class="fas fa-plus"></i>
-                Thêm thể loại
-            </button>
-        </div>
+        <PageHeader
+            title="Quản lý Thể loại"
+            subtitle="Quản lý tất cả thể loại truyện trong hệ thống"
+            icon="fas fa-tags"
+        >
+            <template #actions>
+                <button @click="openAddModal" class="btn-add">
+                    <i class="fas fa-plus"></i>
+                    Thêm thể loại
+                </button>
+            </template>
+        </PageHeader>
 
         <!-- Stats Cards -->
-        <div class="stats-cards">
-            <div class="stat-card">
-                <div class="stat-icon purple">
-                    <i class="fas fa-tags"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>{{ genreStore.genres.length }}</h3>
-                    <p>Tổng Thể loại</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon green">
-                    <i class="fas fa-book"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>{{ totalNovels }}</h3>
-                    <p>Tổng Truyện</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon blue">
-                    <i class="fas fa-star"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>{{ popularGenre }}</h3>
-                    <p>Thể loại phổ biến</p>
-                </div>
-            </div>
-        </div>
+        <StatsCards :stats="statsData" />
+
+        <!-- Search Filter -->
+        <SearchFilter
+            v-model="searchQuery"
+            placeholder="Tìm kiếm theo tên thể loại..."
+            @reset="searchQuery = ''"
+        />
 
         <!-- Error Message -->
         <div v-if="genreStore.error" class="error-message">
@@ -55,16 +33,16 @@
         <!-- Genres Table -->
         <div class="table-container">
             <div class="table-header">
-                <h2>Danh sách Thể loại ({{ genreStore.genres.length }})</h2>
+                <h2>Danh sách Thể loại ({{ filteredGenres.length }})</h2>
             </div>
 
             <LoadingSpinner v-if="genreStore.loading" />
 
             <EmptyState
-                v-else-if="genreStore.genres.length === 0"
+                v-else-if="filteredGenres.length === 0"
                 icon="fa-tags"
-                title="Chưa có thể loại nào"
-                message="Bắt đầu bằng cách thêm thể loại mới"
+                :title="searchQuery ? 'Không tìm thấy thể loại' : 'Chưa có thể loại nào'"
+                :message="searchQuery ? 'Thử tìm kiếm với từ khóa khác' : 'Bắt đầu bằng cách thêm thể loại mới'"
             />
 
             <table v-else class="data-table">
@@ -72,23 +50,19 @@
                     <tr>
                         <th style="width: 60px;">STT</th>
                         <th>Tên Thể loại</th>
-                        <th>Slug</th>
                         <th>Mô tả</th>
                         <th style="width: 100px;">Số Truyện</th>
                         <th style="width: 150px;">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(genre, index) in genreStore.genres" :key="genre._id">
+                    <tr v-for="(genre, index) in filteredGenres" :key="genre._id">
                         <td>{{ index + 1 }}</td>
                         <td>
                             <div class="genre-name">
                                 <i class="fas fa-tag"></i>
                                 {{ genre.name }}
                             </div>
-                        </td>
-                        <td>
-                            <span class="slug-badge">{{ genre.slug }}</span>
                         </td>
                         <td>
                             <div class="description-text">
@@ -155,6 +129,9 @@ import LoadingSpinner from '@/components/Common/LoadingSpinner.vue';
 import EmptyState from '@/components/Common/EmptyState.vue';
 import GenreForm from '@/components/Genre/GenreForm.vue';
 import ConfirmModal from '@/components/Common/ConfirmModal.vue';
+import PageHeader from '@/components/Admin/PageHeader.vue';
+import StatsCards from '@/components/Admin/StatsCards.vue';
+import SearchFilter from '@/components/Admin/SearchFilter.vue';
 
 export default {
     name: 'ManageGenres',
@@ -163,7 +140,10 @@ export default {
         LoadingSpinner, 
         EmptyState,
         GenreForm,
-        ConfirmModal
+        ConfirmModal,
+        PageHeader,
+        StatsCards,
+        SearchFilter
     },
     setup() {
         const genreStore = useGenreStore();
@@ -173,6 +153,7 @@ export default {
         const form = ref({ name: '', slug: '', description: '' });
         const confirmVisible = ref(false);
         const deleteTargetId = ref(null);
+        const searchQuery = ref('');
 
         // Computed properties for stats
         const totalNovels = computed(() => {
@@ -185,6 +166,38 @@ export default {
                 (genre.novelCount || 0) > (max.novelCount || 0) ? genre : max
             );
             return maxGenre.name || 'N/A';
+        });
+
+        // Stats data for StatsCards component
+        const statsData = computed(() => [
+            {
+                icon: 'fas fa-tags',
+                value: genreStore.genres.length,
+                label: 'Tổng Thể loại',
+                color: 'purple'
+            },
+            {
+                icon: 'fas fa-book',
+                value: totalNovels.value,
+                label: 'Tổng Truyện',
+                color: 'green'
+            },
+            {
+                icon: 'fas fa-star',
+                value: popularGenre.value,
+                label: 'Thể loại phổ biến',
+                color: 'cyan'
+            }
+        ]);
+
+        // Filter genres based on search
+        const filteredGenres = computed(() => {
+            if (!searchQuery.value) return genreStore.genres;
+            const query = searchQuery.value.toLowerCase();
+            return genreStore.genres.filter(genre => 
+                genre.name.toLowerCase().includes(query) ||
+                (genre.description && genre.description.toLowerCase().includes(query))
+            );
         });
 
         // Mở modal thêm mới và reset form
@@ -286,8 +299,9 @@ export default {
             openAddModal,
             formInitial,
             onSave,
-            totalNovels,
-            popularGenre
+            statsData,
+            searchQuery,
+            filteredGenres
         };
     }
 };
@@ -300,33 +314,7 @@ export default {
     min-height: 100vh;
 }
 
-/* Page Header */
-.page-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 2rem;
-    border-radius: 15px;
-    margin-bottom: 2rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.header-content h1 {
-    color: white;
-    margin: 0 0 0.5rem 0;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    font-size: 2rem;
-}
-
-.header-content p {
-    color: rgba(255, 255, 255, 0.9);
-    margin: 0;
-    font-size: 1.1rem;
-}
-
+/* Add Button */
 .btn-add {
     background: white;
     color: #667eea;
@@ -345,57 +333,6 @@ export default {
 .btn-add:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-/* Stats Cards */
-.stats-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-.stat-card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 15px;
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s;
-}
-
-.stat-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-.stat-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    color: white;
-}
-
-.stat-icon.purple { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-.stat-icon.green { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
-.stat-icon.blue { background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%); }
-
-.stat-info h3 {
-    margin: 0;
-    font-size: 2rem;
-    color: #2c3e50;
-}
-
-.stat-info p {
-    margin: 0.25rem 0 0 0;
-    color: #7f8c8d;
-    font-size: 0.9rem;
 }
 
 /* Error Message */
@@ -425,18 +362,9 @@ export default {
     color: #667eea;
 }
 
-.slug-badge {
-    background: #e3f2fd;
-    color: #1976d2;
-    padding: 0.35rem 0.75rem;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-family: 'Courier New', monospace;
-}
-
 .description-text {
     color: #7f8c8d;
-    max-width: 300px;
+    max-width: 400px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -510,22 +438,12 @@ export default {
         padding: 1rem;
     }
 
-    .page-header {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-    }
-
-    .stats-cards {
-        grid-template-columns: 1fr;
-    }
-
     .table-container {
         overflow-x: auto;
     }
 
     .data-table {
-        min-width: 800px;
+        min-width: 700px;
     }
 
     .description-text {
