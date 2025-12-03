@@ -118,16 +118,6 @@ export default {
                     change: null,
                     changeType: 'up'
                 },
-                
-                {
-                    title: 'Tổng Users',
-                    value: 0,
-                    label: 'Người dùng',
-                    icon: 'fas fa-users',
-                    color: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-                    change: null,
-                    changeType: 'up'
-                },
                 {
                     title: 'Tổng Views',
                     label: 'Lượt xem',
@@ -154,8 +144,7 @@ export default {
         computedStats() {
             const stats = [...this.stats];
             stats[0].value = this.novelStore.totalNovels;
-            // views is now at index 2 after removing Chapters stat
-            stats[2].value = this.novelStore.totalViews;
+            stats[1].value = this.novelStore.totalViews;
             return stats;
         }
     },

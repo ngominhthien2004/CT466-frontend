@@ -62,10 +62,6 @@
                                 <i class="fas fa-user"></i>
                                 Trang cá nhân
                             </router-link>
-                            <router-link to="/settings" class="dropdown-item" @click="closeDropdown">
-                                <i class="fas fa-cog"></i>
-                                Cài đặt
-                            </router-link>
                             <div class="dropdown-divider"></div>
                             <button @click="handleLogout" class="dropdown-item logout">
                                 <i class="fas fa-sign-out-alt"></i>
