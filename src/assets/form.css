@@ -363,22 +363,15 @@
     cursor: not-allowed;
 }
 
-/* Scrollbar */
+/* Scrollbar - Hidden */
 .form-container::-webkit-scrollbar {
-    width: 8px;
+    width: 0;
+    height: 0;
 }
 
-.form-container::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-
-.form-container::-webkit-scrollbar-thumb {
-    background: #c9a9a6;
-    border-radius: 4px;
-}
-
-.form-container::-webkit-scrollbar-thumb:hover {
-    background: #b8a39e;
+.form-container {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
 }
 
 /* ===================================

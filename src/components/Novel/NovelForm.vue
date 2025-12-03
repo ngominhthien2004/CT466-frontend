@@ -59,16 +59,36 @@
                     <!-- URL ảnh bìa -->
                     <div class="form-group full-width">
                         <label for="coverImage">
-                            URL ảnh bìa
+                            Ảnh bìa
                         </label>
-                        <input
-                            id="coverImage"
-                            v-model="formData.coverImage"
-                            type="url"
-                            placeholder="https://example.com/cover.jpg"
-                        />
+                        <div class="file-input-wrapper">
+                            <input
+                                type="file"
+                                id="coverImageFile"
+                                accept="image/*"
+                                @change="handleFileSelect"
+                                ref="fileInput"
+                                style="display: none"
+                            />
+                            <button
+                                type="button"
+                                class="btn-file-select"
+                                @click="$refs.fileInput.click()"
+                            >
+                                <i class="fas fa-upload"></i>
+                                {{ formData.coverImage ? 'Đổi ảnh' : 'Chọn ảnh' }}
+                            </button>
+                            <span v-if="fileName" class="file-name">{{ fileName }}</span>
+                        </div>
                         <div v-if="formData.coverImage" class="image-preview">
                             <img :src="formData.coverImage" alt="Preview" @error="handleImageError" />
+                            <button
+                                type="button"
+                                class="btn-remove-image"
+                                @click="removeImage"
+                            >
+                                <i class="fas fa-times"></i>
+                            </button>
                         </div>
                     </div>
 
@@ -184,7 +204,8 @@ export default {
             newGenre: '',
             showSuggestions: false,
             errors: {},
-            submitting: false
+            submitting: false,
+            fileName: ''
         };
     },
     mounted() {
@@ -263,6 +284,41 @@ export default {
         },
         handleImageError(event) {
             event.target.src = '/assets/default-book.png';
+        },
+        handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                alert('Vui lòng chọn file ảnh');
+                return;
+            }
+            
+            // Validate file size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Kích thước ảnh không được vượt quá 5MB');
+                return;
+            }
+            
+            this.fileName = file.name;
+            
+            // Convert to base64
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.formData.coverImage = e.target.result;
+            };
+            reader.onerror = () => {
+                alert('Không thể đọc file ảnh');
+            };
+            reader.readAsDataURL(file);
+        },
+        removeImage() {
+            this.formData.coverImage = '';
+            this.fileName = '';
+            if (this.$refs.fileInput) {
+                this.$refs.fileInput.value = '';
+            }
         },
         validateForm() {
             this.errors = {};
@@ -347,6 +403,17 @@ export default {
     padding: 0.25rem 0;
 }
 
+/* Hide scrollbar but keep functionality */
+.suggestions-list::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+
+.suggestions-list {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
 .suggestions-list li {
     list-style: none;
     padding: 0.5rem 0.75rem;
@@ -356,5 +423,67 @@ export default {
 
 .suggestions-list li:hover {
     background: #f6f6f6;
+}
+
+/* File Upload Styles */
+.file-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.btn-file-select {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-file-select:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(201, 169, 166, 0.4);
+}
+
+.file-name {
+    color: #2c3e50;
+    font-size: 0.9rem;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.image-preview {
+    position: relative;
+    margin-top: 1rem;
+}
+
+.btn-remove-image {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: rgba(231, 76, 60, 0.9);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.btn-remove-image:hover {
+    background: rgba(231, 76, 60, 1);
+    transform: scale(1.1);
 }
 </style>
