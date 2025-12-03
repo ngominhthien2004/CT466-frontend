@@ -185,6 +185,7 @@ import LoadingSpinner from '@/components/Common/LoadingSpinner.vue';
 import EmptyState from '@/components/Common/EmptyState.vue';
 import DeleteModal from '@/components/Common/DeleteModal.vue';
 import UserForm from '@/components/User/UserForm.vue';
+import { useAuthStore } from '@/stores';
 
 export default {
     name: 'ManageUsers',
@@ -204,7 +205,8 @@ export default {
             userToDelete: null,
             editTarget: null,
             deleting: false,
-            submitting: false
+            submitting: false,
+            authStore: useAuthStore()
         };
     },
     computed: {
@@ -296,6 +298,7 @@ export default {
             
             this.submitting = true;
             const userId = this.editTarget._id;
+            const oldRole = this.editTarget.role;
             
             try {
                 await UserService.update(userId, formData);
@@ -310,7 +313,17 @@ export default {
                     };
                 }
                 this.applyFilters();
-                alert('Đã cập nhật user thành công!');
+                
+                // Check if role changed for currently logged-in user
+                const currentUser = this.authStore.user;
+                if (currentUser && currentUser._id === userId && oldRole !== formData.role) {
+                    alert('Vai trò của bạn đã được thay đổi. Vui lòng đăng nhập lại!');
+                    // Force logout
+                    this.authStore.logout();
+                    this.$router.push('/login');
+                } else {
+                    alert('Đã cập nhật user thành công!');
+                }
             } catch (error) {
                 console.error('Error updating user:', error);
                 alert(error.response?.data?.message || 'Không thể cập nhật user');

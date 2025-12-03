@@ -53,7 +53,7 @@
                                  @error="handleAvatarError" />
                             <div class="user-details">
                                 <span class="user-name">{{ username }}</span>
-                                <span class="user-role">{{ user?.role || 'user' }}</span>
+                                <span class="user-role">{{ authStore.userRole }}</span>
                             </div>
                             <i class="fas fa-chevron-down dropdown-icon"></i>
                         </div>

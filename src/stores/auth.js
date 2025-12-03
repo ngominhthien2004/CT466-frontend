@@ -12,6 +12,11 @@ export const useAuthStore = defineStore('auth', {
         isAuthenticated: (state) => state.isLoggedIn,
         userId: (state) => state.user?._id,
         username: (state) => state.user?.username,
+        userRole: (state) => {
+            const role = state.user?.role || 'user'
+            // Case-insensitive check for admin
+            return role.toLowerCase() === 'admin' ? 'Quản trị viên' : 'Người dùng'
+        },
         userAvatar: (state) => {
             if (!state.user?.avatar) {
                 return '/assets/default-avatar.svg'
