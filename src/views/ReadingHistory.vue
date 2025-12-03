@@ -97,14 +97,15 @@
 
         <!-- History List -->
         <div v-else-if="filteredHistory.length > 0" class="history-container">
-            <div class="history-list">
+            <div class="history-grid">
                 <div 
                     v-for="item in paginatedHistory" 
                     :key="item._id || item.novelId" 
-                    class="history-item"
+                    class="history-card"
+                    @click="continueReading(item)"
                 >
                     <!-- Cover Image -->
-                    <div class="history-cover">
+                    <div class="card-cover">
                         <img
                             :src="item.novelCover || '/assets/default-book.png'"
                             :alt="item.novelTitle"
@@ -117,51 +118,20 @@
                     </div>
 
                     <!-- Info -->
-                    <div class="history-info">
-                        <a 
-                            :href="`/novels/${item.novelId}`"
-                            class="novel-title"
-                            @click.prevent="goToNovel(item.novelId)"
-                        >
+                    <div class="card-info">
+                        <h3 class="card-title">
                             {{ item.novelTitle || 'Không rõ tên' }}
-                        </a>
+                        </h3>
                         
-                        <div class="chapter-info">
+                        <div class="card-chapter">
                             <i class="fas fa-bookmark"></i>
-                            <span>Đang đọc: {{ item.chapterTitle || `Chương ${item.chapterNumber || '?'}` }}</span>
+                            <span>{{ item.chapterTitle || `Chương ${item.chapterNumber || '?'}` }}</span>
                         </div>
 
-                        <div class="read-time">
+                        <div class="card-date">
                             <i class="far fa-calendar-alt"></i>
-                            Lần cuối đọc: {{ formatDate(item.lastRead) }}
+                            {{ formatDate(item.lastRead) }}
                         </div>
-                    </div>
-
-                    <!-- Actions -->
-                    <div class="history-actions">
-                        <a
-                            :href="`/novels/${item.novelId}/chapters/${item.chapterId}`"
-                            class="btn-action btn-continue"
-                            @click.prevent="continueReading(item)"
-                        >
-                            <i class="fas fa-play"></i>
-                            Đọc tiếp
-                        </a>
-                        <a
-                            :href="`/novels/${item.novelId}`"
-                            class="btn-action btn-view"
-                            @click.prevent="goToNovel(item.novelId)"
-                        >
-                            <i class="fas fa-info-circle"></i>
-                            Chi tiết
-                        </a>
-                        <button
-                            @click="confirmRemove(item)"
-                            class="btn-action btn-remove"
-                            title="Xóa khỏi lịch sử"
-                        >
-                            <i class="fas fa-times"></i>
-                        </button>
                     </div>
                 </div>
             </div>
@@ -683,37 +653,44 @@ export default {
 }
 
 /* History List */
-.history-list {
-    display: flex;
-    flex-direction: column;
+.history-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 1.5rem;
 }
 
-.history-item {
+.history-card {
     background: white;
     border-radius: 12px;
-    padding: 1.5rem;
+    overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    display: flex;
-    gap: 1.5rem;
+    cursor: pointer;
     transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
 }
 
-.history-item:hover {
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-    transform: translateY(-3px);
+.history-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(102, 126, 234, 0.2);
 }
 
-.history-cover {
+.card-cover {
     position: relative;
     flex-shrink: 0;
+    width: 100%;
+    padding-top: 140%;
+    overflow: hidden;
+    background: #f0f0f0;
 }
 
-.history-cover img {
-    width: 120px;
-    height: 170px;
+.card-cover img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    border-radius: 8px;
 }
 
 .time-badge {
@@ -723,108 +700,68 @@ export default {
     transform: translateX(-50%);
     background: rgba(0, 0, 0, 0.8);
     color: white;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
     font-size: 0.75rem;
     display: flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: 0.35rem;
     white-space: nowrap;
+    font-weight: 600;
 }
 
-.history-info {
+.card-info {
+    padding: 1rem;
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.5rem;
 }
 
-.novel-title {
-    font-size: 1.25rem;
+.card-title {
+    font-size: 1rem;
     font-weight: 700;
     color: #2c3e50;
-    text-decoration: none;
-    transition: color 0.3s;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-height: 1.4;
 }
 
-.novel-title:hover {
-    color: #667eea;
-}
-
-.chapter-info {
+.card-chapter {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     color: #667eea;
     font-weight: 600;
+    font-size: 0.9rem;
 }
 
-.chapter-info i {
+.card-chapter i {
     color: #f39c12;
+    font-size: 0.85rem;
 }
 
-.read-time {
+.card-chapter span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.card-date {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     color: #95a5a6;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
+    margin-top: auto;
 }
 
-.history-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    justify-content: center;
-    min-width: 140px;
-}
-
-.btn-action {
-    padding: 0.75rem 1rem;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    transition: all 0.3s;
-    white-space: nowrap;
-    text-decoration: none;
-    font-size: 0.9rem;
-}
-
-.btn-continue {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-}
-
-.btn-continue:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
-
-.btn-view {
-    background: white;
-    border: 2px solid #667eea;
-    color: #667eea;
-}
-
-.btn-view:hover {
-    background: #667eea;
-    color: white;
-}
-
-.btn-remove {
-    background: white;
-    border: 2px solid #e74c3c;
-    color: #e74c3c;
-}
-
-.btn-remove:hover {
-    background: #e74c3c;
-    color: white;
+.card-date i {
+    font-size: 0.75rem;
 }
 
 /* Pagination */
@@ -890,6 +827,10 @@ export default {
     .actions-section {
         justify-content: flex-end;
     }
+
+    .history-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
 }
 
 @media (max-width: 768px) {
@@ -905,22 +846,29 @@ export default {
         flex-direction: column;
     }
 
-    .history-item {
-        flex-direction: column;
+    .history-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 1rem;
     }
 
-    .history-cover img {
-        width: 100%;
-        height: 250px;
+    .card-cover {
+        padding-top: 145%;
     }
 
-    .history-actions {
-        flex-direction: row;
-        min-width: auto;
+    .card-info {
+        padding: 0.75rem;
     }
 
-    .btn-action {
-        flex: 1;
+    .card-title {
+        font-size: 0.9rem;
+    }
+
+    .card-chapter {
+        font-size: 0.85rem;
+    }
+
+    .card-date {
+        font-size: 0.75rem;
     }
 }
 </style>
