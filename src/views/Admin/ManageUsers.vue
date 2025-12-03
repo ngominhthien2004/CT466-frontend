@@ -6,6 +6,9 @@
             icon="fas fa-users"
         />
 
+        <!-- Stats Cards -->
+        <StatsCards :stats="statsData" />
+
         <!-- Filters -->
         <SearchFilter
             v-model="searchQuery"
@@ -25,9 +28,6 @@
                 <option value="inactive">Đã khóa</option>
             </select>
         </SearchFilter>
-
-        <!-- Stats Cards -->
-        <StatsCards :stats="statsData" />
 
         <!-- Users Table -->
         <div class="table-container">
@@ -355,9 +355,9 @@ export default {
 
 <style scoped>
 .manage-users {
-    padding: 2rem;
-    background: #f8f9fa;
-    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
 /* Page Header */

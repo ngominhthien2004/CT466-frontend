@@ -305,9 +305,9 @@ export default {
 
 <style scoped>
 .manage-genres {
-    padding: 2rem;
-    background: #f8f9fa;
-    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
 /* Add Button */
