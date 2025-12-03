@@ -4,7 +4,7 @@
         <div class="actions">
             <button @click="openAddModal" class="btn btn-primary">Thêm thể loại</button>
         </div>
-        <div v-if="genreStore.loading" class="loading"><i class="fas fa-spinner fa-spin"></i> Đang tải...</div>
+        <LoadingSpinner v-if="genreStore.loading" />
         <div v-if="genreStore.error" class="error">{{ genreStore.error }}</div>
         <table v-if="!genreStore.loading && genreStore.genres.length" class="genre-table">
             <thead>
@@ -25,7 +25,12 @@
                 </tr>
             </tbody>
         </table>
-        <div v-else-if="!genreStore.loading">Không có thể loại nào.</div>
+        <EmptyState
+            v-else-if="!genreStore.loading"
+            icon="fa-tags"
+            title="Chưa có thể loại nào"
+            message="Bắt đầu bằng cách thêm thể loại mới"
+        />
     </div>
 
     <!-- Modal Thêm/Sửa (componentized) -->
@@ -58,9 +63,12 @@
 <script>
 import { useGenreStore } from '@/stores/genre';
 import { ref } from 'vue';
+import LoadingSpinner from '@/components/Common/LoadingSpinner.vue';
+import EmptyState from '@/components/Common/EmptyState.vue';
 
 export default {
     name: 'ManageGenres',
+    components: { LoadingSpinner, EmptyState },
     setup() {
         const genreStore = useGenreStore();
         const showAdd = ref(false);
@@ -169,7 +177,7 @@ export default {
 .genre-table th {
     background: #f8f9fa;
 }
-.loading, .error {
+.error {
     margin: 1rem 0;
     color: #e74c3c;
 }

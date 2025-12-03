@@ -79,15 +79,13 @@
                 <h2>Danh sách Comments ({{ filteredComments.length }})</h2>
             </div>
 
-            <div v-if="loading" class="loading">
-                <i class="fas fa-spinner fa-spin"></i>
-                <p>Đang tải dữ liệu...</p>
-            </div>
+            <LoadingSpinner v-if="loading" />
 
-            <div v-else-if="paginatedComments.length === 0" class="empty-state">
-                <i class="fas fa-comment-slash"></i>
-                <p>Không tìm thấy comment nào</p>
-            </div>
+            <EmptyState
+                v-else-if="paginatedComments.length === 0"
+                icon="fa-comment-slash"
+                title="Không tìm thấy comment nào"
+            />
 
             <div v-else class="comments-list">
                 <div
@@ -172,9 +170,12 @@
 <script>
 import { CommentService, NovelService, ChapterService } from '@/services';
 import UserService from '@/services/user.service';
+import LoadingSpinner from '@/components/Common/LoadingSpinner.vue';
+import EmptyState from '@/components/Common/EmptyState.vue';
 
 export default {
     name: 'ManageComments',
+    components: { LoadingSpinner, EmptyState },
     data() {
         return {
             comments: [],
@@ -510,26 +511,6 @@ export default {
     margin: 0;
     color: #2c3e50;
     font-size: 1.5rem;
-}
-
-/* Loading & Empty State */
-.loading,
-.empty-state {
-    text-align: center;
-    padding: 4rem 2rem;
-    color: #7f8c8d;
-}
-
-.loading i,
-.empty-state i {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    color: #f093fb;
-}
-
-.loading p,
-.empty-state p {
-    font-size: 1.1rem;
 }
 
 /* Comments List */

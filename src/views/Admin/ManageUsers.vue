@@ -92,15 +92,13 @@
                 <h2>Danh sách Users ({{ filteredUsers.length }})</h2>
             </div>
 
-            <div v-if="loading" class="loading">
-                <i class="fas fa-spinner fa-spin"></i>
-                <p>Đang tải dữ liệu...</p>
-            </div>
+            <LoadingSpinner v-if="loading" />
 
-            <div v-else-if="paginatedUsers.length === 0" class="empty-state">
-                <i class="fas fa-user-friends"></i>
-                <p>Không tìm thấy user nào</p>
-            </div>
+            <EmptyState
+                v-else-if="paginatedUsers.length === 0"
+                icon="fa-user-friends"
+                title="Không tìm thấy user nào"
+            />
 
             <table v-else class="data-table">
                 <thead>
@@ -205,9 +203,12 @@
 
 <script>
 import UserService from '@/services/user.service';
+import LoadingSpinner from '@/components/Common/LoadingSpinner.vue';
+import EmptyState from '@/components/Common/EmptyState.vue';
 
 export default {
     name: 'ManageUsers',
+    components: { LoadingSpinner, EmptyState },
     data() {
         return {
             users: [],
@@ -547,26 +548,6 @@ export default {
     margin: 0;
     color: #2c3e50;
     font-size: 1.5rem;
-}
-
-/* Loading & Empty State */
-.loading,
-.empty-state {
-    text-align: center;
-    padding: 4rem 2rem;
-    color: #7f8c8d;
-}
-
-.loading i,
-.empty-state i {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    color: #667eea;
-}
-
-.loading p,
-.empty-state p {
-    font-size: 1.1rem;
 }
 
 /* Table */

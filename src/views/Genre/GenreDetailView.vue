@@ -54,15 +54,14 @@
             </div>
 
             <!-- Novels Grid -->
-            <div v-if="loading" class="loading">
-                <i class="fas fa-spinner fa-spin"></i>
-                <p>Đang tải truyện...</p>
-            </div>
+            <LoadingSpinner v-if="loading" message="Đang tải truyện..." />
 
-            <div v-else-if="filteredNovels.length === 0" class="empty">
-                <i class="fas fa-inbox"></i>
-                <p>Chưa có truyện nào thuộc thể loại này</p>
-            </div>
+            <EmptyState
+                v-else-if="filteredNovels.length === 0"
+                icon="fa-inbox"
+                title="Chưa có truyện nào"
+                message="Chưa có truyện nào thuộc thể loại này"
+            />
 
             <div v-else class="novels-grid">
                 <div v-for="novel in filteredNovels" :key="novel._id" class="novel-card">
@@ -92,9 +91,12 @@
 
 <script>
 import { NovelService, GenreService } from '@/services';
+import LoadingSpinner from '@/components/Common/LoadingSpinner.vue';
+import EmptyState from '@/components/Common/EmptyState.vue';
 
 export default {
     name: 'GenreDetailView',
+    components: { LoadingSpinner, EmptyState },
     data() {
         return {
             genreSlug: this.$route.params.slug,
@@ -299,22 +301,6 @@ export default {
 .filter-select:focus {
     outline: none;
     border-color: #c9a9a6;
-}
-
-/* Loading & Empty */
-.loading,
-.empty {
-    text-align: center;
-    padding: 4rem 1rem;
-    background: white;
-    border-radius: 12px;
-}
-
-.loading i,
-.empty i {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    color: #c9a9a6;
 }
 
 /* Novels Grid */
