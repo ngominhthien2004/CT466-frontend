@@ -2,61 +2,36 @@
     <div class="manage-novels">
         <!-- Header Actions -->
         <div class="page-actions">
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input
-                    v-model="searchQuery"
-                    type="text"
-                    placeholder="Tìm kiếm theo tên, tác giả..."
-                    @input="handleSearch"
-                />
-            </div>
-               <router-link to="/novels/add" class="btn-add">
-                   <i class="fas fa-plus"></i>
-                   Thêm Novel mới
-               </router-link>
+            <SearchNovel
+                placeholder="Tìm kiếm theo tên, tác giả..."
+                @input="searchQuery = $event"
+                @search="handleSearch"
+                @clear="searchQuery = ''; handleSearch();"
+            />
         </div>
 
         <!-- Filters -->
-        <div class="filters">
-            <select v-model="filterStatus" @change="applyFilters" class="filter-select">
-                <option value="">Tất cả trạng thái</option>
-                <option value="ongoing">Đang ra</option>
-                <option value="completed">Hoàn thành</option>
-                <option value="paused">Tạm dừng</option>
-                <option value="dropped">Ngưng</option>
-            </select>
-            
-            <select v-model="sortBy" @change="applySorting" class="filter-select">
-                <option value="createdAt">Mới nhất</option>
-                <option value="views">Lượt xem</option>
-                <option value="likes">Lượt thích</option>
-                <option value="title">Tên A-Z</option>
-            </select>
-            
-            <button @click="resetFilters" class="btn-reset">
-                <i class="fas fa-redo"></i>
-                Đặt lại
-            </button>
-        </div>
+        <FilterBar
+            :status-filter="filterStatus"
+            :sort-by="sortBy"
+            :status-options="statusOptions"
+            :sort-options="sortOptions"
+            @update:statusFilter="filterStatus = $event"
+            @update:sortBy="sortBy = $event"
+            @filter-change="applyFilters"
+            @sort-change="applySorting"
+            @reset="resetFilters"
+        />
         
         <!-- Loading State -->
-        <div v-if="loading" class="loading-container">
-            <div class="spinner"></div>
-            <p>Đang tải dữ liệu...</p>
-        </div>
+        <LoadingSpinner v-if="loading" />
 
         <!-- Empty State -->
-        <div v-else-if="paginatedNovels.length === 0" class="empty-state">
-            <i class="fas fa-inbox"></i>
-            <h3>Không tìm thấy tiểu thuyết nào</h3>
-            <p v-if="searchQuery">Thử tìm kiếm với từ khóa khác</p>
-            <p v-else>Bắt đầu bằng cách thêm tiểu thuyết mới</p>
-               <router-link to="/novels/add" class="btn-add-empty">
-                   <i class="fas fa-plus-circle"></i>
-                   Thêm Novel
-               </router-link>
-        </div>
+        <EmptyState 
+            v-else-if="paginatedNovels.length === 0"
+            title="Không tìm thấy tiểu thuyết nào"
+            :message="searchQuery ? 'Thử tìm kiếm với từ khóa khác' : 'Bắt đầu bằng cách thêm tiểu thuyết mới'"
+        />
 
         <!-- Data Table -->
         <div v-else class="table-container">
@@ -180,31 +155,14 @@
         </div>
 
         <!-- Delete Confirmation Modal -->
-        <div v-if="showDeleteModal" class="modal-overlay" @click.self="closeDeleteModal">
-            <div class="modal">
-                <div class="modal-header">
-                    <h3>
-                        <i class="fas fa-exclamation-triangle"></i>
-                        Xác nhận xóa
-                    </h3>
-                </div>
-                <div class="modal-body">
-                    <p>Bạn có chắc chắn muốn xóa tiểu thuyết này?</p>
-                    <p class="novel-name">{{ deleteTarget?.title }}</p>
-                    <p class="warning">Hành động này không thể hoàn tác!</p>
-                </div>
-                <div class="modal-actions">
-                    <button @click="closeDeleteModal" class="btn-cancel">
-                        <i class="fas fa-times"></i>
-                        Hủy
-                    </button>
-                    <button @click="handleDelete" class="btn-confirm-delete" :disabled="deleting">
-                        <i class="fas" :class="deleting ? 'fa-spinner fa-spin' : 'fa-trash'"></i>
-                        {{ deleting ? 'Đang xóa...' : 'Xóa' }}
-                    </button>
-                </div>
-            </div>
-        </div>
+        <DeleteModal
+            :show="showDeleteModal"
+            :item-name="deleteTarget?.title"
+            :loading="deleting"
+            message="Bạn có chắc chắn muốn xóa tiểu thuyết này?"
+            @confirm="handleDelete"
+            @cancel="closeDeleteModal"
+        />
 
         <!-- Edit Novel Modal (uses NovelForm component) -->
         <NovelForm
@@ -220,10 +178,15 @@
 <script>
 import { useNovelStore } from '@/stores';
 import NovelForm from '@/components/Novel/NovelForm.vue';
+import DeleteModal from '@/components/Common/DeleteModal.vue';
+import SearchNovel from '@/components/Novel/SearchNovel.vue';
+import FilterBar from '@/components/Common/FilterBar.vue';
+import LoadingSpinner from '@/components/Common/LoadingSpinner.vue';
+import EmptyState from '@/components/Common/EmptyState.vue';
 
 export default {
     name: 'ManageNovels',
-    components: { NovelForm },
+    components: { NovelForm, DeleteModal, SearchNovel, FilterBar, LoadingSpinner, EmptyState },
     data() {
         return {
             novelStore: useNovelStore(),
@@ -237,7 +200,24 @@ export default {
             itemsPerPage: 10,
             showDeleteModal: false,
             deleteTarget: null,
-            deleting: false
+            deleting: false,
+            statusOptions: {
+                placeholder: 'Tất cả trạng thái',
+                options: [
+                    { value: 'ongoing', label: 'Đang ra' },
+                    { value: 'completed', label: 'Hoàn thành' },
+                    { value: 'paused', label: 'Tạm dừng' },
+                    { value: 'dropped', label: 'Ngưng' }
+                ]
+            },
+            sortOptions: {
+                options: [
+                    { value: 'createdAt', label: 'Mới nhất' },
+                    { value: 'views', label: 'Lượt xem' },
+                    { value: 'likes', label: 'Lượt thích' },
+                    { value: 'title', label: 'Tên A-Z' }
+                ]
+            }
         };
     },
     computed: {
@@ -332,8 +312,10 @@ export default {
             }
         },
         confirmDelete(novel) {
+            console.log('confirmDelete called', novel);
             this.deleteTarget = novel;
             this.showDeleteModal = true;
+            console.log('showDeleteModal set to:', this.showDeleteModal);
         },
         closeDeleteModal() {
             this.showDeleteModal = false;
@@ -414,35 +396,6 @@ export default {
     align-items: center;
 }
 
-.search-box {
-    flex: 1;
-    position: relative;
-    max-width: 500px;
-}
-
-.search-box i {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #95a5a6;
-}
-
-.search-box input {
-    width: 100%;
-    padding: 0.75rem 1rem 0.75rem 3rem;
-    border: 2px solid #dfe6e9;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: all 0.3s;
-}
-
-.search-box input:focus {
-    outline: none;
-    border-color: #c9a9a6;
-    box-shadow: 0 0 0 3px rgba(201, 169, 166, 0.1);
-}
-
 .btn-add {
     background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
     color: white;
@@ -462,112 +415,7 @@ export default {
     box-shadow: 0 4px 12px rgba(201, 169, 166, 0.4);
 }
 
-/* Filters */
-.filters {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-}
-
-.filter-select {
-    padding: 0.75rem 1rem;
-    border: 2px solid #dfe6e9;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.filter-select:focus {
-    outline: none;
-    border-color: #c9a9a6;
-}
-
-.btn-reset {
-    background: white;
-    border: 2px solid #dfe6e9;
-    color: #7f8c8d;
-    padding: 0.75rem 1.25rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s;
-}
-
-.btn-reset:hover {
-    background: #f8f9fa;
-    border-color: #bdc3c7;
-}
-
-/* Loading */
-.loading-container {
-    text-align: center;
-    padding: 4rem 2rem;
-    background: white;
-    border-radius: 12px;
-}
-
-.spinner {
-    width: 50px;
-    height: 50px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #c9a9a6;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 0 auto 1rem;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
 /* Empty State */
-.empty-state {
-    text-align: center;
-    padding: 4rem 2rem;
-    background: white;
-    border-radius: 12px;
-}
-
-.empty-state i {
-    font-size: 4rem;
-    color: #bdc3c7;
-    margin-bottom: 1.5rem;
-}
-
-.empty-state h3 {
-    margin: 0 0 0.5rem 0;
-    color: #2c3e50;
-}
-
-.empty-state p {
-    color: #7f8c8d;
-    margin-bottom: 1.5rem;
-}
-
-.btn-add-empty {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s;
-}
-
-.btn-add-empty:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(201, 169, 166, 0.4);
-}
-
-/* Table */
 .table-container {
     background: white;
     border-radius: 12px;
@@ -769,112 +617,6 @@ export default {
     font-size: 0.9rem;
 }
 
-/* Delete Modal */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2000;
-}
-
-.modal {
-    background: white;
-    border-radius: 16px;
-    width: 90%;
-    max-width: 500px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-}
-
-.modal-header {
-    padding: 1.5rem;
-    border-bottom: 2px solid #ecf0f1;
-}
-
-.modal-header h3 {
-    margin: 0;
-    color: #e74c3c;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-size: 1.25rem;
-}
-
-.modal-body {
-    padding: 2rem 1.5rem;
-}
-
-.modal-body p {
-    margin: 0 0 1rem 0;
-    color: #2c3e50;
-}
-
-.novel-name {
-    font-weight: 700;
-    font-size: 1.1rem;
-    color: #c9a9a6;
-}
-
-.warning {
-    color: #e74c3c;
-    font-size: 0.9rem;
-    font-style: italic;
-}
-
-.modal-actions {
-    padding: 1.5rem;
-    border-top: 2px solid #ecf0f1;
-    display: flex;
-    gap: 1rem;
-    justify-content: flex-end;
-}
-
-.btn-cancel {
-    background: white;
-    border: 2px solid #dfe6e9;
-    color: #7f8c8d;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s;
-}
-
-.btn-cancel:hover {
-    background: #f8f9fa;
-}
-
-.btn-confirm-delete {
-    background: #e74c3c;
-    border: none;
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s;
-}
-
-.btn-confirm-delete:hover:not(:disabled) {
-    background: #c0392b;
-}
-
-.btn-confirm-delete:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
 /* Responsive */
 @media (max-width: 1200px) {
     .data-table {
@@ -891,14 +633,6 @@ export default {
     .page-actions {
         flex-direction: column;
         align-items: stretch;
-    }
-    
-    .search-box {
-        max-width: 100%;
-    }
-    
-    .filters {
-        flex-wrap: wrap;
     }
     
     .table-container {
