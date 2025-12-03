@@ -39,7 +39,7 @@
             <div class="genre-modal">
                 <h2>{{ showAdd ? 'Thêm thể loại' : 'Sửa thể loại' }}</h2>
                 <GenreForm
-                    :initial="formInitial"
+                    :initial="formInitial()"
                     :mode="showAdd ? 'add' : 'edit'"
                     @save="onSave"
                     @cancel="closeModal"
@@ -65,16 +65,26 @@ import { useGenreStore } from '@/stores/genre';
 import { ref } from 'vue';
 import LoadingSpinner from '@/components/Common/LoadingSpinner.vue';
 import EmptyState from '@/components/Common/EmptyState.vue';
+import GenreForm from '@/components/Genre/GenreForm.vue';
+import ConfirmModal from '@/components/Common/ConfirmModal.vue';
 
 export default {
     name: 'ManageGenres',
-    components: { LoadingSpinner, EmptyState },
+    emits: ['update-title'],
+    components: { 
+        LoadingSpinner, 
+        EmptyState,
+        GenreForm,
+        ConfirmModal
+    },
     setup() {
         const genreStore = useGenreStore();
         const showAdd = ref(false);
         const showEdit = ref(false);
         const editId = ref(null);
         const form = ref({ name: '', slug: '', description: '' });
+        const confirmVisible = ref(false);
+        const deleteTargetId = ref(null);
 
         // Mở modal thêm mới và reset form
         function openAddModal() {
@@ -110,6 +120,24 @@ export default {
             resetForm();
         };
 
+        const formInitial = () => {
+            if (showEdit.value && editId.value) {
+                return form.value;
+            }
+            return { name: '', slug: '', description: '' };
+        };
+
+        const onSave = async (data) => {
+            if (showAdd.value) {
+                await genreStore.addGenre(data);
+                await genreStore.fetchGenres();
+            } else if (showEdit.value && editId.value) {
+                await genreStore.updateGenre(editId.value, data);
+                await genreStore.fetchGenres();
+            }
+            closeModal();
+        };
+
         const submitForm = async () => {
             if (showAdd.value) {
                 await genreStore.addGenre(form.value);
@@ -127,10 +155,17 @@ export default {
             showEdit.value = true;
         };
 
-        const deleteGenre = async (id) => {
-            if (confirm('Bạn có chắc muốn xóa thể loại này?')) {
-                await genreStore.deleteGenre(id);
+        const deleteGenre = (id) => {
+            deleteTargetId.value = id;
+            confirmVisible.value = true;
+        };
+
+        const onConfirmDelete = async () => {
+            if (deleteTargetId.value) {
+                await genreStore.deleteGenre(deleteTargetId.value);
+                deleteTargetId.value = null;
             }
+            confirmVisible.value = false;
         };
 
         genreStore.fetchGenres();
@@ -140,12 +175,16 @@ export default {
             showAdd,
             showEdit,
             form,
+            confirmVisible,
             closeModal,
             submitForm,
             editGenre,
             deleteGenre,
+            onConfirmDelete,
             autoSlug,
-            openAddModal
+            openAddModal,
+            formInitial,
+            onSave
         };
     }
 };

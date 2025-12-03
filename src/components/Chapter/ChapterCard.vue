@@ -1,7 +1,10 @@
 <template>
     <div class="chapter-card">
         <div class="chapter-info" @click="readChapter">
-            <h4 class="chapter-title">{{ chapter.title }}</h4>
+            <h4 class="chapter-title">
+                <span v-if="chapter.chapterNumber" class="chapter-number">Chương {{ chapter.chapterNumber }}</span>
+                {{ chapter.title }}
+            </h4>
             <p class="chapter-date">{{ formatDate(chapter.createdAt) }}</p>
         </div>
         <div class="chapter-meta">
@@ -79,6 +82,19 @@ export default {
     font-weight: 600;
     color: #2c3e50;
     margin: 0 0 0.25rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.chapter-number {
+    background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    white-space: nowrap;
 }
 
 .chapter-date {
