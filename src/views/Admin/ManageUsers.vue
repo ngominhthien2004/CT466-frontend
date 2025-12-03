@@ -8,10 +8,6 @@
                 </h1>
                 <p>Quản lý tất cả người dùng trong hệ thống</p>
             </div>
-            <button @click="showAddUserModal = true" class="btn-add-user">
-                <i class="fas fa-user-plus"></i>
-                Thêm User
-            </button>
         </div>
 
         <!-- Filters -->
@@ -75,15 +71,6 @@
                     <p>Admins</p>
                 </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon red">
-                    <i class="fas fa-user-slash"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>{{ inactiveUsers }}</h3>
-                    <p>Đã Khóa</p>
-                </div>
-            </div>
         </div>
 
         <!-- Users Table -->
@@ -134,7 +121,7 @@
                         <td>
                             <span class="status" :class="user.isActive ? 'status-active' : 'status-inactive'">
                                 <i :class="user.isActive ? 'fas fa-check-circle' : 'fas fa-ban'"></i>
-                                {{ user.isActive ? 'Hoạt động' : 'Đã khóa' }}
+                                {{ user.isActive ? 'Hoạt động' : 'Ngưng hoạt động' }}
                             </span>
                         </td>
                         <td>{{ formatDate(user.createdAt) }}</td>
@@ -142,14 +129,6 @@
                             <div class="action-buttons">
                                 <button @click="editUser(user)" class="btn-action btn-edit" title="Sửa">
                                     <i class="fas fa-edit"></i>
-                                </button>
-                                <button
-                                    @click="toggleUserStatus(user)"
-                                    class="btn-action"
-                                    :class="user.isActive ? 'btn-lock' : 'btn-unlock'"
-                                    :title="user.isActive ? 'Khóa' : 'Mở khóa'"
-                                >
-                                    <i :class="user.isActive ? 'fas fa-lock' : 'fas fa-unlock'"></i>
                                 </button>
                                 <button @click="confirmDelete(user)" class="btn-action btn-delete" title="Xóa">
                                     <i class="fas fa-trash"></i>
@@ -173,31 +152,30 @@
         </div>
 
         <!-- Delete Confirmation Modal -->
-        <div v-if="showDeleteModal" class="modal-overlay" @click="closeDeleteModal">
-            <div class="modal-content" @click.stop>
-                <div class="modal-header">
-                    <h3>
-                        <i class="fas fa-exclamation-triangle"></i>
-                        Xác nhận xóa
-                    </h3>
+        <DeleteModal
+            :show="showDeleteModal"
+            title="Xóa User"
+            :item-name="userToDelete?.username"
+            :loading="deleting"
+            @confirm="deleteUser"
+            @cancel="closeDeleteModal"
+        >
+            <template #message>
+                <p>Bạn có chắc chắn muốn xóa user này?</p>
+                <div class="user-details">
+                    <strong>{{ userToDelete?.username }}</strong>
+                    <span>{{ userToDelete?.email }}</span>
                 </div>
-                <div class="modal-body">
-                    <p>Bạn có chắc chắn muốn xóa user này?</p>
-                    <div class="user-details">
-                        <strong>{{ userToDelete?.username }}</strong>
-                        <span>{{ userToDelete?.email }}</span>
-                    </div>
-                    <p class="warning">Hành động này không thể hoàn tác!</p>
-                </div>
-                <div class="modal-footer">
-                    <button @click="closeDeleteModal" class="btn-cancel">Hủy</button>
-                    <button @click="deleteUser" class="btn-confirm-delete">
-                        <i class="fas fa-trash"></i>
-                        Xóa
-                    </button>
-                </div>
-            </div>
-        </div>
+            </template>
+        </DeleteModal>
+
+        <!-- Edit User Modal -->
+        <UserForm
+            v-if="showEditModal && editTarget"
+            :user="editTarget"
+            @close="closeEditModal"
+            @submit="handleEditUser"
+        />
     </div>
 </template>
 
@@ -205,10 +183,12 @@
 import UserService from '@/services/user.service';
 import LoadingSpinner from '@/components/Common/LoadingSpinner.vue';
 import EmptyState from '@/components/Common/EmptyState.vue';
+import DeleteModal from '@/components/Common/DeleteModal.vue';
+import UserForm from '@/components/User/UserForm.vue';
 
 export default {
     name: 'ManageUsers',
-    components: { LoadingSpinner, EmptyState },
+    components: { LoadingSpinner, EmptyState, DeleteModal, UserForm },
     data() {
         return {
             users: [],
@@ -220,8 +200,11 @@ export default {
             currentPage: 1,
             itemsPerPage: 10,
             showDeleteModal: false,
-            showAddUserModal: false,
-            userToDelete: null
+            showEditModal: false,
+            userToDelete: null,
+            editTarget: null,
+            deleting: false,
+            submitting: false
         };
     },
     computed: {
@@ -301,21 +284,39 @@ export default {
             return `/assets/user/${user._id}/${user.avatar}`;
         },
         editUser(user) {
-            // TODO: Implement edit user modal or route
-            console.log('Edit user:', user);
-            alert('Chức năng đang được phát triển');
+            this.editTarget = user;
+            this.showEditModal = true;
         },
-        async toggleUserStatus(user) {
+        closeEditModal() {
+            this.showEditModal = false;
+            this.editTarget = null;
+        },
+        async handleEditUser(formData) {
+            if (!this.editTarget || this.submitting) return;
+            
+            this.submitting = true;
+            const userId = this.editTarget._id;
+            
             try {
-                const newStatus = !user.isActive;
-                await UserService.update(user._id, { isActive: newStatus });
+                await UserService.update(userId, formData);
                 
-                user.isActive = newStatus;
-                const action = newStatus ? 'mở khóa' : 'khóa';
-                alert(`Đã ${action} user thành công!`);
+                // Update local user data
+                const index = this.users.findIndex(u => u._id === userId);
+                if (index !== -1) {
+                    this.users[index] = { 
+                        ...this.users[index], 
+                        role: formData.role,
+                        isActive: formData.isActive
+                    };
+                }
+                this.applyFilters();
+                alert('Đã cập nhật user thành công!');
             } catch (error) {
-                console.error('Error toggling user status:', error);
-                alert('Không thể thay đổi trạng thái user');
+                console.error('Error updating user:', error);
+                alert(error.response?.data?.message || 'Không thể cập nhật user');
+            } finally {
+                this.submitting = false;
+                this.closeEditModal();
             }
         },
         confirmDelete(user) {
@@ -329,6 +330,7 @@ export default {
         async deleteUser() {
             if (!this.userToDelete) return;
 
+            this.deleting = true;
             try {
                 await UserService.delete(this.userToDelete._id);
                 
@@ -340,6 +342,8 @@ export default {
             } catch (error) {
                 console.error('Error deleting user:', error);
                 alert('Không thể xóa user');
+            } finally {
+                this.deleting = false;
             }
         },
         formatDate(dateString) {
@@ -365,9 +369,6 @@ export default {
     border-radius: 15px;
     margin-bottom: 2rem;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
 }
 
 .header-content h1 {
@@ -383,26 +384,6 @@ export default {
     color: rgba(255, 255, 255, 0.9);
     margin: 0;
     font-size: 1.1rem;
-}
-
-.btn-add-user {
-    background: white;
-    color: #667eea;
-    padding: 0.875rem 1.5rem;
-    border: none;
-    border-radius: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.btn-add-user:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 /* Filters Section */
@@ -661,22 +642,6 @@ export default {
     background: #e67e22;
 }
 
-.btn-lock {
-    background: #e74c3c;
-}
-
-.btn-lock:hover {
-    background: #c0392b;
-}
-
-.btn-unlock {
-    background: #27ae60;
-}
-
-.btn-unlock:hover {
-    background: #229954;
-}
-
 .btn-delete {
     background: #95a5a6;
 }
@@ -718,50 +683,7 @@ export default {
     color: #2c3e50;
 }
 
-/* Modal */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
-
-.modal-content {
-    background: white;
-    border-radius: 15px;
-    width: 90%;
-    max-width: 500px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-}
-
-.modal-header {
-    padding: 1.5rem;
-    border-bottom: 1px solid #e9ecef;
-}
-
-.modal-header h3 {
-    margin: 0;
-    color: #e74c3c;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.modal-body {
-    padding: 1.5rem;
-}
-
-.modal-body p {
-    margin: 0 0 1rem 0;
-    color: #495057;
-}
-
+/* User Details for Delete Modal */
 .user-details {
     background: #f8f9fa;
     padding: 1rem;
@@ -772,60 +694,19 @@ export default {
     gap: 0.5rem;
 }
 
-.warning {
-    color: #e74c3c;
-    font-weight: 600;
+.user-details strong {
+    color: #2c3e50;
 }
 
-.modal-footer {
-    padding: 1.5rem;
-    border-top: 1px solid #e9ecef;
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-}
-
-.btn-cancel,
-.btn-confirm-delete {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.btn-cancel {
-    background: #e9ecef;
-    color: #495057;
-}
-
-.btn-cancel:hover {
-    background: #dee2e6;
-}
-
-.btn-confirm-delete {
-    background: #e74c3c;
-    color: white;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.btn-confirm-delete:hover {
-    background: #c0392b;
+.user-details span {
+    color: #7f8c8d;
+    font-size: 0.9rem;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
     .manage-users {
         padding: 1rem;
-    }
-
-    .page-header {
-        flex-direction: column;
-        gap: 1rem;
-        align-items: flex-start;
     }
 
     .filter-group {
