@@ -81,8 +81,9 @@
         <!-- Edit Modal -->
         <NovelForm
             v-if="showEditModal"
+            :isModal="true"
             :novel="novel"
-            @submit="handleEditSubmit"
+            @submit-form="handleEditSubmit"
             @close="closeEditModal"
         />
     </div>

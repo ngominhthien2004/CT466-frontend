@@ -15,9 +15,6 @@
 
             <!-- Genre Header -->
             <div class="genre-header">
-                <div class="genre-icon">
-                    <i :class="genreIcon"></i>
-                </div>
                 <div class="genre-info">
                     <h1 class="genre-title">{{ genreName }}</h1>
                     <p class="genre-description">{{ genreDescription }}</p>
@@ -94,14 +91,14 @@
 </template>
 
 <script>
+import { NovelService, GenreService } from '@/services';
+
 export default {
     name: 'GenreDetailView',
     data() {
         return {
             genreSlug: this.$route.params.slug,
-            genreName: '',
-            genreIcon: 'fas fa-layer-group',
-            genreDescription: '',
+            genre: null,
             novels: [],
             sortBy: 'latest',
             statusFilter: 'all',
@@ -109,6 +106,12 @@ export default {
         };
     },
     computed: {
+        genreName() {
+            return this.genre?.name || 'Thể loại';
+        },
+        genreDescription() {
+            return this.genre?.description || `Khám phá những tác phẩm ${this.genreName} hấp dẫn nhất`;
+        },
         filteredNovels() {
             let result = [...this.novels];
             
@@ -120,17 +123,17 @@ export default {
             // Sort
             switch (this.sortBy) {
                 case 'popular':
-                    result.sort((a, b) => b.views - a.views);
+                    result.sort((a, b) => (b.views || 0) - (a.views || 0));
                     break;
                 case 'views':
-                    result.sort((a, b) => b.views - a.views);
+                    result.sort((a, b) => (b.views || 0) - (a.views || 0));
                     break;
                 case 'chapters':
-                    result.sort((a, b) => b.chapterCount - a.chapterCount);
+                    result.sort((a, b) => (b.chapterCount || 0) - (a.chapterCount || 0));
                     break;
                 case 'latest':
                 default:
-                    result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    result.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
             }
             
             return result;
@@ -147,52 +150,26 @@ export default {
             this.loading = true;
             
             try {
-                // TODO: Replace with actual API call
-                // const response = await GenreService.getBySlug(this.genreSlug);
+                // Get genre by slug
+                const genres = await GenreService.getAll();
+                this.genre = genres.find(g => g.slug === this.genreSlug);
                 
-                // Mock data
-                this.genreName = this.getGenreName(this.genreSlug);
-                this.genreIcon = this.getGenreIcon(this.genreSlug);
-                this.genreDescription = `Khám phá những tác phẩm ${this.genreName} hấp dẫn nhất`;
-                this.novels = this.getMockNovels();
+                if (!this.genre) {
+                    console.error('Genre not found');
+                    return;
+                }
+                
+                // Get all novels and filter by genre name
+                const allNovels = await NovelService.getAll();
+                this.novels = allNovels.filter(novel => 
+                    novel.genres && novel.genres.includes(this.genre.name)
+                );
+                
             } catch (error) {
                 console.error('Error loading genre data:', error);
             } finally {
                 this.loading = false;
             }
-        },
-        getGenreName(slug) {
-            const genreMap = {
-                'tien-hiep': 'Tiên Hiệp',
-                'huyen-huyen': 'Huyền Huyễn',
-                'khoa-huyen': 'Khoa Huyễn',
-                'do-thi': 'Đô Thị',
-                'ngon-tinh': 'Ngôn Tình'
-            };
-            return genreMap[slug] || 'Thể loại';
-        },
-        getGenreIcon(slug) {
-            const iconMap = {
-                'tien-hiep': 'fas fa-yin-yang',
-                'huyen-huyen': 'fas fa-hat-wizard',
-                'khoa-huyen': 'fas fa-rocket',
-                'do-thi': 'fas fa-city',
-                'ngon-tinh': 'fas fa-kiss-wink-heart'
-            };
-            return iconMap[slug] || 'fas fa-layer-group';
-        },
-        getMockNovels() {
-            // Mock data - replace with API call
-            return Array(12).fill(null).map((_, i) => ({
-                _id: `novel-${i}`,
-                title: `Truyện ${this.genreName} ${i + 1}`,
-                author: `Tác giả ${i + 1}`,
-                coverImage: '/assets/placeholder-cover.jpg',
-                status: i % 3 === 0 ? 'completed' : 'ongoing',
-                views: Math.floor(Math.random() * 100000),
-                chapterCount: Math.floor(Math.random() * 500) + 50,
-                createdAt: new Date(Date.now() - Math.random() * 10000000000)
-            }));
         }
     }
 };
@@ -247,9 +224,6 @@ export default {
 
 /* Genre Header */
 .genre-header {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
     padding: 2rem;
     background: white;
     border-radius: 16px;
@@ -257,24 +231,8 @@ export default {
     margin-bottom: 2rem;
 }
 
-.genre-icon {
-    width: 100px;
-    height: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #e8c5c1 0%, #c9a9a6 100%);
-    border-radius: 20px;
-    flex-shrink: 0;
-}
-
-.genre-icon i {
-    font-size: 3rem;
-    color: white;
-}
-
 .genre-info {
-    flex: 1;
+    width: 100%;
 }
 
 .genre-title {
@@ -452,12 +410,6 @@ export default {
 }
 
 @media (max-width: 768px) {
-    .genre-header {
-        flex-direction: column;
-        text-align: center;
-        gap: 1rem;
-    }
-    
     .filters {
         flex-direction: column;
         gap: 1rem;

@@ -1,8 +1,5 @@
 <template>
     <router-link :to="`/genres/${genre.slug}`" class="genre-card">
-        <div class="genre-icon">
-            <i :class="genre.icon"></i>
-        </div>
         <div class="genre-content">
             <h3 class="genre-name">{{ genre.name }}</h3>
             <p class="genre-count">{{ genre.novelCount || 0 }} truyện</p>
@@ -29,7 +26,7 @@ export default {
 .genre-card {
     display: flex;
     align-items: center;
-    gap: 1.25rem;
+    justify-content: space-between;
     padding: 1.5rem;
     background: white;
     border-radius: 12px;
@@ -42,22 +39,6 @@ export default {
 .genre-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 20px rgba(201, 169, 166, 0.2);
-}
-
-.genre-icon {
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #e8c5c1 0%, #c9a9a6 100%);
-    border-radius: 12px;
-    flex-shrink: 0;
-}
-
-.genre-icon i {
-    font-size: 1.75rem;
-    color: white;
 }
 
 .genre-content {
@@ -85,16 +66,6 @@ export default {
 @media (max-width: 768px) {
     .genre-card {
         padding: 1rem;
-        gap: 1rem;
-    }
-    
-    .genre-icon {
-        width: 50px;
-        height: 50px;
-    }
-    
-    .genre-icon i {
-        font-size: 1.5rem;
     }
     
     .genre-name {

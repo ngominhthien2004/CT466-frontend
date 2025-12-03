@@ -368,7 +368,7 @@ export default {
                 }
 
                 console.log('NovelForm emitting submit with data:', data);
-                this.$emit('create-novel', data);
+                this.$emit('submit-form', data);
             } catch (error) {
                 console.error('Form submission error:', error);
                 this.submitting = false;

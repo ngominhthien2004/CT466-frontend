@@ -32,7 +32,7 @@
         <NovelForm
             ref="novelForm"
             :isModal="false"
-            @create-novel="handleCreateNovel"
+            @submit-form="handleCreateNovel"
             @close="goBack"
         />
     </div>

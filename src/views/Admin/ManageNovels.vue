@@ -212,7 +212,7 @@
             :isModal="true"
             :novel="editTarget"
             @close="closeEditModal"
-            @submit="handleEditSubmit"
+            @submit-form="handleEditSubmit"
         />
     </div>
 </template>
