@@ -151,7 +151,7 @@
     object-fit: cover;
 }
 
-.favorite-btn {
+.novel-card .favorite-btn {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -167,24 +167,24 @@
     z-index: 10;
 }
 
-.favorite-btn:hover {
+.novel-card .favorite-btn:hover {
     background: white;
     transform: scale(1.1);
 }
 
-.favorite-btn i {
+.novel-card .favorite-btn i {
     font-size: 1.2rem;
     color: #e74c3c;
 }
 
-.novel-info {
+.novel-card .novel-info {
     padding: 1rem;
     flex: 1;
     display: flex;
     flex-direction: column;
 }
 
-.novel-title {
+.novel-card .novel-title {
     font-size: 1.1rem;
     font-weight: 600;
     color: #2c3e50;
@@ -196,7 +196,7 @@
     -webkit-box-orient: vertical;
 }
 
-.novel-description {
+.novel-card .novel-description {
     font-size: 0.9rem;
     color: #7f8c8d;
     margin: 0 0 1rem 0;
@@ -208,7 +208,7 @@
     -webkit-box-orient: vertical;
 }
 
-.novel-meta {
+.novel-card .novel-meta {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -216,11 +216,11 @@
     color: #95a5a6;
 }
 
-.novel-meta .author {
+.novel-card .novel-meta .author {
     font-weight: 500;
 }
 
-.novel-meta .views {
+.novel-card .novel-meta .views {
     display: flex;
     align-items: center;
     gap: 0.3rem;
@@ -503,11 +503,11 @@
         grid-template-columns: 1fr;
     }
 
-    .novel-title {
+    .novel-card .novel-title {
         font-size: 1rem;
     }
 
-    .novel-description {
+    .novel-card .novel-description {
         font-size: 0.85rem;
     }
 }
