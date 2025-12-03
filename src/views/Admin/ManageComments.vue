@@ -495,23 +495,7 @@ export default {
     font-size: 0.9rem;
 }
 
-/* Table Container */
-.table-container {
-    background: white;
-    border-radius: 15px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
-
-.table-header {
-    margin-bottom: 1.5rem;
-}
-
-.table-header h2 {
-    margin: 0;
-    color: #2c3e50;
-    font-size: 1.5rem;
-}
+/* Table styles moved to tables.css */
 
 /* Comments List */
 .comments-list {
@@ -622,37 +606,10 @@ export default {
     gap: 0.5rem;
 }
 
-/* Pagination */
-.pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 2rem;
-}
-
-.btn-page {
-    padding: 0.5rem 1rem;
-    background: white;
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
+/* Pagination styles moved to tables.css - custom hover color */
 .btn-page:hover:not(:disabled) {
     border-color: #f093fb;
     color: #f093fb;
-}
-
-.btn-page:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.page-info {
-    font-weight: 600;
-    color: #2c3e50;
 }
 
 /* Modal styles moved to modals.css */

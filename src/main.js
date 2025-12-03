@@ -3,6 +3,7 @@ import './assets/buttons.css'
 import './assets/utilities.css'
 import './assets/modals.css'
 import './assets/cards.css'
+import './assets/tables.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'

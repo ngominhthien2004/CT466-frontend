@@ -6,8 +6,8 @@
         </div>
         <LoadingSpinner v-if="genreStore.loading" />
         <div v-if="genreStore.error" class="error">{{ genreStore.error }}</div>
-        <table v-if="!genreStore.loading && genreStore.genres.length" class="genre-table">
-            <thead>
+        <table v-if="!genreStore.loading && genreStore.genres.length" class="data-table">
+            <thead class="header-light">
                 <tr>
                     <th>Tên</th>
                     <th>Mô tả</th>
@@ -206,23 +206,13 @@ export default {
     box-shadow: 0 4px 16px rgba(0,0,0,0.08);
     padding: 2rem;
 }
+/* Table styles moved to tables.css */
+
 .actions {
     margin-bottom: 1rem;
     text-align: right;
 }
-.genre-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 1rem;
-}
-.genre-table th, .genre-table td {
-    border: 1px solid #e9ecef;
-    padding: 0.75rem;
-    text-align: left;
-}
-.genre-table th {
-    background: #f8f9fa;
-}
+
 /* Utility styles moved to utilities.css */
 .btn {
     padding: 0.5rem 1.2rem;

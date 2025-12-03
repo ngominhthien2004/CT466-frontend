@@ -526,118 +526,9 @@ export default {
     font-size: 0.9rem;
 }
 
-/* Table Container */
-.table-container {
-    background: white;
-    border-radius: 15px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
+/* Table styles moved to tables.css */
 
-.table-header {
-    margin-bottom: 1.5rem;
-}
-
-.table-header h2 {
-    margin: 0;
-    color: #2c3e50;
-    font-size: 1.5rem;
-}
-
-/* Table */
-.data-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.data-table thead {
-    background: #f8f9fa;
-}
-
-.data-table th {
-    padding: 1rem;
-    text-align: left;
-    font-weight: 600;
-    color: #2c3e50;
-    border-bottom: 2px solid #e9ecef;
-}
-
-.data-table td {
-    padding: 1rem;
-    border-bottom: 1px solid #f1f3f5;
-    color: #495057;
-}
-
-.data-table tbody tr {
-    transition: background 0.2s;
-}
-
-.data-table tbody tr:hover {
-    background: #f8f9fa;
-}
-
-.user-avatar {
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #e9ecef;
-}
-
-.user-info {
-    display: flex;
-    flex-direction: column;
-}
-
-.user-info strong {
-    color: #2c3e50;
-    margin-bottom: 0.25rem;
-}
-
-.full-name {
-    font-size: 0.85rem;
-    color: #7f8c8d;
-}
-
-.badge {
-    display: inline-block;
-    padding: 0.35rem 0.85rem;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 600;
-}
-
-.badge-admin {
-    background: #fee;
-    color: #c33;
-}
-
-.badge-user {
-    background: #e3f2fd;
-    color: #1976d2;
-}
-
-.status {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 500;
-}
-
-.status-active {
-    color: #27ae60;
-}
-
-.status-inactive {
-    color: #e74c3c;
-}
-
-/* Action Buttons */
-.action-buttons {
-    display: flex;
-    gap: 0.5rem;
-}
-
+/* Button styles */
 .btn-action {
     padding: 0.5rem 0.75rem;
     border: none;
@@ -645,41 +536,6 @@ export default {
     cursor: pointer;
     transition: all 0.3s;
     color: white;
-}
-
-/* Button styles moved to buttons.css */
-
-/* Pagination */
-.pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 2rem;
-}
-
-.btn-page {
-    padding: 0.5rem 1rem;
-    background: white;
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.btn-page:hover:not(:disabled) {
-    border-color: #667eea;
-    color: #667eea;
-}
-
-.btn-page:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.page-info {
-    font-weight: 600;
-    color: #2c3e50;
 }
 
 /* User Details for Delete Modal */
@@ -707,27 +563,17 @@ export default {
     .manage-users {
         padding: 1rem;
     }
-
-    .filter-group {
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .filter-row {
         flex-direction: column;
     }
-
+    
     .search-box {
         min-width: 100%;
-    }
-
-    .data-table {
-        font-size: 0.85rem;
-    }
-
-    .data-table th,
-    .data-table td {
-        padding: 0.75rem 0.5rem;
-    }
-
-    .user-avatar {
-        width: 35px;
-        height: 35px;
     }
 }
 </style>

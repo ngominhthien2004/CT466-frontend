@@ -495,56 +495,9 @@ export default {
     font-size: 0.9rem;
 }
 
-/* Table Container */
-.table-container {
-    background: white;
-    border-radius: 15px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
+/* Table styles moved to tables.css */
 
-.table-header {
-    margin-bottom: 1.5rem;
-}
-
-.table-header h2 {
-    margin: 0;
-    color: #2c3e50;
-    font-size: 1.5rem;
-}
-
-/* Table */
-.data-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.data-table thead {
-    background: #f8f9fa;
-}
-
-.data-table th {
-    padding: 1rem;
-    text-align: left;
-    font-weight: 600;
-    color: #2c3e50;
-    border-bottom: 2px solid #e9ecef;
-}
-
-.data-table td {
-    padding: 1rem;
-    border-bottom: 1px solid #f1f3f5;
-    color: #495057;
-}
-
-.data-table tbody tr {
-    transition: background 0.2s;
-}
-
-.data-table tbody tr:hover {
-    background: #f8f9fa;
-}
-
+/* Custom styles for chapters table */
 .novel-info {
     display: flex;
     flex-direction: column;
@@ -560,14 +513,6 @@ export default {
     color: #2c3e50;
 }
 
-.badge {
-    display: inline-block;
-    padding: 0.35rem 0.75rem;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 600;
-}
-
 .badge-primary {
     background: #e3f2fd;
     color: #1976d2;
@@ -580,59 +525,11 @@ export default {
     color: #7f8c8d;
 }
 
-/* Action Buttons */
-.action-buttons {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.btn-action {
-    padding: 0.5rem 0.75rem;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.3s;
-    color: white;
-}
-
 .btn-view {
     background: #3498db;
 }
 
 /* Button styles moved to buttons.css */
-
-/* Pagination */
-.pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 2rem;
-}
-
-.btn-page {
-    padding: 0.5rem 1rem;
-    background: white;
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.btn-page:hover:not(:disabled) {
-    border-color: #c9a9a6;
-    color: #c9a9a6;
-}
-
-.btn-page:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.page-info {
-    font-weight: 600;
-    color: #2c3e50;
-}
 
 /* Modal styles moved to modals.css */
 

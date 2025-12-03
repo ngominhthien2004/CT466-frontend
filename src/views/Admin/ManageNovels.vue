@@ -221,7 +221,7 @@ export default {
         };
     },
     computed: {
-        // 👉 Lấy data từ store
+        //  Lấy data từ store
         novels() {
             return this.novelStore.allNovels;
         },
@@ -253,13 +253,13 @@ export default {
         }
     },
     watch: {
-        // 👉 Tự động apply filters khi novels trong store thay đổi
+        //  Tự động apply filters khi novels trong store thay đổi
         novels() {
             this.applyFilters();
         }
     },
     async mounted() {
-        // 👉 Fetch novels vào store
+        //  Fetch novels vào store
         await this.novelStore.fetchNovels();
         this.applyFilters();
     },
@@ -396,201 +396,10 @@ export default {
     align-items: center;
 }
 
-/* Empty State */
-.table-container {
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.data-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.data-table thead {
-    background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
-    color: white;
-}
-
-.data-table th {
-    padding: 1rem;
-    text-align: left;
-    font-weight: 600;
-    font-size: 0.95rem;
-}
-
-.data-table tbody tr {
-    border-bottom: 1px solid #ecf0f1;
-    transition: background 0.2s;
-}
-
-.data-table tbody tr:hover {
-    background: #f8f9fa;
-}
-
-.data-table td {
-    padding: 1rem;
-    vertical-align: middle;
-}
-
-.table-cover {
-    width: 50px;
-    height: 70px;
-    object-fit: cover;
-    border-radius: 6px;
-}
-
-.novel-title {
-    font-weight: 600;
-    color: #2c3e50;
-    max-width: 300px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.genres-cell {
-    display: flex;
-    gap: 0.25rem;
-    flex-wrap: wrap;
-}
-
-.genre-badge {
-    background: #ecf0f1;
-    color: #7f8c8d;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.8rem;
-}
-
-.more-badge {
-    background: #c9a9a6;
-    color: white;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.8rem;
-}
-
-.status-badge {
-    padding: 0.4rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    display: inline-block;
-}
-
-.status-badge.ongoing {
-    background: #d4edda;
-    color: #155724;
-}
-
-.status-badge.completed {
-    background: #cce5ff;
-    color: #004085;
-}
-
-.status-badge.paused {
-    background: #fff3cd;
-    color: #856404;
-}
-
-.status-badge.dropped {
-    background: #f8d7da;
-    color: #721c24;
-}
-
-.action-buttons {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.btn-action {
-    width: 35px;
-    height: 35px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s;
-    text-decoration: none;
-}
-
-.btn-view {
-    background: #3498db;
-    color: white;
-}
-
-.btn-view:hover {
-    background: #2980b9;
-    transform: scale(1.1);
-}
-
-/* Pagination */
-.pagination {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    justify-content: center;
-    padding: 1rem;
-    background: white;
-    border-radius: 12px;
-}
-
-.pagination-btn {
-    width: 40px;
-    height: 40px;
-    border: 2px solid #dfe6e9;
-    background: white;
-    color: #2c3e50;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-}
-
-.pagination-btn:hover:not(:disabled) {
-    border-color: #c9a9a6;
-    background: #c9a9a6;
-    color: white;
-}
-
-.pagination-btn.active {
-    background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
-    color: white;
-    border-color: #c9a9a6;
-}
-
-.pagination-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.pagination-info {
-    margin-left: 1rem;
-    color: #7f8c8d;
-    font-size: 0.9rem;
-}
+/* Table styles moved to tables.css */
 
 /* Responsive */
 @media (max-width: 1200px) {
-    .data-table {
-        font-size: 0.9rem;
-    }
-    
-    .data-table th,
-    .data-table td {
-        padding: 0.75rem 0.5rem;
-    }
-}
-
-@media (max-width: 768px) {
     .page-actions {
         flex-direction: column;
         align-items: stretch;
