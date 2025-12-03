@@ -64,26 +64,12 @@
             />
 
             <div v-else class="novels-grid">
-                <div v-for="novel in filteredNovels" :key="novel._id" class="novel-card">
-                    <router-link :to="`/novels/${novel._id}`" class="novel-link">
-                        <img :src="novel.coverImage" :alt="novel.title" class="novel-cover" />
-                        <div class="novel-overlay">
-                            <span class="novel-status" :class="novel.status">
-                                {{ novel.status === 'ongoing' ? 'Đang ra' : 'Hoàn thành' }}
-                            </span>
-                        </div>
-                    </router-link>
-                    <div class="novel-info">
-                        <router-link :to="`/novels/${novel._id}`" class="novel-title">
-                            {{ novel.title }}
-                        </router-link>
-                        <p class="novel-author">{{ novel.author }}</p>
-                        <div class="novel-stats">
-                            <span><i class="fas fa-eye"></i> {{ novel.views }}</span>
-                            <span><i class="fas fa-book"></i> {{ novel.chapterCount }} chương</span>
-                        </div>
-                    </div>
-                </div>
+                <NovelCard
+                    v-for="novel in filteredNovels"
+                    :key="novel._id"
+                    :novel="novel"
+                    @toggle-favorite="handleToggleFavorite"
+                />
             </div>
         </div>
     </div>
@@ -93,10 +79,11 @@
 import { NovelService, GenreService } from '@/services';
 import LoadingSpinner from '@/components/Common/LoadingSpinner.vue';
 import EmptyState from '@/components/Common/EmptyState.vue';
+import NovelCard from '@/components/Novel/NovelCard.vue';
 
 export default {
     name: 'GenreDetailView',
-    components: { LoadingSpinner, EmptyState },
+    components: { LoadingSpinner, EmptyState, NovelCard },
     data() {
         return {
             genreSlug: this.$route.params.slug,
@@ -171,6 +158,13 @@ export default {
                 console.error('Error loading genre data:', error);
             } finally {
                 this.loading = false;
+            }
+        },
+        handleToggleFavorite(novelId, isFavorite) {
+            // Update novel in the list
+            const novel = this.novels.find(n => n._id === novelId);
+            if (novel) {
+                novel.favorite = isFavorite;
             }
         }
     }
@@ -308,91 +302,6 @@ export default {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 1.5rem;
-}
-
-.novel-card {
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s;
-}
-
-.novel-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(201, 169, 166, 0.2);
-}
-
-.novel-link {
-    position: relative;
-    display: block;
-    overflow: hidden;
-}
-
-.novel-cover {
-    width: 100%;
-    height: 260px;
-    object-fit: cover;
-}
-
-.novel-overlay {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-}
-
-.novel-status {
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    background: rgba(255, 255, 255, 0.95);
-    color: #2c3e50;
-}
-
-.novel-status.completed {
-    background: #27ae60;
-    color: white;
-}
-
-.novel-info {
-    padding: 1rem;
-}
-
-.novel-title {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 700;
-    color: #2c3e50;
-    text-decoration: none;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-}
-
-.novel-title:hover {
-    color: #c9a9a6;
-}
-
-.novel-author {
-    margin: 0 0 0.5rem 0;
-    font-size: 0.85rem;
-    color: #7f8c8d;
-}
-
-.novel-stats {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.8rem;
-    color: #95a5a6;
-}
-
-.novel-stats span {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
 }
 
 @media (max-width: 768px) {

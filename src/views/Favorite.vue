@@ -118,55 +118,12 @@
 
             <!-- Grid View -->
             <div v-if="viewMode === 'grid'" class="novels-grid">
-                <div v-for="novel in paginatedNovels" :key="novel._id" class="novel-card">
-                    <div class="novel-cover-wrapper">
-                        <img
-                            :src="novel.coverImage || '/assets/default-book.png'"
-                            :alt="novel.title"
-                            class="novel-cover"
-                        />
-                        <div class="cover-overlay">
-                            <router-link :to="`/novels/${novel._id}`" class="btn-read">
-                                <i class="fas fa-book-open"></i>
-                                Đọc ngay
-                            </router-link>
-                        </div>
-                        <button @click="toggleFavorite(novel)" class="btn-favorite active" title="Bỏ yêu thích">
-                            <i class="fas fa-heart"></i>
-                        </button>
-                        <span class="status-badge" :class="novel.status">
-                            {{ getStatusText(novel.status) }}
-                        </span>
-                    </div>
-                    <div class="novel-info">
-                        <router-link :to="`/novels/${novel._id}`" class="novel-title">
-                            {{ novel.title }}
-                        </router-link>
-                        <p class="novel-author">
-                            <i class="fas fa-user"></i>
-                            {{ novel.author || 'Chưa rõ' }}
-                        </p>
-                        <div class="novel-genres">
-                            <span v-for="genre in novel.genres?.slice(0, 3)" :key="genre" class="genre-tag">
-                                {{ genre }}
-                            </span>
-                        </div>
-                        <div class="novel-stats">
-                            <span title="Lượt xem">
-                                <i class="fas fa-eye"></i>
-                                {{ formatNumber(novel.views || 0) }}
-                            </span>
-                            <span title="Lượt thích">
-                                <i class="fas fa-heart"></i>
-                                {{ formatNumber(novel.likes || 0) }}
-                            </span>
-                            <span title="Số chương">
-                                <i class="fas fa-book"></i>
-                                {{ novel.chapterCount || 0 }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
+                <NovelCard
+                    v-for="novel in paginatedNovels"
+                    :key="novel._id"
+                    :novel="novel"
+                    @toggle-favorite="handleToggleFavorite"
+                />
             </div>
 
             <!-- List View -->
@@ -266,9 +223,13 @@
 <script>
 import { NovelService } from '@/services';
 import { useAuthStore } from '@/stores';
+import NovelCard from '@/components/Novel/NovelCard.vue';
 
 export default {
     name: 'FavoritePage',
+    components: {
+        NovelCard
+    },
     data() {
         return {
             favoriteNovels: [],
@@ -378,22 +339,28 @@ export default {
             this.sortBy = 'addedDate';
             this.applyFilters();
         },
-        async toggleFavorite(novel) {
-            // Xóa khỏi danh sách yêu thích
+        async toggleFavorite(novelId) {
+            // Remove from favorites
+            const novel = this.favoriteNovels.find(n => n._id === novelId);
+            if (!novel) return;
+            
             const confirmed = confirm(`Bạn có chắc muốn bỏ yêu thích "${novel.title}"?`);
             if (!confirmed) return;
 
             try {
-                // TODO: Gọi API để xóa khỏi favorites
-                // await NovelService.removeFavorite(novel._id);
+                // Call API to toggle favorite
+                await NovelService.toggleFavorite(novelId, this.authStore.user.id);
                 
-                // Tạm thời xóa khỏi danh sách local
-                this.favoriteNovels = this.favoriteNovels.filter(n => n._id !== novel._id);
+                // Remove from local list
+                this.favoriteNovels = this.favoriteNovels.filter(n => n._id !== novelId);
                 this.applyFilters();
             } catch (error) {
                 console.error('Error removing from favorites:', error);
                 alert('Không thể bỏ yêu thích. Vui lòng thử lại!');
             }
+        },
+        handleToggleFavorite(novelId) {
+            this.toggleFavorite(novelId);
         },
         goToPage(page) {
             if (page >= 1 && page <= this.totalPages) {
@@ -702,183 +669,6 @@ export default {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 2rem;
-}
-
-.novel-card {
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s;
-}
-
-.novel-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-}
-
-.novel-cover-wrapper {
-    position: relative;
-    overflow: hidden;
-}
-
-.novel-cover {
-    width: 100%;
-    height: 280px;
-    object-fit: cover;
-    display: block;
-}
-
-.cover-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 50%);
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    padding: 1.5rem;
-    opacity: 0;
-    transition: opacity 0.3s;
-}
-
-.novel-card:hover .cover-overlay {
-    opacity: 1;
-}
-
-.btn-read {
-    background: white;
-    color: #c9a9a6;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s;
-}
-
-.btn-read:hover {
-    background: #c9a9a6;
-    color: white;
-    transform: scale(1.05);
-}
-
-.btn-favorite {
-    position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(255, 255, 255, 0.9);
-    color: #95a5a6;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-    transition: all 0.3s;
-    z-index: 10;
-}
-
-.btn-favorite.active {
-    background: #e74c3c;
-    color: white;
-}
-
-.btn-favorite:hover {
-    transform: scale(1.15);
-}
-
-.status-badge {
-    position: absolute;
-    bottom: 0.75rem;
-    left: 0.75rem;
-    padding: 0.4rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    z-index: 10;
-}
-
-.status-badge.ongoing {
-    background: #d4edda;
-    color: #155724;
-}
-
-.status-badge.completed {
-    background: #cce5ff;
-    color: #004085;
-}
-
-.status-badge.paused {
-    background: #fff3cd;
-    color: #856404;
-}
-
-.novel-info {
-    padding: 1rem;
-}
-
-.novel-title {
-    display: block;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #2c3e50;
-    margin-bottom: 0.5rem;
-    text-decoration: none;
-    line-height: 1.4;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.novel-title:hover {
-    color: #c9a9a6;
-}
-
-.novel-author {
-    font-size: 0.85rem;
-    color: #7f8c8d;
-    margin: 0 0 0.75rem 0;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.novel-genres {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem;
-    margin-bottom: 0.75rem;
-}
-
-.genre-tag {
-    background: #ecf0f1;
-    color: #7f8c8d;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.75rem;
-}
-
-.novel-stats {
-    display: flex;
-    gap: 1rem;
-    font-size: 0.8rem;
-    color: #95a5a6;
-}
-
-.novel-stats span {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
 }
 
 /* List View */
