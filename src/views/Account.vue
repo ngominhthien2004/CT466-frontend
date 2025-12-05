@@ -83,15 +83,6 @@
                                     <span>{{ formatDate(authStore.user?.createdAt) }}</span>
                                 </div>
                             </div>
-                            <div class="detail-item">
-                                <i class="fas fa-info-circle"></i>
-                                <div>
-                                    <label>Trạng thái</label>
-                                    <span :class="['status-badge', authStore.user?.status]">
-                                        {{ getStatusText(authStore.user?.status) }}
-                                    </span>
-                                </div>
-                            </div>
                         </div>
 
                         <div class="profile-actions">
@@ -227,25 +218,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Activity Tab -->
-                <div v-if="activeTab === 'activity'" class="activity-section">
-                    <h3>
-                        <i class="fas fa-chart-line"></i>
-                        Hoạt động gần đây
-                    </h3>
-                    <div class="activity-timeline">
-                        <div v-for="activity in recentActivities" :key="activity.id" class="activity-item">
-                            <div class="activity-icon" :class="activity.type">
-                                <i :class="getActivityIcon(activity.type)"></i>
-                            </div>
-                            <div class="activity-content">
-                                <p class="activity-text">{{ activity.text }}</p>
-                                <span class="activity-time">{{ formatRelativeTime(activity.timestamp) }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -347,6 +319,58 @@
                 </form>
             </div>
         </div>
+
+        <!-- Upload Avatar Modal -->
+        <div v-if="showAvatarUpload" class="form-overlay" @click="closeAvatarUpload">
+            <div class="form-container" @click.stop>
+                <div class="form-header">
+                    <h3>
+                        <i class="fas fa-camera"></i>
+                        Thay đổi ảnh đại diện
+                    </h3>
+                    <button @click="closeAvatarUpload" class="btn-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="form-body">
+                    <div class="avatar-preview-section">
+                        <img
+                            :src="avatarPreview || authStore.userAvatar"
+                            alt="Preview"
+                            class="avatar-preview"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label class="file-input-label">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Chọn ảnh từ máy tính</span>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                @change="handleAvatarSelect"
+                                class="file-input"
+                            />
+                        </label>
+                        <p class="file-hint">Định dạng: JPG, PNG, GIF. Kích thước tối đa: 5MB</p>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" @click="closeAvatarUpload" class="btn-cancel">
+                            <i class="fas fa-times"></i>
+                            Hủy
+                        </button>
+                        <button
+                            type="button"
+                            @click="uploadAvatar"
+                            class="btn-submit"
+                            :disabled="!selectedAvatar || submitting"
+                        >
+                            <i :class="submitting ? 'fas fa-spinner fa-spin' : 'fas fa-upload'"></i>
+                            {{ submitting ? 'Đang tải...' : 'Tải lên' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -363,8 +387,7 @@ export default {
             activeTab: 'profile',
             tabs: [
                 { id: 'profile', label: 'Thông tin', icon: 'fas fa-user' },
-                { id: 'novels', label: 'Tiểu thuyết', icon: 'fas fa-book' },
-                { id: 'activity', label: 'Hoạt động', icon: 'fas fa-chart-line' }
+                { id: 'novels', label: 'Tiểu thuyết', icon: 'fas fa-book' }
             ],
             stats: {
                 favorites: 0,
@@ -376,7 +399,6 @@ export default {
             filteredMyNovels: [],
             novelSearch: '',
             novelStatusFilter: '',
-            recentActivities: [],
             showEditProfile: false,
             showChangePassword: false,
             showAvatarUpload: false,
@@ -389,7 +411,10 @@ export default {
                 currentPassword: '',
                 newPassword: '',
                 confirmPassword: ''
-            }
+            },
+            selectedAvatar: null,
+            avatarPreview: null,
+            uploadingAvatar: false
         };
     },
     computed: {
@@ -408,8 +433,7 @@ export default {
             try {
                 await Promise.all([
                     this.loadStats(),
-                    this.loadMyNovels(),
-                    this.loadRecentActivities()
+                    this.loadMyNovels()
                 ]);
             } catch (error) {
                 console.error('Error loading account data:', error);
@@ -449,29 +473,6 @@ export default {
                 console.error('Error loading my novels:', error);
                 this.myNovels = [];
             }
-        },
-        async loadRecentActivities() {
-            // Mock data - would need API endpoint
-            this.recentActivities = [
-                {
-                    id: 1,
-                    type: 'novel',
-                    text: 'Bạn đã thêm tiểu thuyết mới',
-                    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000)
-                },
-                {
-                    id: 2,
-                    type: 'favorite',
-                    text: 'Bạn đã yêu thích một tiểu thuyết',
-                    timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000)
-                },
-                {
-                    id: 3,
-                    type: 'comment',
-                    text: 'Bạn đã bình luận',
-                    timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000)
-                }
-            ];
         },
         filterNovels() {
             let result = [...this.myNovels];
@@ -563,6 +564,59 @@ export default {
         handleAvatarError(event) {
             event.target.src = '/assets/default-avatar.svg';
         },
+        handleAvatarSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                alert('Vui lòng chọn file ảnh!');
+                return;
+            }
+
+            // Validate file size (5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Kích thước ảnh không được vượt quá 5MB!');
+                return;
+            }
+
+            this.selectedAvatar = file;
+            
+            // Create preview
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.avatarPreview = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        },
+        closeAvatarUpload() {
+            this.showAvatarUpload = false;
+            this.selectedAvatar = null;
+            this.avatarPreview = null;
+        },
+        async uploadAvatar() {
+            if (!this.selectedAvatar) return;
+
+            this.submitting = true;
+            try {
+                const userId = this.authStore.user?._id;
+                const formData = new FormData();
+                formData.append('avatar', this.selectedAvatar);
+
+                const response = await UserService.uploadAvatar(userId, formData);
+                
+                // Update auth store with new avatar
+                this.authStore.updateUser({ avatar: response.avatar });
+                
+                alert('Cập nhật ảnh đại diện thành công!');
+                this.closeAvatarUpload();
+            } catch (error) {
+                console.error('Error uploading avatar:', error);
+                alert(error.response?.data?.message || 'Không thể tải lên ảnh đại diện!');
+            } finally {
+                this.submitting = false;
+            }
+        },
         formatDate(date) {
             if (!date) return 'Không rõ';
             return new Date(date).toLocaleDateString('vi-VN');
@@ -587,20 +641,9 @@ export default {
             const statusMap = {
                 'ongoing': 'Đang ra',
                 'completed': 'Hoàn thành',
-                'paused': 'Tạm dừng',
-                'active': 'Hoạt động',
-                'inactive': 'Không hoạt động'
+                'paused': 'Tạm dừng'
             };
             return statusMap[status] || status;
-        },
-        getActivityIcon(type) {
-            const iconMap = {
-                'novel': 'fas fa-book',
-                'favorite': 'fas fa-heart',
-                'comment': 'fas fa-comment',
-                'reading': 'fas fa-book-open'
-            };
-            return iconMap[type] || 'fas fa-circle';
         }
     }
 };
@@ -1186,57 +1229,58 @@ export default {
     background: #fee;
 }
 
-/* Activity Section */
-.activity-timeline {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+/* Avatar Upload Modal */
+.avatar-preview-section {
+    text-align: center;
+    padding: 2rem;
 }
 
-.activity-item {
-    display: flex;
-    gap: 1rem;
-    padding: 1rem;
-    background: #f8f9fa;
-    border-radius: 8px;
-}
-
-.activity-icon {
-    width: 40px;
-    height: 40px;
+.avatar-preview {
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    flex-shrink: 0;
+    object-fit: cover;
+    border: 4px solid #c9a9a6;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.activity-icon.novel {
-    background: #3498db;
+.file-input-label {
+    display: block;
+    padding: 2rem;
+    border: 2px dashed #dfe6e9;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: #f8f9fa;
 }
 
-.activity-icon.favorite {
-    background: #e74c3c;
+.file-input-label:hover {
+    border-color: #c9a9a6;
+    background: white;
 }
 
-.activity-icon.comment {
-    background: #2ecc71;
+.file-input-label i {
+    font-size: 2rem;
+    color: #c9a9a6;
+    display: block;
+    margin-bottom: 0.5rem;
 }
 
-.activity-content {
-    flex: 1;
-}
-
-.activity-text {
-    margin: 0 0 0.25rem 0;
+.file-input-label span {
     color: #2c3e50;
-    font-weight: 500;
+    font-weight: 600;
 }
 
-.activity-time {
+.file-input {
+    display: none;
+}
+
+.file-hint {
+    text-align: center;
     font-size: 0.85rem;
     color: #7f8c8d;
+    margin-top: 0.5rem;
 }
 
 /* Responsive */

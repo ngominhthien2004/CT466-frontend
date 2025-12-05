@@ -45,6 +45,15 @@ class UserService {
         return (await this.api.put(`/change-password/${id}`, data)).data;
     }
 
+    // Upload avatar
+    async uploadAvatar(id, formData) {
+        return (await this.api.put(`/${id}/avatar`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })).data;
+    }
+
     // Delete user
     async delete(id) {
         return (await this.api.delete(`/${id}`)).data;
