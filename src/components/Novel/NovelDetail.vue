@@ -22,6 +22,12 @@
                         <span class="value">{{ novel.author || 'Đang cập nhật' }}</span>
                     </div>
                     
+                    <div class="meta-item" v-if="creatorUsername">
+                        <i class="fas fa-user-edit"></i>
+                        <span class="label">Đăng bởi:</span>
+                        <span class="value">{{ creatorUsername }}</span>
+                    </div>
+                    
                     <div class="meta-item">
                         <i class="fas fa-tags"></i>
                         <span class="label">Thể loại:</span>
@@ -98,6 +104,7 @@
 import NovelForm from '@/components/Novel/NovelForm.vue';
 import NovelService from '@/services/novel.service';
 import { useAuthStore } from '@/stores/auth';
+import { UserService } from '@/services';
 
 export default {
     name: 'NovelDetail',
@@ -118,7 +125,8 @@ export default {
         return {
             lastReadChapter: null,
             showEditModal: false,
-            isUpdating: false
+            isUpdating: false,
+            creatorUsername: null
         };
     },
     computed: {
@@ -131,11 +139,23 @@ export default {
     },
     mounted() {
         this.loadLastReadChapter();
+        this.loadCreatorUsername();
     },
     methods: {
         toggleFavorite() {
             // Emit to parent - parent will handle the API call
             this.$emit('toggle-favorite', this.novel._id);
+        },
+        async loadCreatorUsername() {
+            if (this.novel.createdBy) {
+                try {
+                    const user = await UserService.get(this.novel.createdBy);
+                    this.creatorUsername = user.username || 'Không rõ';
+                } catch (error) {
+                    console.error('Error fetching creator:', error);
+                    this.creatorUsername = null;
+                }
+            }
         },
         getStatusText(status) {
             const statusMap = {

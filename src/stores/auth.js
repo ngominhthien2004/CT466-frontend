@@ -51,8 +51,6 @@ export const useAuthStore = defineStore('auth', {
             this.user = null
             this.isLoggedIn = false
             AuthService.logout()
-            // Redirect to home after logout
-            window.location.href = '/'
         },
         
         updateUser(userData) {

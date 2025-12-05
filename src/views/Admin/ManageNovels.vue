@@ -50,6 +50,7 @@
                         <th style="width: 80px;">Ảnh bìa</th>
                         <th>Tên tiểu thuyết</th>
                         <th>Tác giả</th>
+                        <th>Đăng bởi</th>
                         <th>Thể loại</th>
                         <th style="width: 120px;">Trạng thái</th>
                         <th style="width: 100px;">Lượt xem</th>
@@ -73,6 +74,7 @@
                             </div>
                         </td>
                         <td>{{ novel.author || 'N/A' }}</td>
+                        <td>{{ getCreatorUsername(novel.createdBy) }}</td>
                         <td>
                             <div class="genres-cell">
                                 <span
@@ -185,6 +187,7 @@
 
 <script>
 import { useNovelStore } from '@/stores';
+import { UserService } from '@/services';
 import PageHeader from '@/components/Admin/PageHeader.vue';
 import StatsCards from '@/components/Admin/StatsCards.vue';
 import NovelForm from '@/components/Novel/NovelForm.vue';
@@ -211,6 +214,7 @@ export default {
             showDeleteModal: false,
             deleteTarget: null,
             deleting: false,
+            creatorUsernames: {}, // Map of userId -> username
             statusOptions: {
                 placeholder: 'Tất cả trạng thái',
                 options: [
@@ -284,9 +288,30 @@ export default {
         //  Fetch novels vào store
         await this.novelStore.fetchNovels();
         this.applyFilters();
+        await this.loadCreatorUsernames();
     },
     methods: {
-        // ❌ Không cần loadNovels() nữa - dùng store
+        async loadCreatorUsernames() {
+            // Load all unique creator usernames
+            const uniqueCreatorIds = [...new Set(this.novels.map(n => n.createdBy).filter(Boolean))];
+            
+            for (const userId of uniqueCreatorIds) {
+                if (!this.creatorUsernames[userId]) {
+                    try {
+                        const user = await UserService.get(userId);
+                        // Vue 3: direct assignment works with reactivity
+                        this.creatorUsernames[userId] = user.username || 'Không rõ';
+                    } catch (error) {
+                        console.error(`Error fetching user ${userId}:`, error);
+                        this.creatorUsernames[userId] = 'N/A';
+                    }
+                }
+            }
+        },
+        getCreatorUsername(userId) {
+            if (!userId) return 'N/A';
+            return this.creatorUsernames[userId] || 'N/A';
+        },
         handleSearch() {
             this.currentPage = 1;
             this.applyFilters();

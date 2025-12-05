@@ -220,11 +220,16 @@ export default {
             this.genreStore.fetchGenres().catch(() => {});
         }
         if (this.novel) {
+            // Extract genre names if genres are objects
+            const genreNames = (this.novel.genres || []).map(g => 
+                typeof g === 'string' ? g : g.name
+            );
+            
             this.formData = {
                 title: this.novel.title || '',
                 author: this.novel.author || '',
                 description: this.novel.description || '',
-                genres: this.novel.genres || [],
+                genres: genreNames,
                 coverImage: this.novel.coverImage || '',
                 status: this.novel.status || 'ongoing',
                 views: this.novel.views || 0,

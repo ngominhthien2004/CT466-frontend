@@ -85,25 +85,7 @@
 
         <!-- Novels Grid -->
         <div v-else-if="filteredNovels.length > 0" class="novels-container">
-            <div class="view-toggle">
-                <button 
-                    @click="viewMode = 'grid'" 
-                    :class="['toggle-btn', { active: viewMode === 'grid' }]"
-                    title="Xem dạng lưới"
-                >
-                    <i class="fas fa-th"></i>
-                </button>
-                <button 
-                    @click="viewMode = 'list'" 
-                    :class="['toggle-btn', { active: viewMode === 'list' }]"
-                    title="Xem dạng danh sách"
-                >
-                    <i class="fas fa-list"></i>
-                </button>
-            </div>
-
-            <!-- Grid View -->
-            <div v-if="viewMode === 'grid'" class="novels-grid">
+            <div class="novels-grid">
                 <NovelCard
                     v-for="novel in paginatedNovels"
                     :key="novel._id"
@@ -111,54 +93,6 @@
                     :is-favorite="isNovelFavorited(novel)"
                     @toggle-favorite="handleToggleFavorite"
                 />
-            </div>
-
-            <!-- List View -->
-            <div v-else class="novels-list">
-                <div v-for="novel in paginatedNovels" :key="novel._id" class="novel-list-item">
-                    <img
-                        :src="novel.coverImage || '/assets/default-book.png'"
-                        :alt="novel.title"
-                        class="list-cover"
-                    />
-                    <div class="list-info">
-                        <div class="list-header">
-                            <router-link :to="`/novels/${novel._id}`" class="list-title">
-                                {{ novel.title }}
-                            </router-link>
-                            <span class="status-badge" :class="novel.status">
-                                {{ getStatusText(novel.status) }}
-                            </span>
-                        </div>
-                        <p class="list-author">
-                            <i class="fas fa-user"></i>
-                            {{ novel.author || 'Chưa rõ' }}
-                        </p>
-                        <div class="list-genres">
-                            <span v-for="genre in novel.genres?.slice(0, 5)" :key="genre" class="genre-tag">
-                                {{ genre }}
-                            </span>
-                        </div>
-                        <p class="list-description">
-                            {{ truncateText(novel.description, 150) }}
-                        </p>
-                        <div class="list-stats">
-                            <span><i class="fas fa-eye"></i> {{ formatNumber(novel.views || 0) }} lượt xem</span>
-                            <span><i class="fas fa-heart"></i> {{ formatNumber(novel.likes || 0) }} lượt thích</span>
-                            <span><i class="fas fa-book"></i> {{ novel.chapterCount || 0 }} chương</span>
-                        </div>
-                    </div>
-                    <div class="list-actions">
-                        <router-link :to="`/novels/${novel._id}`" class="btn-action btn-read">
-                            <i class="fas fa-book-open"></i>
-                            Đọc tiểu thuyết
-                        </router-link>
-                        <button @click="toggleFavorite(novel)" class="btn-action btn-unfavorite">
-                            <i class="fas fa-heart-broken"></i>
-                            Bỏ yêu thích
-                        </button>
-                    </div>
-                </div>
             </div>
 
             <!-- Pagination -->
@@ -225,7 +159,6 @@ export default {
             searchQuery: '',
             filterStatus: '',
             sortBy: 'addedDate',
-            viewMode: 'grid', // 'grid' or 'list'
             currentPage: 1,
             itemsPerPage: 12,
             authStore: useAuthStore(),
@@ -610,175 +543,11 @@ export default {
     padding: 0 2rem 2rem;
 }
 
-/* View Toggle */
-.view-toggle {
-    display: flex;
-    gap: 0.5rem;
-    justify-content: flex-end;
-    margin-bottom: 1.5rem;
-}
-
-.toggle-btn {
-    width: 45px;
-    height: 45px;
-    border: 2px solid #dfe6e9;
-    background: white;
-    color: #7f8c8d;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-}
-
-.toggle-btn:hover {
-    border-color: #c9a9a6;
-    color: #c9a9a6;
-}
-
-.toggle-btn.active {
-    background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
-    color: white;
-    border-color: #c9a9a6;
-}
-
 /* Grid View */
 .novels-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 2rem;
-}
-
-/* List View */
-.novels-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-.novel-list-item {
-    background: white;
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    display: flex;
-    gap: 1.5rem;
-    transition: all 0.3s;
-}
-
-.novel-list-item:hover {
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-    transform: translateX(5px);
-}
-
-.list-cover {
-    width: 120px;
-    height: 170px;
-    object-fit: cover;
-    border-radius: 8px;
-    flex-shrink: 0;
-}
-
-.list-info {
-    flex: 1;
-}
-
-.list-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 0.5rem;
-}
-
-.list-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #2c3e50;
-    text-decoration: none;
-}
-
-.list-title:hover {
-    color: #c9a9a6;
-}
-
-.list-author {
-    font-size: 0.9rem;
-    color: #7f8c8d;
-    margin: 0 0 0.75rem 0;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.list-genres {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 0.75rem;
-}
-
-.list-description {
-    color: #7f8c8d;
-    line-height: 1.6;
-    margin: 0 0 1rem 0;
-}
-
-.list-stats {
-    display: flex;
-    gap: 2rem;
-    font-size: 0.9rem;
-    color: #95a5a6;
-}
-
-.list-stats span {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.list-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    justify-content: center;
-}
-
-.btn-action {
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    transition: all 0.3s;
-    white-space: nowrap;
-    text-decoration: none;
-}
-
-.btn-action.btn-read {
-    background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
-    color: white;
-}
-
-.btn-action.btn-read:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(201, 169, 166, 0.4);
-}
-
-.btn-action.btn-unfavorite {
-    background: white;
-    border: 2px solid #e74c3c;
-    color: #e74c3c;
-}
-
-.btn-action.btn-unfavorite:hover {
-    background: #e74c3c;
-    color: white;
 }
 
 /* Pagination */
@@ -856,17 +625,5 @@ export default {
         gap: 1rem;
     }
 
-    .novel-list-item {
-        flex-direction: column;
-    }
-
-    .list-cover {
-        width: 100%;
-        height: 250px;
-    }
-
-    .list-actions {
-        flex-direction: row;
-    }
 }
 </style>

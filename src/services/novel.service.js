@@ -49,6 +49,11 @@ class NovelService {
     async getFavoritesByUserId(userId) {
         return (await this.api.get(`/favorites/${userId}`)).data;
     }
+
+    // Get novels created by a user
+    async getNovelsByCreator(userId) {
+        return (await this.api.get(`/creator/${userId}`)).data;
+    }
 }
 
 export default new NovelService();

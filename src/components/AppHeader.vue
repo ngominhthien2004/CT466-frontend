@@ -4,9 +4,7 @@
             <div class="header-content">
                 <!-- Logo -->
                 <router-link to="/" class="logo">
-                    <div class="logo-icon">
-                        <i class="fas fa-book-reader"></i>
-                    </div>
+                    <img src="../assets/logo.png" alt="NovelMT Logo" class="logo-image" />
                     <div class="logo-text">
                         <h1>NovelMT</h1>
                         <span class="logo-tagline">Đọc tiểu thuyết mọi lúc</span>
@@ -283,20 +281,13 @@ export default {
     transform: scale(1.05);
 }
 
-.logo-icon {
+.logo-image {
     width: 50px;
     height: 50px;
+    object-fit: contain;
+    border-radius: 50%;
     background: white;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.logo-icon i {
-    font-size: 1.75rem;
-    color: #c9a9a6;
+    padding: 2px;
 }
 
 .logo-text h1 {
@@ -737,13 +728,9 @@ export default {
         display: none;
     }
 
-    .logo-icon {
+    .logo-image {
         width: 40px;
         height: 40px;
-    }
-
-    .logo-icon i {
-        font-size: 1.25rem;
     }
 }
 </style>

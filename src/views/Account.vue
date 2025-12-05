@@ -114,13 +114,6 @@
                             </div>
                         </div>
                         <div class="stat-card">
-                            <i class="fas fa-comment"></i>
-                            <div class="stat-info">
-                                <span class="stat-value">{{ stats.comments }}</span>
-                                <span class="stat-label">Bình luận</span>
-                            </div>
-                        </div>
-                        <div class="stat-card">
                             <i class="fas fa-book"></i>
                             <div class="stat-info">
                                 <span class="stat-value">{{ stats.novels }}</span>
@@ -376,7 +369,7 @@
 
 <script>
 import { useAuthStore } from '@/stores';
-import { NovelService, UserService } from '@/services';
+import { NovelService, UserService, ReadingHistoryService } from '@/services';
 
 export default {
     name: 'AccountPage',
@@ -392,7 +385,6 @@ export default {
             stats: {
                 favorites: 0,
                 reading: 0,
-                comments: 0,
                 novels: 0
             },
             myNovels: [],
@@ -447,27 +439,51 @@ export default {
                 if (!userId) return;
 
                 // Get favorites count
-                const favorites = await NovelService.getFavoritesByUserId(userId);
-                this.stats.favorites = favorites.data?.length || 0;
+                try {
+                    const favorites = await NovelService.getFavoritesByUserId(userId);
+                    console.log('Favorites response:', favorites);
+                    // Handle both array and object responses
+                    this.stats.favorites = Array.isArray(favorites) ? favorites.length : (favorites.data?.length || 0);
+                } catch (error) {
+                    console.error('Error loading favorites:', error);
+                    this.stats.favorites = 0;
+                }
 
-                // Get novels count by checking author field
-                const allNovels = await NovelService.getAll();
-                const username = this.authStore.username;
-                this.stats.novels = allNovels.filter(n => n.author === username).length;
+                // Get novels count using createdBy field
+                try {
+                    const myNovels = await NovelService.getNovelsByCreator(userId);
+                    console.log('My novels response:', myNovels);
+                    this.stats.novels = Array.isArray(myNovels) ? myNovels.length : (myNovels.data?.length || 0);
+                } catch (error) {
+                    console.error('Error loading my novels:', error);
+                    this.stats.novels = 0;
+                }
 
-                // Placeholder for other stats (would need API endpoints)
-                this.stats.reading = 0;
-                this.stats.comments = 0;
+                // Get reading history count
+                try {
+                    const history = await ReadingHistoryService.getUserHistory(userId);
+                    console.log('Reading history response:', history);
+                    this.stats.reading = history.data?.length || history?.length || 0;
+                } catch (error) {
+                    console.error('Error loading reading history:', error);
+                    this.stats.reading = 0;
+                }
             } catch (error) {
                 console.error('Error loading stats:', error);
             }
         },
         async loadMyNovels() {
             try {
-                const allNovels = await NovelService.getAll();
-                const username = this.authStore.username;
-                // Filter novels by author name
-                this.myNovels = allNovels.filter(novel => novel.author === username);
+                const userId = this.authStore.user?._id;
+                if (!userId) {
+                    this.myNovels = [];
+                    return;
+                }
+                
+                // Use new API to get novels by creator
+                const novels = await NovelService.getNovelsByCreator(userId);
+                console.log('Loaded my novels:', novels);
+                this.myNovels = Array.isArray(novels) ? novels : (novels.data || []);
                 this.filteredMyNovels = [...this.myNovels];
             } catch (error) {
                 console.error('Error loading my novels:', error);

@@ -253,7 +253,7 @@ export default {
 <style scoped>
 .register-page {
     min-height: 100vh;
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -262,7 +262,7 @@ export default {
 
 .register-container {
     width: 100%;
-    max-width: 550px;
+    max-width: 450px;
 }
 
 .register-card {

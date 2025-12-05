@@ -34,22 +34,17 @@
                     :novels="newNovels"
                     :show-suggestions-on-type="true"
                     @search="handleSearch"
-                    @clear="handleSearchClear"
                     @select="handleSelectSuggestion"
                 />
             </section>
 
             <!-- Tiểu thuyết mới -->
-            <section v-if="!isSearching" class="novel-section">
+            <section class="novel-section">
                 <div class="section-header">
                     <h2 class="section-title">
                         <i class="fas fa-fire"></i>
                         Tiểu thuyết Mới Cập Nhật
                     </h2>
-                    <router-link to="/novels" class="view-all">
-                        Xem tất cả
-                        <i class="fas fa-arrow-right"></i>
-                    </router-link>
                 </div>
                 <NovelList 
                     :novels="newNovels"
@@ -60,16 +55,12 @@
             </section>
 
             <!-- Tiểu thuyết nổi bật -->
-            <section v-if="!isSearching" class="novel-section">
+            <section class="novel-section">
                 <div class="section-header">
                     <h2 class="section-title">
                         <i class="fas fa-star"></i>
                         Tiểu thuyết Nổi Bật
                     </h2>
-                    <router-link to="/novels?sort=views" class="view-all">
-                        Xem tất cả
-                        <i class="fas fa-arrow-right"></i>
-                    </router-link>
                 </div>
                 <NovelList 
                     :novels="featuredNovels"
@@ -101,12 +92,11 @@ export default {
             novelStore: useNovelStore(),
             authStore: useAuthStore(),
             loadingNew: false,
-            loadingFeatured: false,
-            isSearching: false
+            loadingFeatured: false
         };
     },
     computed: {
-        // Get novels from store - reactive to store changes
+        // Get novels from store
         newNovels() {
             return [...this.novelStore.novels]
                 .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -168,9 +158,6 @@ export default {
                 path: '/search',
                 query: { q: query.trim() }
             });
-        },
-        handleSearchClear() {
-            // Do nothing - just clear the input
         },
         handleSelectSuggestion(novel) {
             this.$router.push(`/novels/${novel._id}`);
@@ -284,18 +271,6 @@ export default {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.search-filters {
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 2px solid #f8f9fa;
-}
-
-.search-count {
-    color: #7f8c8d;
-    font-size: 1rem;
-    font-weight: 500;
-}
-
 /* Novel Section */
 .novel-section {
     margin-bottom: 3rem;
@@ -323,24 +298,6 @@ export default {
 .section-title i {
     color: #c9a9a6;
     font-size: 1.75rem;
-}
-
-.view-all {
-    color: #c9a9a6;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-}
-
-.view-all:hover {
-    background: rgba(201, 169, 166, 0.1);
-    gap: 0.75rem;
 }
 
 /* Responsive */
@@ -384,10 +341,6 @@ export default {
 
     .section-title {
         font-size: 1.5rem;
-    }
-
-    .view-all {
-        align-self: flex-end;
     }
 }
 

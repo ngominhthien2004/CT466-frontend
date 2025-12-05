@@ -41,6 +41,7 @@
 <script>
 import NovelForm from '@/components/Novel/NovelForm.vue';
 import NovelService from '@/services/novel.service';
+import { useAuthStore } from '@/stores';
 
 export default {
     name: 'NovelAdd',
@@ -49,6 +50,7 @@ export default {
     },
     data() {
         return {
+            authStore: useAuthStore(),
             message: {
                 show: false,
                 type: '',
@@ -63,7 +65,13 @@ export default {
             console.log('Title value:', data.title);
             
             try {
-                const novel = await NovelService.create(data);
+                // Add createdBy field
+                const novelData = {
+                    ...data,
+                    createdBy: this.authStore.user?._id
+                };
+                
+                const novel = await NovelService.create(novelData);
                 
                 // Show success message
                 this.showMessage('success', 'Thêm tiểu thuyết thành công!');
