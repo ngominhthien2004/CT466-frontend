@@ -35,7 +35,12 @@
                         <i class="fas fa-th-large"></i>
                         <span>Thể loại</span>
                     </router-link>
-                    <router-link to="/admin" class="nav-link admin-link" active-class="active">
+                    <router-link 
+                        v-if="isAdmin"
+                        to="/admin" 
+                        class="nav-link admin-link" 
+                        active-class="active"
+                    >
                         <i class="fas fa-cog"></i>
                         <span>Quản lý</span>
                     </router-link>
@@ -43,7 +48,11 @@
 
                 <!-- User Actions -->
                 <div class="user-actions">
-                    <router-link to="/novels/add" class="btn-add-novel">
+                    <router-link 
+                        v-if="isLoggedIn"
+                        to="/novels/add" 
+                        class="btn-add-novel"
+                    >
                         <i class="fas fa-plus-circle"></i>
                         <span>Thêm tiểu thuyết</span>
                     </router-link>
@@ -117,12 +126,22 @@
                     <i class="fas fa-th-large"></i>
                     <span>Thể loại</span>
                 </router-link>
-                <router-link to="/admin" class="mobile-nav-link" @click="closeMobileMenu">
+                <router-link 
+                    v-if="isAdmin"
+                    to="/admin" 
+                    class="mobile-nav-link" 
+                    @click="closeMobileMenu"
+                >
                     <i class="fas fa-cog"></i>
                     <span>Quản lý</span>
                 </router-link>
                 <div class="mobile-divider"></div>
-                <router-link to="/novels/add" class="mobile-nav-link" @click="closeMobileMenu">
+                <router-link 
+                    v-if="isLoggedIn"
+                    to="/novels/add" 
+                    class="mobile-nav-link" 
+                    @click="closeMobileMenu"
+                >
                     <i class="fas fa-plus-circle"></i>
                     <span>Thêm tiểu thuyết</span>
                 </router-link>
@@ -166,6 +185,9 @@ export default {
     computed: {
         isLoggedIn() {
             return this.authStore.isAuthenticated;
+        },
+        isAdmin() {
+            return this.authStore.isAuthenticated && this.authStore.user?.role === 'admin';
         },
         user() {
             return this.authStore.currentUser;

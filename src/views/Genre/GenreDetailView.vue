@@ -162,11 +162,27 @@ export default {
                     return;
                 }
                 
-                // Get all novels and filter by genre name
+                // Get all novels and filter by genre
                 const allNovels = await NovelService.getAll();
-                this.novels = allNovels.filter(novel => 
-                    novel.genres && novel.genres.includes(this.genre.name)
-                );
+                
+                // Filter novels by genre - handle both string and object genres
+                // Similar to Search.vue filtering logic
+                this.novels = allNovels.filter(novel => {
+                    if (!novel.genres || novel.genres.length === 0) return false;
+                    
+                    // Check if novel has this genre (handle both string and object)
+                    return novel.genres.some(genre => {
+                        // If genre is a string, compare with genre name
+                        if (typeof genre === 'string') {
+                            return genre === this.genre.name;
+                        }
+                        // If genre is an object, compare _id
+                        if (typeof genre === 'object' && genre._id) {
+                            return genre._id.toString() === this.genre._id.toString();
+                        }
+                        return false;
+                    });
+                });
                 
             } catch (error) {
                 console.error('Error loading genre data:', error);
