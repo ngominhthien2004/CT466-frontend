@@ -402,15 +402,6 @@ export default {
     box-shadow: 0 4px 12px rgba(240, 147, 251, 0.4);
 }
 
-.btn-delete {
-    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-}
-
-.btn-delete:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(250, 112, 154, 0.4);
-}
-
 /* Modal styles moved to modals.css */
 
 /* Custom modal header for genres */

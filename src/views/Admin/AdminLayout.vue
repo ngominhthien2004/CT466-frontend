@@ -36,6 +36,11 @@
                     <span v-show="!sidebarCollapsed">Quản lý Thể loại</span>
                 </router-link>
 
+                <router-link to="/admin/comments" class="nav-item" active-class="active">
+                    <i class="fas fa-flag"></i>
+                    <span v-show="!sidebarCollapsed">Quản lý Báo cáo</span>
+                </router-link>
+
                 <div class="nav-divider"></div>
 
                 <router-link to="/" class="nav-item">

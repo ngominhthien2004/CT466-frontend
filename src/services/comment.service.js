@@ -74,6 +74,21 @@ class CommentService {
     async getReplies(id) {
         return (await this.api.get(`/${id}/replies`)).data;
     }
+
+    // Report a comment
+    async reportComment(id, data) {
+        return (await this.api.post(`/${id}/report`, data)).data;
+    }
+
+    // Get all reported comments (Admin only)
+    async getReportedComments() {
+        return (await this.api.get("/reported")).data;
+    }
+
+    // Unreport a comment (Admin only)
+    async unreportComment(id) {
+        return (await this.api.post(`/${id}/unreport`)).data;
+    }
 }
 
 export default new CommentService();

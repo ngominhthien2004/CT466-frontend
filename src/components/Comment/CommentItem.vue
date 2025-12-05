@@ -17,6 +17,15 @@
                     Trả lời
                 </button>
                 <button 
+                    v-if="!isReply && currentUserId && currentUserId !== comment.userId" 
+                    @click="showReportModal = true" 
+                    class="action-btn report-btn"
+                    title="Báo cáo bình luận vi phạm"
+                >
+                    <i class="fas fa-flag"></i>
+                    Báo cáo
+                </button>
+                <button 
                     v-if="canDelete" 
                     @click="$emit('delete', comment._id)" 
                     class="action-btn delete-btn"
@@ -59,6 +68,41 @@
                 />
             </div>
         </div>
+        
+        <!-- Report Modal -->
+        <div v-if="showReportModal" class="modal-overlay" @click.self="showReportModal = false">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-flag"></i> Báo cáo bình luận</h3>
+                    <button class="close-btn" @click="showReportModal = false">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="modal-description">
+                        Hãy cho chúng tôi biết lý do bạn báo cáo bình luận này:
+                    </p>
+                    <textarea 
+                        v-model="reportReason" 
+                        placeholder="Nhập lý do báo cáo (tối thiểu 10 ký tự)..."
+                        rows="4"
+                        maxlength="500"
+                    ></textarea>
+                    <div class="char-count">{{ reportReason.length }}/500</div>
+                </div>
+                <div class="modal-footer">
+                    <button @click="showReportModal = false" class="btn-cancel">Hủy</button>
+                    <button 
+                        @click="submitReport" 
+                        :disabled="reportReason.trim().length < 10"
+                        class="btn-submit btn-danger"
+                    >
+                        <i class="fas fa-flag"></i>
+                        Gửi báo cáo
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -88,7 +132,9 @@ export default {
             replyContent: '',
             replies: [],
             isLiked: false,
-            likeCount: 0
+            likeCount: 0,
+            showReportModal: false,
+            reportReason: ''
         };
     },
     computed: {
@@ -198,10 +244,30 @@ export default {
         async handleDeleteReply(replyId) {
             // Emit lên parent để xóa (không cần confirmation ở đây vì parent sẽ xử lý)
             this.$emit('delete', replyId);
-            // Delay rồi reload lại replies
-            setTimeout(async () => {
-                await this.loadReplies();
-            }, 500);
+        },
+        async submitReport() {
+            if (this.reportReason.trim().length < 10) {
+                alert('Vui lòng nhập lý do báo cáo (tối thiểu 10 ký tự)');
+                return;
+            }
+            
+            try {
+                await CommentService.reportComment(this.comment._id, {
+                    userId: this.currentUserId,
+                    reason: this.reportReason.trim()
+                });
+                
+                alert('Đã gửi báo cáo thành công. Cảm ơn bạn đã giúp duy trì cộng đồng văn minh!');
+                this.showReportModal = false;
+                this.reportReason = '';
+            } catch (error) {
+                console.error('Error reporting comment:', error);
+                if (error.response?.data?.message) {
+                    alert(error.response.data.message);
+                } else {
+                    alert('Có lỗi xảy ra khi gửi báo cáo. Vui lòng thử lại sau.');
+                }
+            }
         }
     }
 };
@@ -281,6 +347,10 @@ export default {
 
 .delete-btn:hover {
     color: #e74c3c;
+}
+
+.report-btn:hover {
+    color: #f39c12;
 }
 
 /* Reply Form */
@@ -367,5 +437,174 @@ export default {
 .replies-list .comment-item {
     margin-top: 0.75rem;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Report Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow: auto;
+    animation: slideUp 0.3s;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #ecf0f1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.modal-header h3 i {
+    color: #f39c12;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #95a5a6;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s;
+}
+
+.close-btn:hover {
+    background: #ecf0f1;
+    color: #2c3e50;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-description {
+    margin: 0 0 1rem 0;
+    color: #7f8c8d;
+    font-size: 0.95rem;
+}
+
+.modal-body textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    resize: vertical;
+    font-family: inherit;
+    font-size: 0.95rem;
+    min-height: 100px;
+}
+
+.modal-body textarea:focus {
+    outline: none;
+    border-color: #f39c12;
+}
+
+.char-count {
+    text-align: right;
+    font-size: 0.85rem;
+    color: #95a5a6;
+    margin-top: 0.25rem;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #ecf0f1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.modal-footer .btn-cancel,
+.modal-footer .btn-submit {
+    padding: 0.6rem 1.25rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.modal-footer .btn-cancel {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.modal-footer .btn-cancel:hover {
+    background: #dee2e6;
+}
+
+.modal-footer .btn-submit {
+    background: linear-gradient(135deg, #e8c5c1 0%, #c9a9a6 100%);
+    color: white;
+}
+
+.modal-footer .btn-submit.btn-danger {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+}
+
+.modal-footer .btn-submit:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(201, 169, 166, 0.3);
+}
+
+.modal-footer .btn-submit.btn-danger:hover:not(:disabled) {
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+.modal-footer .btn-submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 </style>

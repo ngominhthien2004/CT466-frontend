@@ -1,334 +1,189 @@
 <template>
     <div class="manage-comments">
-        <div class="page-header">
-            <div class="header-content">
-                <h1>
-                    <i class="fas fa-comments"></i>
-                    Quản lý Comments
-                </h1>
-                <p>Quản lý tất cả bình luận trong hệ thống</p>
-            </div>
-        </div>
-
-        <!-- Filters -->
-        <div class="filters-section">
-            <div class="filter-group">
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input
-                        v-model="searchQuery"
-                        type="text"
-                        placeholder="Tìm kiếm theo nội dung..."
-                        @input="applyFilters"
-                    />
-                </div>
-
-                <select v-model="filterNovel" @change="applyFilters" class="filter-select">
-                    <option value="">Tất cả truyện</option>
-                    <option v-for="novel in novels" :key="novel._id" :value="novel._id">
-                        {{ novel.title }}
-                    </option>
-                </select>
-
-                <select v-model="sortBy" @change="applyFilters" class="filter-select">
-                    <option value="createdAt">Mới nhất</option>
-                    <option value="oldest">Cũ nhất</option>
-                </select>
-
-                <button @click="resetFilters" class="btn-reset">
-                    <i class="fas fa-redo"></i>
-                    Reset
-                </button>
-            </div>
-        </div>
+        <PageHeader
+            title="Quản lý báo cáo"
+            subtitle="Xem và xử lý các bình luận bị báo cáo"
+            icon="fas fa-flag"
+        />
 
         <!-- Stats Cards -->
-        <div class="stats-cards">
-            <div class="stat-card">
-                <div class="stat-icon blue">
-                    <i class="fas fa-comments"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>{{ totalComments }}</h3>
-                    <p>Tổng Comments</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon green">
-                    <i class="fas fa-calendar-day"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>{{ todayComments }}</h3>
-                    <p>Hôm Nay</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon purple">
-                    <i class="fas fa-users"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>{{ uniqueUsers }}</h3>
-                    <p>Người Dùng</p>
-                </div>
-            </div>
-        </div>
+        <StatsCards :stats="statsData" />
 
-        <!-- Comments Table -->
-        <div class="table-container">
-            <LoadingSpinner v-if="loading" />
+        <!-- Loading State -->
+        <LoadingSpinner v-if="loading" />
 
-            <EmptyState
-                v-else-if="paginatedComments.length === 0"
-                icon="fa-comment-slash"
-                title="Không tìm thấy comment nào"
-            />
+        <!-- Empty State -->
+        <EmptyState
+            v-else-if="reportedComments.length === 0"
+            icon="fa-check-circle"
+            title="Không có báo cáo nào"
+            message="Hệ thống không có bình luận bị báo cáo"
+        />
 
-            <div v-else class="comments-list">
-                <div
-                    v-for="comment in paginatedComments"
-                    :key="comment._id"
-                    class="comment-card"
-                >
-                    <div class="comment-header">
-                        <div class="user-info">
-                            <img :src="getUserAvatar(comment.userId)" alt="Avatar" class="user-avatar" />
-                            <div class="user-details">
-                                <strong>{{ getUserName(comment.userId) }}</strong>
-                                <span class="comment-time">
-                                    <i class="fas fa-clock"></i>
-                                    {{ formatDateTime(comment.createdAt) }}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="comment-actions">
-                            <button @click="viewNovel(comment.novelId)" class="btn-view-novel" title="Xem truyện">
-                                <i class="fas fa-book"></i>
-                                {{ getNovelTitle(comment.novelId) }}
-                            </button>
-                            <button @click="confirmDelete(comment)" class="btn-delete" title="Xóa">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="comment-content">
-                        <p>{{ comment.content }}</p>
-                    </div>
-                    <div class="comment-footer">
-                        <span class="comment-chapter">
-                            <i class="fas fa-bookmark"></i>
-                            Chương {{ getChapterNumber(comment.chapterId) }}
-                        </span>
-                    </div>
+        <!-- Data Table -->
+        <div v-else class="table-container">
+            <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 30%;">Nội dung</th>
+                                <th style="width: 15%;">Người viết</th>
+                                <th style="width: 15%;">Novel</th>
+                                <th style="width: 10%;">Báo cáo</th>
+                                <th style="width: 15%;">Lý do</th>
+                                <th style="width: 15%;">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="comment in reportedComments" :key="comment._id">
+                                <td>
+                                    <div class="comment-content">{{ comment.content }}</div>
+                                </td>
+                                <td>
+                                    <div class="user-cell">
+                                        <img :src="getUserAvatar(comment)" :alt="comment.userName" />
+                                        <span>{{ comment.userName }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <a class="novel-link" @click="viewNovel(comment.novelId)">
+                                        <i class="fas fa-external-link-alt"></i>
+                                        Xem novel
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="badge badge-danger">
+                                        {{ comment.reports?.length || 0 }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="report-reasons">
+                                        <div v-for="(report, idx) in comment.reports?.slice(0, 2)" :key="idx" class="reason-item">
+                                            • {{ report.reason }}
+                                        </div>
+                                        <span v-if="comment.reports?.length > 2" class="more-text">
+                                            +{{ comment.reports.length - 2 }} lý do khác
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button 
+                                            @click="unreportComment(comment._id)" 
+                                            class="btn-action btn-edit"
+                                            title="Gỡ báo cáo"
+                                        >
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                        <button 
+                                            @click="deleteComment(comment._id)" 
+                                            class="btn-action btn-delete"
+                                            title="Xóa bình luận"
+                                        >
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-            </div>
-
-            <!-- Pagination -->
-            <div v-if="totalPages > 1" class="pagination">
-                <button @click="currentPage--" :disabled="currentPage === 1" class="btn-page">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                <span class="page-info">Trang {{ currentPage }} / {{ totalPages }}</span>
-                <button @click="currentPage++" :disabled="currentPage === totalPages" class="btn-page">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Delete Confirmation Modal -->
-        <div v-if="showDeleteModal" class="modal-overlay" @click="closeDeleteModal">
-            <div class="modal-content" @click.stop>
-                <div class="modal-header">
-                    <h3>
-                        <i class="fas fa-exclamation-triangle"></i>
-                        Xác nhận xóa
-                    </h3>
-                </div>
-                <div class="modal-body">
-                    <p>Bạn có chắc chắn muốn xóa comment này?</p>
-                    <div class="comment-preview">
-                        <strong>{{ getUserName(commentToDelete?.userId) }}</strong>
-                        <p>{{ commentToDelete?.content }}</p>
-                    </div>
-                    <p class="warning">Hành động này không thể hoàn tác!</p>
-                </div>
-                <div class="modal-footer">
-                    <button @click="closeDeleteModal" class="btn-cancel">Hủy</button>
-                    <button @click="deleteComment" class="btn-confirm-delete">
-                        <i class="fas fa-trash"></i>
-                        Xóa
-                    </button>
-                </div>
-            </div>
-        </div>
     </div>
 </template>
 
 <script>
-import { CommentService, NovelService, ChapterService } from '@/services';
-import UserService from '@/services/user.service';
+import PageHeader from '@/components/Admin/PageHeader.vue';
+import StatsCards from '@/components/Admin/StatsCards.vue';
 import LoadingSpinner from '@/components/Common/LoadingSpinner.vue';
 import EmptyState from '@/components/Common/EmptyState.vue';
+import CommentService from '@/services/comment.service';
 
 export default {
     name: 'ManageComments',
-    components: { LoadingSpinner, EmptyState },
+    components: {
+        PageHeader,
+        StatsCards,
+        LoadingSpinner,
+        EmptyState
+    },
     data() {
         return {
-            comments: [],
-            novels: [],
-            chapters: [],
-            users: [],
-            filteredComments: [],
+            reportedComments: [],
             loading: false,
-            searchQuery: '',
-            filterNovel: '',
-            sortBy: 'createdAt',
-            currentPage: 1,
-            itemsPerPage: 10,
-            showDeleteModal: false,
-            commentToDelete: null
         };
     },
     computed: {
-        totalComments() {
-            return this.comments.length;
-        },
-        todayComments() {
-            const today = new Date().toDateString();
-            return this.comments.filter(c => new Date(c.createdAt).toDateString() === today).length;
-        },
-        uniqueUsers() {
-            const userIds = new Set(this.comments.map(c => c.userId));
-            return userIds.size;
-        },
-        paginatedComments() {
-            const start = (this.currentPage - 1) * this.itemsPerPage;
-            const end = start + this.itemsPerPage;
-            return this.filteredComments.slice(start, end);
-        },
-        totalPages() {
-            return Math.ceil(this.filteredComments.length / this.itemsPerPage);
+        statsData() {
+            return [
+                {
+                    title: 'Tổng báo cáo',
+                    value: this.reportedComments.length,
+                    icon: 'fa-flag',
+                    color: 'gradient-pink',
+                    label: 'Bình luận bị báo cáo'
+                }
+            ];
         }
     },
     async mounted() {
-        await this.fetchData();
+        await this.loadReportedComments();
     },
     methods: {
-        async fetchData() {
+        async loadReportedComments() {
             this.loading = true;
             try {
-                // Fetch all data
-                this.novels = await NovelService.getAll();
-                this.users = await UserService.getAll();
-                
-                // Fetch all chapters
-                const allChapters = [];
-                for (const novel of this.novels) {
-                    const chapters = await ChapterService.getByNovelId(novel._id);
-                    allChapters.push(...chapters);
-                }
-                this.chapters = allChapters;
-
-                // Fetch all comments
-                const allComments = [];
-                for (const novel of this.novels) {
-                    const comments = await CommentService.getByNovelId(novel._id);
-                    allComments.push(...comments);
-                }
-                
-                this.comments = allComments;
-                this.applyFilters();
+                this.reportedComments = await CommentService.getReportedComments();
             } catch (error) {
-                console.error('Error fetching data:', error);
-                alert('Không thể tải dữ liệu comments');
+                console.error('Error loading reported comments:', error);
+                alert('Không thể tải danh sách bình luận bị báo cáo');
             } finally {
                 this.loading = false;
             }
         },
-        applyFilters() {
-            let filtered = [...this.comments];
 
-            // Search filter
-            if (this.searchQuery) {
-                const query = this.searchQuery.toLowerCase();
-                filtered = filtered.filter(comment =>
-                    comment.content?.toLowerCase().includes(query)
-                );
+        async unreportComment(commentId) {
+            if (!confirm('Bạn có chắc muốn gỡ báo cáo cho bình luận này?')) {
+                return;
             }
-
-            // Novel filter
-            if (this.filterNovel) {
-                filtered = filtered.filter(comment => comment.novelId === this.filterNovel);
-            }
-
-            // Sort
-            filtered.sort((a, b) => {
-                if (this.sortBy === 'createdAt') {
-                    return new Date(b.createdAt) - new Date(a.createdAt);
-                } else if (this.sortBy === 'oldest') {
-                    return new Date(a.createdAt) - new Date(b.createdAt);
-                }
-                return 0;
-            });
-
-            this.filteredComments = filtered;
-            this.currentPage = 1;
-        },
-        resetFilters() {
-            this.searchQuery = '';
-            this.filterNovel = '';
-            this.sortBy = 'createdAt';
-            this.applyFilters();
-        },
-        getUserName(userId) {
-            const user = this.users.find(u => u._id === userId);
-            return user?.username || 'Unknown User';
-        },
-        getUserAvatar(userId) {
-            const user = this.users.find(u => u._id === userId);
-            if (!user?.avatar) return '/assets/default-avatar.svg';
-            if (user.avatar.startsWith('http')) return user.avatar;
-            return `/assets/user/${userId}/${user.avatar}`;
-        },
-        getNovelTitle(novelId) {
-            const novel = this.novels.find(n => n._id === novelId);
-            return novel?.title || 'Unknown';
-        },
-        getChapterNumber(chapterId) {
-            const chapter = this.chapters.find(c => c._id === chapterId);
-            return chapter?.chapterNumber || '?';
-        },
-        viewNovel(novelId) {
-            this.$router.push(`/novels/${novelId}`);
-        },
-        confirmDelete(comment) {
-            this.commentToDelete = comment;
-            this.showDeleteModal = true;
-        },
-        closeDeleteModal() {
-            this.showDeleteModal = false;
-            this.commentToDelete = null;
-        },
-        async deleteComment() {
-            if (!this.commentToDelete) return;
 
             try {
-                await CommentService.delete(this.commentToDelete._id);
-                
-                this.comments = this.comments.filter(c => c._id !== this.commentToDelete._id);
-                this.applyFilters();
-                
-                this.closeDeleteModal();
-                alert('Đã xóa comment thành công!');
+                await CommentService.unreportComment(commentId);
+                alert('Đã gỡ báo cáo thành công');
+                await this.loadReportedComments();
             } catch (error) {
-                console.error('Error deleting comment:', error);
-                alert('Không thể xóa comment');
+                console.error('Error unreporting comment:', error);
+                alert('Không thể gỡ báo cáo');
             }
         },
-        formatDateTime(dateString) {
-            if (!dateString) return '-';
-            const date = new Date(dateString);
-            return date.toLocaleString('vi-VN');
+
+        async deleteComment(commentId) {
+            if (!confirm('Bạn có chắc muốn XÓA bình luận này? Hành động này không thể hoàn tác!')) {
+                return;
+            }
+
+            try {
+                await CommentService.delete(commentId);
+                alert('Đã xóa bình luận thành công');
+                await this.loadReportedComments();
+            } catch (error) {
+                console.error('Error deleting comment:', error);
+                alert('Không thể xóa bình luận');
+            }
+        },
+
+        getUserAvatar(comment) {
+            if (!comment.userAvatar) {
+                return '/assets/default-avatar.svg';
+            }
+            if (comment.userAvatar.startsWith('http')) {
+                return comment.userAvatar;
+            }
+            return `/assets/user/${comment.userId}/${comment.userAvatar}`;
+        },
+
+        viewNovel(novelId) {
+            if (novelId) {
+                this.$router.push(`/novels/${novelId}`);
+            }
         }
     }
 };
@@ -336,323 +191,97 @@ export default {
 
 <style scoped>
 .manage-comments {
-    padding: 2rem;
-    background: #f8f9fa;
-    min-height: 100vh;
-}
-
-/* Page Header */
-.page-header {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    padding: 2rem;
-    border-radius: 15px;
-    margin-bottom: 2rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-.header-content h1 {
-    color: white;
-    margin: 0 0 0.5rem 0;
     display: flex;
-    align-items: center;
-    gap: 1rem;
-    font-size: 2rem;
+    flex-direction: column;
+    gap: 2rem;
 }
 
-.header-content p {
-    color: rgba(255, 255, 255, 0.9);
-    margin: 0;
-    font-size: 1.1rem;
-}
-
-/* Filters Section */
-.filters-section {
+.table-container {
     background: white;
-    padding: 1.5rem;
-    border-radius: 15px;
-    margin-bottom: 2rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
 }
 
-.filter-group {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
+.comment-content {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    color: #2c3e50;
+    line-height: 1.5;
 }
 
-.search-box {
-    flex: 1;
-    min-width: 250px;
-    position: relative;
-}
-
-.search-box i {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #7f8c8d;
-}
-
-.search-box input {
-    width: 100%;
-    padding: 0.875rem 1rem 0.875rem 3rem;
-    border: 2px solid #e9ecef;
-    border-radius: 10px;
-    font-size: 1rem;
-    transition: all 0.3s;
-}
-
-.search-box input:focus {
-    outline: none;
-    border-color: #f093fb;
-    box-shadow: 0 0 0 4px rgba(240, 147, 251, 0.1);
-}
-
-.filter-select {
-    padding: 0.875rem 1rem;
-    border: 2px solid #e9ecef;
-    border-radius: 10px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s;
-    background: white;
-}
-
-.filter-select:focus {
-    outline: none;
-    border-color: #f093fb;
-}
-
-.btn-reset {
-    padding: 0.875rem 1.5rem;
-    background: #e9ecef;
-    border: none;
-    border-radius: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
+.user-cell {
     display: flex;
     align-items: center;
     gap: 0.5rem;
 }
 
-.btn-reset:hover {
-    background: #dee2e6;
-}
-
-/* Stats Cards */
-.stats-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-.stat-card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 15px;
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s;
-}
-
-.stat-card:hover {
-    transform: translateY(-5px);
-}
-
-.stat-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    color: white;
-}
-
-.stat-icon.blue { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-.stat-icon.green { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
-.stat-icon.purple { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
-
-.stat-info h3 {
-    margin: 0;
-    font-size: 2rem;
-    color: #2c3e50;
-}
-
-.stat-info p {
-    margin: 0.25rem 0 0 0;
-    color: #7f8c8d;
-    font-size: 0.9rem;
-}
-
-/* Table styles moved to tables.css */
-
-/* Comments List */
-.comments-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.comment-card {
-    background: #f8f9fa;
-    border-radius: 12px;
-    padding: 1.5rem;
-    transition: all 0.3s;
-}
-
-.comment-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.comment-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.user-avatar {
-    width: 45px;
-    height: 45px;
+.user-cell img {
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid white;
 }
 
-.user-details {
-    display: flex;
-    flex-direction: column;
-}
-
-.user-details strong {
-    color: #2c3e50;
-    font-size: 1rem;
-}
-
-.comment-time {
-    font-size: 0.85rem;
-    color: #7f8c8d;
-    display: flex;
+.novel-link {
+    color: #c9a9a6;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: 0.25rem;
+    font-weight: 500;
+    transition: color 0.3s;
 }
 
-.comment-actions {
+.novel-link:hover {
+    color: #b8a39e;
+    text-decoration: underline;
+}
+
+.report-reasons {
+    font-size: 0.85rem;
+}
+
+.reason-item {
+    color: #7f8c8d;
+    margin-bottom: 0.25rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.more-text {
+    color: #95a5a6;
+    font-style: italic;
+    font-size: 0.8rem;
+}
+
+.action-buttons {
     display: flex;
     gap: 0.5rem;
 }
 
-.btn-view-novel {
-    background: #3498db;
-    color: white;
+.btn-action {
+    padding: 0.5rem 0.75rem;
     border: none;
-    padding: 0.5rem 1rem;
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 500;
+    color: white;
 }
 
-.btn-view-novel:hover {
+.btn-action.btn-edit {
+    background: #3498db;
+}
+
+.btn-action.btn-edit:hover {
     background: #2980b9;
 }
 
-/* Button styles moved to buttons.css */
 
-.comment-content {
-    margin-bottom: 1rem;
-}
-
-.comment-content p {
-    margin: 0;
-    color: #495057;
-    line-height: 1.6;
-}
-
-.comment-footer {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.comment-chapter {
-    background: white;
-    padding: 0.35rem 0.75rem;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    color: #7f8c8d;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-/* Pagination styles moved to tables.css - custom hover color */
-.btn-page:hover:not(:disabled) {
-    border-color: #f093fb;
-    color: #f093fb;
-}
-
-/* Modal styles moved to modals.css */
-
-/* Custom comment preview styling */
-.comment-preview {
-    background: #f8f9fa;
-    padding: 1rem;
-    border-radius: 8px;
-    margin: 1rem 0;
-}
-
-.comment-preview strong {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #2c3e50;
-}
-
-.comment-preview p {
-    margin: 0;
-    color: #495057;
-    font-style: italic;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .manage-comments {
-        padding: 1rem;
-    }
-
-    .filter-group {
-        flex-direction: column;
-    }
-
-    .search-box {
-        min-width: 100%;
-    }
-
-    .comment-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-    }
-
-    .comment-actions {
-        width: 100%;
-        justify-content: space-between;
-    }
-}
 </style>

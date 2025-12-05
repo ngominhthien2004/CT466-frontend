@@ -96,6 +96,11 @@ const routes = [
                 name: "admin-genres",
                 component: () => import("@/views/Admin/ManageGenres.vue"),
             },
+            {
+                path: "comments",
+                name: "admin-comments",
+                component: () => import("@/views/Admin/ManageComments.vue"),
+            },
         ]
     },
     // Auth Routes
