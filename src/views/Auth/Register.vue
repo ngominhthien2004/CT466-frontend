@@ -109,7 +109,7 @@
                     </div>
 
                     <!-- Terms -->
-                    <div class="form-group">
+                    <div class="filter-group">
                         <label class="checkbox-label">
                             <input v-model="agreedToTerms" type="checkbox" required />
                             <span>

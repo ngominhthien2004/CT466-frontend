@@ -388,11 +388,18 @@ export default {
     margin-bottom: 1.5rem;
 }
 
+/* Override global label styles */
+.filter-group label {
+    margin-bottom: 0;
+    padding: 0;
+}
+
 .filter-label {
     font-size: 0.95rem;
     font-weight: 600;
     color: #2c3e50;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
+    display: block;
 }
 
 .genre-list {
@@ -401,6 +408,7 @@ export default {
     gap: 0.25rem;
     max-height: 300px;
     overflow-y: auto;
+    padding: 0;
 }
 
 .genre-checkbox {
@@ -408,6 +416,7 @@ export default {
     align-items: center;
     gap: 0.4rem;
     padding: 0.35rem 0.5rem;
+    margin: 0;
     border-radius: 6px;
     cursor: pointer;
     transition: background 0.3s;

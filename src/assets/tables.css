@@ -331,7 +331,7 @@
 
 .filter-group input,
 .filter-group select {
-    width: 100%;
+    width: 30%;
     padding: 0.625rem 0.875rem;
     border: 2px solid #e9ecef;
     border-radius: 8px;
