@@ -1,0 +1,379 @@
+<template>
+    <div class="novels-section">
+        <div class="section-header">
+            <h3>
+                <i class="fas fa-book"></i>
+                Tiểu thuyết đã đăng
+            </h3>
+            <router-link to="/novels/add" class="btn-add">
+                <i class="fas fa-plus"></i>
+                Thêm tiểu thuyết mới
+            </router-link>
+        </div>
+
+        <!-- Search & Filter -->
+        <div class="filters-section">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input
+                    v-model="searchQuery"
+                    type="text"
+                    placeholder="Tìm kiếm tiểu thuyết..."
+                    @input="$emit('filter', { search: searchQuery, status: statusFilter })"
+                />
+            </div>
+            <select 
+                v-model="statusFilter" 
+                @change="$emit('filter', { search: searchQuery, status: statusFilter })" 
+                class="filter-select"
+            >
+                <option value="">Tất cả trạng thái</option>
+                <option value="ongoing">Đang ra</option>
+                <option value="completed">Hoàn thành</option>
+                <option value="paused">Tạm dừng</option>
+            </select>
+        </div>
+
+        <!-- Empty State -->
+        <div v-if="novels.length === 0" class="empty-state-small">
+            <i class="fas fa-book-open"></i>
+            <p v-if="totalNovels === 0">Bạn chưa đăng tiểu thuyết nào</p>
+            <p v-else>Không tìm thấy kết quả phù hợp</p>
+        </div>
+
+        <!-- Novels List -->
+        <div v-else class="novels-list">
+            <div v-for="novel in novels" :key="novel._id" class="novel-item">
+                <img
+                    :src="novel.coverImage || '/assets/default-book.png'"
+                    :alt="novel.title"
+                    class="novel-cover"
+                />
+                <div class="novel-info">
+                    <div class="novel-header">
+                        <router-link :to="`/novels/${novel._id}`" class="novel-title">
+                            {{ novel.title }}
+                        </router-link>
+                        <span class="status-badge" :class="novel.status">
+                            {{ getStatusText(novel.status) }}
+                        </span>
+                    </div>
+                    <p class="novel-author">
+                        <i class="fas fa-user"></i>
+                        {{ novel.author || 'Chưa rõ' }}
+                    </p>
+                    <div class="novel-genres">
+                        <span v-for="genre in novel.genres?.slice(0, 5)" :key="genre" class="genre-tag">
+                            {{ genre }}
+                        </span>
+                    </div>
+                    <div class="novel-stats">
+                        <span><i class="fas fa-eye"></i> {{ formatNumber(novel.views || 0) }}</span>
+                        <span><i class="fas fa-heart"></i> {{ formatNumber(novel.likes || 0) }}</span>
+                        <span><i class="fas fa-book"></i> {{ novel.chapterCount || 0 }} chương</span>
+                    </div>
+                </div>
+                <div class="novel-actions">
+                    <router-link :to="`/novels/${novel._id}`" class="btn-icon" title="Xem chi tiết">
+                        <i class="fas fa-eye"></i>
+                    </router-link>
+                    <button @click="$emit('edit', novel)" class="btn-icon" title="Chỉnh sửa">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button @click="$emit('delete', novel)" class="btn-icon btn-delete" title="Xóa">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+export default {
+    name: 'MyNovelsList',
+    props: {
+        novels: { type: Array, required: true },
+        totalNovels: { type: Number, default: 0 }
+    },
+    emits: ['filter', 'edit', 'delete'],
+    data() {
+        return {
+            searchQuery: '',
+            statusFilter: ''
+        };
+    },
+    methods: {
+        formatNumber(num) {
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+            return num.toString();
+        },
+        getStatusText(status) {
+            const statusMap = {
+                'ongoing': 'Đang ra',
+                'completed': 'Hoàn thành',
+                'paused': 'Tạm dừng'
+            };
+            return statusMap[status] || status;
+        }
+    }
+};
+</script>
+
+<style scoped>
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.section-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-add {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-add:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(201, 169, 166, 0.4);
+}
+
+.filters-section {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.search-box {
+    flex: 1;
+    position: relative;
+}
+
+.search-box i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #95a5a6;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 3rem;
+    border: 2px solid #dfe6e9;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: #c9a9a6;
+}
+
+.filter-select {
+    padding: 0.75rem 1rem;
+    border: 2px solid #dfe6e9;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    background: white;
+}
+
+.empty-state-small {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #7f8c8d;
+}
+
+.empty-state-small i {
+    font-size: 3rem;
+    color: #c9a9a6;
+    margin-bottom: 1rem;
+}
+
+.novels-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.novel-item {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+.novel-item:hover {
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.novel-cover {
+    width: 80px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.novel-info {
+    flex: 1;
+}
+
+.novel-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.novel-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2c3e50;
+    text-decoration: none;
+}
+
+.novel-title:hover {
+    color: #c9a9a6;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.status-badge.ongoing {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-badge.completed {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.status-badge.paused {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.novel-author {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.novel-genres {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.genre-tag {
+    padding: 0.25rem 0.75rem;
+    background: white;
+    border: 1px solid #dfe6e9;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    color: #7f8c8d;
+}
+
+.novel-stats {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.9rem;
+    color: #95a5a6;
+}
+
+.novel-stats span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.novel-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.btn-icon {
+    width: 40px;
+    height: 40px;
+    border: 2px solid #dfe6e9;
+    background: white;
+    color: #7f8c8d;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.btn-icon:hover {
+    border-color: #c9a9a6;
+    color: #c9a9a6;
+}
+
+.btn-icon.btn-delete:hover {
+    border-color: #e74c3c;
+    color: #e74c3c;
+    background: #fee;
+}
+
+@media (max-width: 768px) {
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .filters-section {
+        flex-direction: column;
+    }
+
+    .novel-item {
+        flex-direction: column;
+    }
+
+    .novel-cover {
+        width: 100%;
+        height: 200px;
+    }
+
+    .novel-actions {
+        flex-direction: row;
+    }
+}
+</style>
