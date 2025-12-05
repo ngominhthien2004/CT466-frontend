@@ -26,9 +26,14 @@
                         <i class="fas fa-tags"></i>
                         <span class="label">Thể loại:</span>
                         <div class="genres">
-                            <span v-for="genre in novel.genres" :key="genre._id || genre" class="genre-tag">
+                            <router-link 
+                                v-for="genre in novel.genres" 
+                                :key="genre._id || genre" 
+                                :to="`/genres/${typeof genre === 'string' ? genre.toLowerCase().replace(/\s+/g, '-') : genre.slug}`"
+                                class="genre-tag"
+                            >
                                 {{ typeof genre === 'string' ? genre : genre.name }}
-                            </span>
+                            </router-link>
                             <span v-if="!novel.genres || novel.genres.length === 0" class="value">
                                 Chưa phân loại
                             </span>
@@ -304,6 +309,15 @@ export default {
     border-radius: 20px;
     font-size: 0.85rem;
     font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s;
+    display: inline-block;
+}
+
+.genre-tag:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, #b8a39e 0%, #a89491 100%);
 }
 
 .status {

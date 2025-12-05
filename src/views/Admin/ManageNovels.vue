@@ -76,8 +76,8 @@
                         <td>
                             <div class="genres-cell">
                                 <span
-                                    v-for="genre in novel.genres?.slice(0, 2)"
-                                    :key="genre"
+                                    v-for="(genre, idx) in getGenreNames(novel.genres).slice(0, 2)"
+                                    :key="idx"
                                     class="genre-badge"
                                 >
                                     {{ genre }}
@@ -399,6 +399,15 @@ export default {
                 return (num / 1000).toFixed(1) + 'K';
             }
             return num.toString();
+        },
+        getGenreNames(genres) {
+            if (!genres || !Array.isArray(genres)) return [];
+            // Handle both string and object genres
+            return genres.map(genre => {
+                if (typeof genre === 'string') return genre;
+                if (typeof genre === 'object' && genre.name) return genre.name;
+                return '';
+            }).filter(Boolean);
         }
     }
 };

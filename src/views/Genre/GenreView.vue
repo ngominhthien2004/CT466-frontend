@@ -86,6 +86,8 @@ export default {
             this.error = null;
             try {
                 const response = await GenreService.getAll();
+                console.log('Genres response from API:', response);
+                console.log('First genre:', response[0]);
                 this.genres = response;
             } catch (error) {
                 console.error('Error loading genres:', error);
