@@ -10,7 +10,7 @@
                         <i class="fas fa-plus-circle"></i>
                         Thêm chương mới
                     </h1>
-                    <p v-if="novelTitle">Truyện: {{ novelTitle }}</p>
+                    <p v-if="novelTitle">Tiểu thuyết: {{ novelTitle }}</p>
                 </div>
             </div>
         </div>
@@ -49,7 +49,7 @@ export default {
         this.novelId = this.$route.query.novelId;
         
         if (!this.novelId) {
-            alert('Không tìm thấy ID truyện');
+            alert('Không tìm thấy ID tiểu thuyết');
             this.$router.push('/admin/novels');
             return;
         }

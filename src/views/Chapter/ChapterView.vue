@@ -165,7 +165,7 @@
 
                 <a :href="`/novels/${novelId}`" @click.prevent="goToNovel" class="btn-back-novel">
                     <i class="fas fa-book"></i>
-                    Về trang truyện
+                    Về trang tiểu thuyết
                 </a>
 
                 <button 

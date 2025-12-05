@@ -5,11 +5,11 @@
             <div class="container">
                 <h1 class="page-title">
                     <i class="fas fa-search"></i>
-                    Tìm kiếm truyện
+                    Tìm kiếm tiểu thuyết
                 </h1>
                 <SearchNovel
                     v-model="searchQuery"
-                    placeholder="Tìm kiếm theo tên truyện, tác giả..."
+                    placeholder="Tìm kiếm theo tên tiểu thuyết, tác giả..."
                     :show-suggestions-on-type="false"
                     @search="handleSearch"
                     @clear="handleClear"
@@ -82,7 +82,7 @@
                     <!-- Results Header -->
                     <div class="results-header">
                         <h2 class="results-title">
-                            {{ searchQuery ? `Kết quả cho "${searchQuery}"` : 'Tất cả truyện' }}
+                            {{ searchQuery ? `Kết quả cho "${searchQuery}"` : 'Tất cả tiểu thuyết' }}
                         </h2>
                         <span class="results-count">
                             {{ filteredNovels.length }} kết quả
@@ -398,7 +398,7 @@ export default {
 .genre-list {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.25rem;
     max-height: 300px;
     overflow-y: auto;
 }
@@ -406,8 +406,8 @@ export default {
 .genre-checkbox {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem;
+    gap: 0.4rem;
+    padding: 0.35rem 0.5rem;
     border-radius: 6px;
     cursor: pointer;
     transition: background 0.3s;

@@ -7,7 +7,7 @@
                         <i class="fas fa-user-plus"></i>
                         Đăng ký tài khoản
                     </h1>
-                    <p>Tham gia cộng đồng đọc truyện NovelMT</p>
+                    <p>Tham gia cộng đồng đọc tiểu thuyết NovelMT</p>
                 </div>
 
                 <form @submit.prevent="handleRegister" class="register-form">

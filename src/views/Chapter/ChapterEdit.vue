@@ -10,7 +10,7 @@
                         <i class="fas fa-edit"></i>
                         Chỉnh sửa chương
                     </h1>
-                    <p v-if="novelTitle">Truyện: {{ novelTitle }}</p>
+                    <p v-if="novelTitle">Tiểu thuyết: {{ novelTitle }}</p>
                 </div>
             </div>
         </div>

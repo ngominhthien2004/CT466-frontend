@@ -5,10 +5,10 @@
             <div class="header-content">
                 <h1>
                     <i class="fas fa-history"></i>
-                    Lịch sử đọc truyện
+                    Lịch sử đọc
                 </h1>
                 <p class="subtitle">
-                    Những truyện bạn đã đọc gần đây
+                    Những tiểu thuyết bạn đã đọc gần đây
                 </p>
             </div>
         </div>
@@ -20,7 +20,7 @@
                     <i class="fas fa-book-reader"></i>
                     <div class="stat-content">
                         <span class="stat-value">{{ historyList.length }}</span>
-                        <span class="stat-label">Truyện đã đọc</span>
+                        <span class="stat-label">Tiểu thuyết đã đọc</span>
                     </div>
                 </div>
                 <div class="stat-item">
@@ -51,7 +51,7 @@
                 <input
                     v-model="searchQuery"
                     type="text"
-                    placeholder="Tìm kiếm theo tên truyện..."
+                    placeholder="Tìm kiếm theo tên tiểu thuyết..."
                     @input="applyFilters"
                 />
             </div>
@@ -77,7 +77,7 @@
         <div v-else-if="!isAuthenticated" class="empty-state">
             <i class="fas fa-user-lock"></i>
             <h3>Bạn chưa đăng nhập</h3>
-            <p>Vui lòng đăng nhập để xem lịch sử đọc truyện</p>
+            <p>Vui lòng đăng nhập để xem lịch sử đọc</p>
             <router-link to="/login" class="btn-login">
                 <i class="fas fa-sign-in-alt"></i>
                 Đăng nhập ngay
@@ -88,7 +88,7 @@
         <div v-else-if="historyList.length === 0 && !loading" class="empty-state">
             <i class="fas fa-book-open"></i>
             <h3>Chưa có lịch sử đọc</h3>
-            <p>Bạn chưa đọc truyện nào. Hãy bắt đầu khám phá!</p>
+            <p>Bạn chưa đọc tiểu thuyết nào. Hãy bắt đầu khám phá!</p>
             <router-link to="/" class="btn-browse">
                 <i class="fas fa-compass"></i>
                 Khám phá ngay
@@ -184,7 +184,7 @@
         <DeleteModal
             :show="showDeleteModal"
             :title="deleteAll ? 'Xóa toàn bộ lịch sử?' : 'Xóa khỏi lịch sử?'"
-            :message="deleteAll ? 'Bạn có chắc chắn muốn xóa toàn bộ lịch sử đọc truyện?' : 'Bạn có chắc muốn xóa truyện này khỏi lịch sử?'"
+            :message="deleteAll ? 'Bạn có chắc chắn muốn xóa toàn bộ lịch sử đọc?' : 'Bạn có chắc muốn xóa tiểu thuyết này khỏi lịch sử?'"
             :item-name="deleteAll ? '' : itemToDelete?.novelTitle"
             :loading="deleting"
             @confirm="deleteAll ? handleClearAll() : handleRemove()"

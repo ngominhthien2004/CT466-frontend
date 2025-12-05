@@ -24,7 +24,7 @@
                 <div class="genre-stats">
                     <div class="stat-badge">
                         <i class="fas fa-book"></i>
-                        <span>{{ novels.length }} truyện</span>
+                        <span>{{ novels.length }} tiểu thuyết</span>
                     </div>
                     <div class="stat-badge">
                         <i class="fas fa-eye"></i>
@@ -68,13 +68,13 @@
             </div>
 
             <!-- Novels Grid -->
-            <LoadingSpinner v-if="loading" message="Đang tải truyện..." />
+            <LoadingSpinner v-if="loading" message="Đang tải tiểu thuyết..." />
 
             <EmptyState
                 v-else-if="filteredNovels.length === 0"
                 icon="fa-inbox"
-                title="Chưa có truyện nào"
-                message="Chưa có truyện nào thuộc thể loại này"
+                title="Chưa có tiểu thuyết nào"
+                message="Chưa có tiểu thuyết nào thuộc thể loại này"
             />
 
             <div v-else class="novels-grid">

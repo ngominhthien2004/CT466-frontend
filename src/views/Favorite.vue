@@ -8,7 +8,7 @@
                     Tiểu thuyết yêu thích
                 </h1>
                 <p class="subtitle">
-                    Danh sách các truyện bạn đã yêu thích
+                    Danh sách các yêu thích
                 </p>
             </div>
         </div>
@@ -19,7 +19,7 @@
                 <i class="fas fa-book"></i>
                 <div class="stat-content">
                     <span class="stat-value">{{ favoriteNovels.length }}</span>
-                    <span class="stat-label">Truyện yêu thích</span>
+                    <span class="stat-label">Yêu thích</span>
                 </div>
             </div>
         </div>
@@ -75,8 +75,8 @@
         <!-- Empty State - No Favorites -->
         <div v-else-if="favoriteNovels.length === 0 && !loading" class="empty-state">
             <i class="fas fa-heart-broken"></i>
-            <h3>Chưa có truyện yêu thích</h3>
-            <p>Bạn chưa thêm truyện nào vào danh sách yêu thích</p>
+            <h3>Chưa có tiểu thuyết yêu thích</h3>
+            <p>Bạn chưa thêm tiểu thuyết nào vào danh sách yêu thích</p>
             <router-link to="/" class="btn-browse">
                 <i class="fas fa-book-open"></i>
                 Khám phá ngay
@@ -151,7 +151,7 @@
                     <div class="list-actions">
                         <router-link :to="`/novels/${novel._id}`" class="btn-action btn-read">
                             <i class="fas fa-book-open"></i>
-                            Đọc truyện
+                            Đọc tiểu thuyết
                         </router-link>
                         <button @click="toggleFavorite(novel)" class="btn-action btn-unfavorite">
                             <i class="fas fa-heart-broken"></i>

@@ -2,7 +2,7 @@
     <router-link :to="`/genres/${genre.slug}`" class="genre-card">
         <div class="genre-content">
             <h3 class="genre-name">{{ genre.name }}</h3>
-            <p class="genre-count">{{ genre.novelCount || 0 }} truyện</p>
+            <p class="genre-count">{{ genre.novelCount || 0 }} tiểu thuyết</p>
         </div>
         <div class="genre-arrow">
             <i class="fas fa-chevron-right"></i>

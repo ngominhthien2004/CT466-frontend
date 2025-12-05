@@ -3,7 +3,7 @@
         <!-- Page Header -->
         <PageHeader
             title="Quản lý Thể loại"
-            subtitle="Quản lý tất cả thể loại truyện trong hệ thống"
+            subtitle="Quản lý tất cả thể loại tiểu thuyết trong hệ thống"
             icon="fas fa-tags"
         >
             <template #actions>
@@ -47,7 +47,7 @@
                         <th style="width: 60px;">STT</th>
                         <th>Tên Thể loại</th>
                         <th>Mô tả</th>
-                        <th style="width: 100px;">Số Truyện</th>
+                        <th style="width: 100px;">Số Tiểu thuyết</th>
                         <th style="width: 150px;">Thao tác</th>
                     </tr>
                 </thead>
@@ -98,7 +98,7 @@
     <ConfirmModal
         :show="confirmVisible"
         title="Xóa thể loại"
-        message="Khi xóa thể loại, hệ thống sẽ bỏ thể loại khỏi các truyện liên quan. Bạn có chắc muốn tiếp tục?"
+        message="Khi xóa thể loại, hệ thống sẽ bỏ thể loại khỏi các tiểu thuyết liên quan. Bạn có chắc muốn tiếp tục?"
         confirmText="Xóa"
         cancelText="Hủy"
         confirmType="danger"

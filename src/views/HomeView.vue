@@ -7,13 +7,13 @@
                     <i class="fas fa-book-open"></i>
                     Chào mừng đến với NovelMT
                 </h1>
-                <p class="hero-subtitle">Khám phá thế giới truyện chữ đầy màu sắc</p>
+                <p class="hero-subtitle">Khám phá thế giới tiểu thuyết đầy màu sắc</p>
                 <div class="hero-stats">
                     <div class="stat-item">
                         <i class="fas fa-book"></i>
                         <div class="stat-info">
                             <span class="stat-number">{{ totalNovels }}</span>
-                            <span class="stat-label">Truyện</span>
+                            <span class="stat-label">Tiểu thuyết</span>
                         </div>
                     </div>
                     <div class="stat-item">
@@ -21,13 +21,6 @@
                         <div class="stat-info">
                             <span class="stat-number">{{ totalViews }}</span>
                             <span class="stat-label">Lượt xem</span>
-                        </div>
-                    </div>
-                    <div class="stat-item">
-                        <i class="fas fa-users"></i>
-                        <div class="stat-info">
-                            <span class="stat-number">1000+</span>
-                            <span class="stat-label">Độc giả</span>
                         </div>
                     </div>
                 </div>
@@ -44,43 +37,6 @@
                     @clear="handleSearchClear"
                     @select="handleSelectSuggestion"
                 />
-                
-                <div v-if="isSearching" class="search-filters">
-                    <FilterBar
-                        :status-filter="searchFilterStatus"
-                        :sort-by="searchSortBy"
-                        :status-options="statusOptions"
-                        :sort-options="sortOptions"
-                        @update:statusFilter="searchFilterStatus = $event"
-                        @update:sortBy="searchSortBy = $event"
-                        @filter-change="handleFilterChange"
-                        @sort-change="handleFilterChange"
-                        @reset="handleSearchReset"
-                    />
-                </div>
-            </section>
-
-            <!-- Search Results -->
-            <section v-if="isSearching" class="novel-section">
-                <div class="section-header">
-                    <h2 class="section-title">
-                        <i class="fas fa-search"></i>
-                        Kết quả tìm kiếm
-                    </h2>
-                    <span class="search-count">{{ searchResults.length }} kết quả</span>
-                </div>
-                <NovelList 
-                    v-if="searchResults.length > 0"
-                    :novels="searchResults"
-                    :loading="false"
-                    :items-per-page="12"
-                    @toggle-favorite="handleToggleFavorite"
-                />
-                <EmptyState
-                    v-else
-                    icon="fa-inbox"
-                    title="Không tìm thấy kết quả nào"
-                />
             </section>
 
             <!-- Tiểu thuyết mới -->
@@ -88,7 +44,7 @@
                 <div class="section-header">
                     <h2 class="section-title">
                         <i class="fas fa-fire"></i>
-                        Truyện Mới Cập Nhật
+                        Tiểu thuyết Mới Cập Nhật
                     </h2>
                     <router-link to="/novels" class="view-all">
                         Xem tất cả
@@ -104,11 +60,11 @@
             </section>
 
             <!-- Tiểu thuyết nổi bật -->
-            <section class="novel-section">
+            <section v-if="!isSearching" class="novel-section">
                 <div class="section-header">
                     <h2 class="section-title">
                         <i class="fas fa-star"></i>
-                        Truyện Nổi Bật
+                        Tiểu thuyết Nổi Bật
                     </h2>
                     <router-link to="/novels?sort=views" class="view-all">
                         Xem tất cả
@@ -129,7 +85,6 @@
 <script>
 import NovelList from '@/components/Novel/NovelList.vue';
 import SearchNovel from '@/components/Novel/SearchNovel.vue';
-import FilterBar from '@/components/Common/FilterBar.vue';
 import EmptyState from '@/components/Common/EmptyState.vue';
 import { NovelService } from '@/services';
 import { useNovelStore, useAuthStore } from '@/stores';
@@ -139,7 +94,6 @@ export default {
     components: {
         NovelList,
         SearchNovel,
-        FilterBar,
         EmptyState
     },
     data() {
@@ -148,27 +102,7 @@ export default {
             authStore: useAuthStore(),
             loadingNew: false,
             loadingFeatured: false,
-            searchResults: [],
-            isSearching: false,
-            searchFilterStatus: '',
-            searchSortBy: 'createdAt',
-            statusOptions: {
-                placeholder: 'Tất cả trạng thái',
-                options: [
-                    { value: 'ongoing', label: 'Đang ra' },
-                    { value: 'completed', label: 'Hoàn thành' },
-                    { value: 'paused', label: 'Tạm dừng' },
-                    { value: 'dropped', label: 'Ngưng' }
-                ]
-            },
-            sortOptions: {
-                options: [
-                    { value: 'createdAt', label: 'Mới nhất' },
-                    { value: 'views', label: 'Lượt xem' },
-                    { value: 'likes', label: 'Lượt thích' },
-                    { value: 'title', label: 'Tên A-Z' }
-                ]
-            }
+            isSearching: false
         };
     },
     computed: {
@@ -213,7 +147,7 @@ export default {
             try {
                 const userId = this.authStore.user?._id;
                 if (!userId) {
-                    alert('Vui lòng đăng nhập để yêu thích truyện');
+                    alert('Vui lòng đăng nhập để yêu thích tiểu thuyết');
                     return;
                 }
                 
@@ -225,56 +159,18 @@ export default {
             }
         },
         handleSearch(query) {
-            if (!query.trim()) {
-                this.isSearching = false;
-                this.searchResults = [];
+            if (!query || !query.trim()) {
                 return;
             }
             
-            const searchTerm = query.toLowerCase();
-            let results = this.newNovels.filter(novel =>
-                novel.title?.toLowerCase().includes(searchTerm) ||
-                novel.author?.toLowerCase().includes(searchTerm) ||
-                novel.genres?.some(g => g.toLowerCase().includes(searchTerm))
-            );
-            
-            // Apply status filter
-            if (this.searchFilterStatus) {
-                results = results.filter(novel => novel.status === this.searchFilterStatus);
-            }
-            
-            // Apply sorting
-            const sortFunctions = {
-                'createdAt': (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0),
-                'views': (a, b) => (b.views || 0) - (a.views || 0),
-                'likes': (a, b) => (b.likes || 0) - (a.likes || 0),
-                'title': (a, b) => (a.title || '').localeCompare(b.title || '')
-            };
-            
-            results.sort(sortFunctions[this.searchSortBy]);
-            
-            this.searchResults = results;
-            this.isSearching = true;
+            // Redirect to search page with query
+            this.$router.push({
+                path: '/search',
+                query: { q: query.trim() }
+            });
         },
         handleSearchClear() {
-            this.isSearching = false;
-            this.searchResults = [];
-            this.searchFilterStatus = '';
-            this.searchSortBy = 'createdAt';
-        },
-        handleFilterChange() {
-            if (this.isSearching) {
-                // Re-apply search with new filters
-                const searchInput = document.querySelector('.search-novel input');
-                if (searchInput && searchInput.value) {
-                    this.handleSearch(searchInput.value);
-                }
-            }
-        },
-        handleSearchReset() {
-            this.searchFilterStatus = '';
-            this.searchSortBy = 'createdAt';
-            this.handleFilterChange();
+            // Do nothing - just clear the input
         },
         handleSelectSuggestion(novel) {
             this.$router.push(`/novels/${novel._id}`);

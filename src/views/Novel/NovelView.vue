@@ -162,7 +162,7 @@ export default {
             try {
                 const userId = this.authStore.user?._id;
                 if (!userId) {
-                    alert('Vui lòng đăng nhập để yêu thích truyện');
+                    alert('Vui lòng đăng nhập để yêu thích');
                     return;
                 }
 

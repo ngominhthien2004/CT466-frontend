@@ -14,7 +14,7 @@
             @reset="resetFilters"
         >
             <select v-model="filterNovel" @change="applyFilters" class="filter-select">
-                <option value="">Tất cả truyện</option>
+                <option value="">Tất cả tiểu thuyết</option>
                 <option v-for="novel in novels" :key="novel._id" :value="novel._id">
                     {{ novel.title }}
                 </option>
@@ -44,7 +44,7 @@
                 <thead>
                     <tr>
                         <th>STT</th>
-                        <th>Truyện</th>
+                        <th>Tiểu thuyết</th>
                         <th>Tên Chapter</th>
                         <th>Số Chương</th>
                         <th>Lượt Xem</th>
@@ -199,7 +199,7 @@ export default {
                 {
                     icon: 'fas fa-book-reader',
                     value: this.novels.length,
-                    label: 'Số Truyện',
+                    label: 'Số tiểu thuyết',
                     color: 'purple'
                 }
             ];
