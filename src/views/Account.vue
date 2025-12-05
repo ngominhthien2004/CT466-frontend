@@ -198,12 +198,9 @@
                                 <router-link :to="`/novels/${novel._id}`" class="btn-icon" title="Xem chi tiết">
                                     <i class="fas fa-eye"></i>
                                 </router-link>
-                                <router-link :to="`/novels/${novel._id}/edit`" class="btn-icon" title="Chỉnh sửa">
+                                <button @click="openEditNovel(novel)" class="btn-icon" title="Chỉnh sửa">
                                     <i class="fas fa-edit"></i>
-                                </router-link>
-                                <router-link :to="`/admin/novels/${novel._id}/chapters`" class="btn-icon" title="Quản lý chương">
-                                    <i class="fas fa-list"></i>
-                                </router-link>
+                                </button>
                                 <button @click="confirmDeleteNovel(novel)" class="btn-icon btn-delete" title="Xóa">
                                     <i class="fas fa-trash"></i>
                                 </button>
@@ -213,6 +210,15 @@
                 </div>
             </div>
         </div>
+
+        <!-- Edit Novel Modal -->
+        <NovelForm
+            v-if="showEditNovel"
+            :isModal="true"
+            :novel="editNovelTarget"
+            @close="closeEditNovel"
+            @submit-form="handleEditNovelSubmit"
+        />
 
         <!-- Edit Profile Modal -->
         <div v-if="showEditProfile" class="form-overlay" @click="closeEditProfile">
@@ -370,9 +376,13 @@
 <script>
 import { useAuthStore } from '@/stores';
 import { NovelService, UserService, ReadingHistoryService } from '@/services';
+import NovelForm from '@/components/Novel/NovelForm.vue';
 
 export default {
     name: 'AccountPage',
+    components: {
+        NovelForm
+    },
     data() {
         return {
             authStore: useAuthStore(),
@@ -394,6 +404,8 @@ export default {
             showEditProfile: false,
             showChangePassword: false,
             showAvatarUpload: false,
+            showEditNovel: false,
+            editNovelTarget: null,
             submitting: false,
             editForm: {
                 username: '',
@@ -415,6 +427,12 @@ export default {
         }
     },
     async mounted() {
+        // Check if tab query parameter exists
+        const tab = this.$route.query.tab;
+        if (tab === 'novels') {
+            this.activeTab = 'novels';
+        }
+        
         if (this.isAuthenticated) {
             await this.loadAccountData();
         }
@@ -519,6 +537,30 @@ export default {
             } catch (error) {
                 console.error('Error deleting novel:', error);
                 alert('Không thể xóa tiểu thuyết!');
+            }
+        },
+        openEditNovel(novel) {
+            this.editNovelTarget = { ...novel };
+            this.showEditNovel = true;
+        },
+        closeEditNovel() {
+            this.showEditNovel = false;
+            this.editNovelTarget = null;
+        },
+        async handleEditNovelSubmit(formData) {
+            if (!this.editNovelTarget) return;
+            
+            this.submitting = true;
+            try {
+                await NovelService.update(this.editNovelTarget._id, formData);
+                alert('Cập nhật tiểu thuyết thành công!');
+                this.closeEditNovel();
+                await this.loadMyNovels();
+            } catch (error) {
+                console.error('Error updating novel:', error);
+                alert('Không thể cập nhật tiểu thuyết!');
+            } finally {
+                this.submitting = false;
             }
         },
         closeEditProfile() {

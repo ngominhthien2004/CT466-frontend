@@ -73,6 +73,10 @@
                                 <i class="fas fa-user"></i>
                                 Trang cá nhân
                             </router-link>
+                            <router-link :to="`/account/${authStore.user?._id}?tab=novels`" class="dropdown-item" @click="closeDropdown">
+                                <i class="fas fa-book"></i>
+                                Tiểu thuyết đã đăng
+                            </router-link>
                             <div class="dropdown-divider"></div>
                             <button @click="handleLogout" class="dropdown-item logout">
                                 <i class="fas fa-sign-out-alt"></i>

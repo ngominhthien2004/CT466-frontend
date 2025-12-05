@@ -146,27 +146,11 @@ const routes = [
     },
     // Account Route
     {
-        path: "/account/:userId",
+        path: "/account/:userId?",
         name: "account",
         component: () => import("@/views/Account.vue"),
         beforeEnter: requireAuth,
     },
-    // TODO: Thêm các route sau khi tạo file view tương ứng
-    // {
-    //     path: "/history",
-    //     name: "history",
-    //     component: () => import("@/views/History.vue"),
-    // },
-    // {
-    //     path: "/categories",
-    //     name: "categories",
-    //     component: () => import("@/views/Categories.vue"),
-    // },
-    // {
-    //     path: "/profile",
-    //     name: "profile",
-    //     component: () => import("@/views/Profile.vue"),
-    // },
     {
         path: "/:pathMatch(.*)*",
         name: "not-found",
