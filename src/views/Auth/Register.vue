@@ -218,12 +218,26 @@ export default {
                 // Call API register
                 const response = await AuthService.register(this.formData);
                 
-                this.success = 'Đăng ký thành công! Đang chuyển đến trang đăng nhập...';
-
-                // Auto login or redirect to login
-                setTimeout(() => {
-                    this.$router.push('/login');
-                }, 2000);
+                // Check if response has user and token
+                if (response && response.user && response.token) {
+                    // Auto login sau khi register thành công
+                    this.authStore.login({
+                        ...response.user,
+                        token: response.token
+                    });
+                    
+                    this.success = 'Đăng ký thành công! Đang chuyển đến trang chủ...';
+                    
+                    setTimeout(() => {
+                        this.$router.push('/');
+                    }, 1500);
+                } else {
+                    // Fallback: redirect to login nếu không có token
+                    this.success = 'Đăng ký thành công! Đang chuyển đến trang đăng nhập...';
+                    setTimeout(() => {
+                        this.$router.push('/login');
+                    }, 2000);
+                }
 
             } catch (error) {
                 console.error('Register error:', error);

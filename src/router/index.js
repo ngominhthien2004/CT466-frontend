@@ -2,6 +2,33 @@ import { createWebHistory, createRouter } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
 import NovelView from "@/views/Novel/NovelView.vue";
 import AdminLayout from "@/views/Admin/AdminLayout.vue";
+import AuthService from "@/services/auth.service";
+
+// Route guard to check authentication
+const requireAuth = (to, from, next) => {
+    if (!AuthService.isLoggedIn()) {
+        next({
+            path: '/login',
+            query: { redirect: to.fullPath }
+        });
+    } else {
+        next();
+    }
+};
+
+// Route guard to check admin role
+const requireAdmin = (to, from, next) => {
+    if (!AuthService.isLoggedIn()) {
+        next({
+            path: '/login',
+            query: { redirect: to.fullPath }
+        });
+    } else if (!AuthService.isAdmin()) {
+        next({ path: '/' }); // Redirect to home if not admin
+    } else {
+        next();
+    }
+};
 
 const routes = [
     {
@@ -13,6 +40,7 @@ const routes = [
         path: "/novels/add",
         name: "novel-add",
         component: () => import("@/views/Novel/NovelAdd.vue"),
+        beforeEnter: requireAuth,
     },
     {
         path: "/novels/:id",
@@ -34,16 +62,19 @@ const routes = [
         path: "/chapters/add",
         name: "chapter-add",
         component: () => import("@/views/Chapter/ChapterAdd.vue"),
+        beforeEnter: requireAuth,
     },
     {
         path: "/chapters/edit/:id",
         name: "chapter-edit",
         component: () => import("@/views/Chapter/ChapterEdit.vue"),
+        beforeEnter: requireAuth,
     },
     // Admin Routes
     {
         path: "/admin",
         component: AdminLayout,
+        beforeEnter: requireAdmin,
         children: [
             {
                 path: "",
@@ -83,6 +114,7 @@ const routes = [
         path: "/favorites",
         name: "favorites",
         component: () => import("@/views/Favorite.vue"),
+        beforeEnter: requireAuth,
     },
     // Genre Routes
     {
@@ -100,12 +132,14 @@ const routes = [
         path: "/reading-history",
         name: "reading-history",
         component: () => import("@/views/ReadingHistory.vue"),
+        beforeEnter: requireAuth,
     },
     // Account Route
     {
         path: "/account/:userId",
         name: "account",
         component: () => import("@/views/Account.vue"),
+        beforeEnter: requireAuth,
     },
     // TODO: Thêm các route sau khi tạo file view tương ứng
     // {

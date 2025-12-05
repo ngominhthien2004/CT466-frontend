@@ -120,13 +120,16 @@ export default {
                 
                 console.log('Login response:', response);
                 
-                // Check if response has user
-                if (!response || !response.user) {
+                // Check if response has user and token
+                if (!response || !response.user || !response.token) {
                     throw new Error('Invalid response from server');
                 }
                 
-                // Lưu user vào store
-                this.authStore.login(response.user);
+                // Lưu user + token vào store
+                this.authStore.login({
+                    ...response.user,
+                    token: response.token
+                });
 
                 // Redirect về trang trước hoặc home
                 const redirect = this.$route.query.redirect || '/';
