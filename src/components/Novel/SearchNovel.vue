@@ -54,6 +54,10 @@
 export default {
     name: 'SearchNovel',
     props: {
+        modelValue: {
+            type: String,
+            default: ''
+        },
         placeholder: {
             type: String,
             default: 'Tìm kiếm tiểu thuyết theo tên, tác giả...'
@@ -67,11 +71,17 @@ export default {
             default: () => []
         }
     },
+    emits: ['update:modelValue', 'search', 'clear', 'select'],
     data() {
         return {
-            searchQuery: '',
+            searchQuery: this.modelValue || '',
             showSuggestions: false
         };
+    },
+    watch: {
+        modelValue(newVal) {
+            this.searchQuery = newVal;
+        }
     },
     computed: {
         suggestions() {
@@ -98,7 +108,7 @@ export default {
     methods: {
         handleInput() {
             this.showSuggestions = true;
-            this.$emit('input', this.searchQuery);
+            this.$emit('update:modelValue', this.searchQuery);
         },
         handleSearch() {
             this.showSuggestions = false;
@@ -107,8 +117,8 @@ export default {
         clearSearch() {
             this.searchQuery = '';
             this.showSuggestions = false;
+            this.$emit('update:modelValue', '');
             this.$emit('clear');
-            this.$emit('input', '');
         },
         selectSuggestion(suggestion) {
             this.showSuggestions = false;

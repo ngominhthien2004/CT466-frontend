@@ -26,8 +26,8 @@
                         <i class="fas fa-tags"></i>
                         <span class="label">Thể loại:</span>
                         <div class="genres">
-                            <span v-for="genre in novel.genres" :key="genre" class="genre-tag">
-                                {{ genre }}
+                            <span v-for="genre in novel.genres" :key="genre._id || genre" class="genre-tag">
+                                {{ typeof genre === 'string' ? genre : genre.name }}
                             </span>
                             <span v-if="!novel.genres || novel.genres.length === 0" class="value">
                                 Chưa phân loại

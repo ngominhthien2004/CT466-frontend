@@ -19,6 +19,10 @@
                         <i class="fas fa-home"></i>
                         <span>Trang chủ</span>
                     </router-link>
+                    <router-link to="/search" class="nav-link" active-class="active">
+                        <i class="fas fa-search"></i>
+                        <span>Tìm kiếm</span>
+                    </router-link>
                     <router-link to="/favorites" class="nav-link" active-class="active">
                         <i class="fas fa-heart"></i>
                         <span>Yêu thích</span>
@@ -96,6 +100,10 @@
                 <router-link to="/" class="mobile-nav-link" @click="closeMobileMenu">
                     <i class="fas fa-home"></i>
                     <span>Trang chủ</span>
+                </router-link>
+                <router-link to="/search" class="mobile-nav-link" @click="closeMobileMenu">
+                    <i class="fas fa-search"></i>
+                    <span>Tìm kiếm</span>
                 </router-link>
                 <router-link to="/favorites" class="mobile-nav-link" @click="closeMobileMenu">
                     <i class="fas fa-heart"></i>
