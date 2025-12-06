@@ -3,7 +3,7 @@
     <div class="footer-inner">
       <div class="col about">
         <div class="brand">
-          <img src="../../../public/assets/logo.png" alt="logo" class="logo" />
+          <img src="../../../assets/logo.png" alt="logo" class="logo" />
           <h3>NovelMT</h3>
         </div>
         <p>Nền tảng nghe tiểu thuyết hàng đầu Việt Nam. Hàng nghìn tiểu thuyết hay, cập nhật liên tục.</p>

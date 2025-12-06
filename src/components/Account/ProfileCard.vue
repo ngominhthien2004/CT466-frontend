@@ -70,11 +70,22 @@
                 Đổi mật khẩu
             </button>
         </div>
+    
+        <NotificationModal
+            :show="showNotification"
+            :type="notificationType"
+            :message="notificationMessage"
+            :autoClose="notificationAutoClose"
+            @close="showNotification = false"
+        />
     </div>
 </template>
 
 <script>
+import NotificationModal from '@/components/Common/NotificationModal.vue';
+
 export default {
+    components: { NotificationModal },
     name: 'ProfileCard',
     props: {
         username: { type: String, required: true },
@@ -88,7 +99,11 @@ export default {
     data() {
         return {
             editingUsername: false,
-            tempUsername: ''
+            tempUsername: '',
+            showNotification: false,
+            notificationMessage: '',
+            notificationType: 'error',
+            notificationAutoClose: false
         };
     },
     methods: {
@@ -108,7 +123,10 @@ export default {
         },
         saveUsername() {
             if (!this.tempUsername || this.tempUsername.trim() === '') {
-                alert('Tên người dùng không được để trống!');
+                this.notificationMessage = 'Tên người dùng không được để trống!';
+                this.notificationType = 'error';
+                this.notificationAutoClose = false;
+                this.showNotification = true;
                 return;
             }
             if (this.tempUsername === this.username) {
@@ -125,6 +143,7 @@ export default {
     }
 };
 </script>
+
 
 <style scoped>
 .profile-card {

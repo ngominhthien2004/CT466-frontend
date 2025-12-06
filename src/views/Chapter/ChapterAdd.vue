@@ -23,6 +23,14 @@
                 @cancel="goBack"
             />
         </div>
+
+        <NotificationModal
+            :show="showNotification"
+            :type="notificationType"
+            :message="notificationMessage"
+            :autoClose="notificationAutoClose"
+            @close="showNotification = false"
+        />
     </div>
 </template>
 
@@ -30,18 +38,24 @@
 import ChapterForm from '@/components/Chapter/ChapterForm.vue';
 import ChapterService from '@/services/chapter.service';
 import NovelService from '@/services/novel.service';
+import NotificationModal from '@/components/Common/NotificationModal.vue';
 
 export default {
     name: 'ChapterAdd',
     components: {
-        ChapterForm
+        ChapterForm,
+        NotificationModal
     },
     data() {
         return {
             novelId: '',
             novelTitle: '',
             loading: false,
-            submitting: false
+            submitting: false,
+            showNotification: false,
+            notificationMessage: '',
+            notificationType: 'success',
+            notificationAutoClose: false
         };
     },
     async mounted() {
@@ -49,8 +63,13 @@ export default {
         this.novelId = this.$route.query.novelId;
         
         if (!this.novelId) {
-            alert('Không tìm thấy ID tiểu thuyết');
-            this.$router.push('/admin/novels');
+            this.notificationMessage = 'Không tìm thấy ID tiểu thuyết';
+            this.notificationType = 'error';
+            this.notificationAutoClose = false;
+            this.showNotification = true;
+            setTimeout(() => {
+                this.$router.push('/admin/novels');
+            }, 2000);
             return;
         }
 
@@ -78,15 +97,21 @@ export default {
             this.loading = true;
             try {
                 await ChapterService.create(chapterData);
-                // Redirect first, then show success message
-                this.$router.push(`/novels/${this.novelId}`);
-                // Show success message after a brief delay
+                // Show success message first so modal is visible, then navigate
+                this.notificationMessage = 'Đã thêm chương thành công!';
+                this.notificationType = 'success';
+                this.notificationAutoClose = true;
+                this.showNotification = true;
+                // Navigate after a short delay so user sees the notification
                 setTimeout(() => {
-                    alert('Đã thêm chương thành công!');
-                }, 300);
+                    this.$router.push(`/novels/${this.novelId}`);
+                }, 1500);
             } catch (error) {
                 console.error('Error creating chapter:', error);
-                alert(error.response?.data?.message || 'Không thể thêm chương');
+                this.notificationMessage = error.response?.data?.message || 'Không thể thêm chương';
+                this.notificationType = 'error';
+                this.notificationAutoClose = false;
+                this.showNotification = true;
             } finally {
                 this.loading = false;
                 this.submitting = false;

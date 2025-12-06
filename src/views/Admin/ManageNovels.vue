@@ -182,6 +182,14 @@
             @close="closeEditModal"
             @submit-form="handleEditSubmit"
         />
+
+        <NotificationModal
+            :show="showNotification"
+            :type="notificationType"
+            :message="notificationMessage"
+            :autoClose="notificationAutoClose"
+            @close="showNotification = false"
+        />
     </div>
 </template>
 
@@ -192,6 +200,7 @@ import PageHeader from '@/components/Admin/PageHeader.vue';
 import StatsCards from '@/components/Admin/StatsCards.vue';
 import NovelForm from '@/components/Novel/NovelForm.vue';
 import DeleteModal from '@/components/Common/DeleteModal.vue';
+import NotificationModal from '@/components/Common/NotificationModal.vue';
 import SearchNovel from '@/components/Novel/SearchNovel.vue';
 import FilterBar from '@/components/Common/FilterBar.vue';
 import LoadingSpinner from '@/components/Common/LoadingSpinner.vue';
@@ -199,7 +208,7 @@ import EmptyState from '@/components/Common/EmptyState.vue';
 
 export default {
     name: 'ManageNovels',
-    components: { PageHeader, StatsCards, NovelForm, DeleteModal, SearchNovel, FilterBar, LoadingSpinner, EmptyState },
+    components: { PageHeader, StatsCards, NovelForm, DeleteModal, NotificationModal, SearchNovel, FilterBar, LoadingSpinner, EmptyState },
     data() {
         return {
             novelStore: useNovelStore(),
@@ -215,6 +224,10 @@ export default {
             deleteTarget: null,
             deleting: false,
             creatorUsernames: {}, // Map of userId -> username
+            showNotification: false,
+            notificationMessage: '',
+            notificationType: 'success',
+            notificationAutoClose: false,
             statusOptions: {
                 placeholder: 'Tất cả trạng thái',
                 options: [
@@ -381,7 +394,10 @@ export default {
 
             } catch (error) {
                 console.error('Error deleting novel:', error);
-                alert('Có lỗi xảy ra khi xóa tiểu thuyết!');
+                this.notificationMessage = 'Có lỗi xảy ra khi xóa tiểu thuyết!';
+                this.notificationType = 'error';
+                this.notificationAutoClose = false;
+                this.showNotification = true;
             } finally {
                 this.deleting = false;
             }
@@ -404,7 +420,10 @@ export default {
                 this.applyFilters();
             } catch (error) {
                 console.error('Error updating novel:', error);
-                alert('Có lỗi xảy ra khi cập nhật tiểu thuyết!');
+                this.notificationMessage = 'Có lỗi xảy ra khi cập nhật tiểu thuyết!';
+                this.notificationType = 'error';
+                this.notificationAutoClose = false;
+                this.showNotification = true;
             }
         },
         getStatusText(status) {

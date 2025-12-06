@@ -175,14 +175,24 @@
                 </div>
             </form>
         </div>
+
+        <NotificationModal
+            :show="showNotification"
+            :type="notificationType"
+            :message="notificationMessage"
+            :autoClose="notificationAutoClose"
+            @close="showNotification = false"
+        />
     </div>
 </template>
 
 <script>
 import { useGenreStore } from '@/stores/genre';
+import NotificationModal from '@/components/Common/NotificationModal.vue';
 
 export default {
     name: 'NovelForm',
+    components: { NotificationModal },
     props: {
         novel: {
             type: Object,
@@ -211,6 +221,11 @@ export default {
             errors: {},
             submitting: false,
             fileName: ''
+            ,
+            showNotification: false,
+            notificationMessage: '',
+            notificationType: 'error',
+            notificationAutoClose: false
         };
     },
     mounted() {
@@ -301,13 +316,19 @@ export default {
             
             // Validate file type
             if (!file.type.startsWith('image/')) {
-                alert('Vui lòng chọn file ảnh');
+                this.notificationMessage = 'Vui lòng chọn file ảnh';
+                this.notificationType = 'error';
+                this.notificationAutoClose = false;
+                this.showNotification = true;
                 return;
             }
             
             // Validate file size (max 5MB)
             if (file.size > 5 * 1024 * 1024) {
-                alert('Kích thước ảnh không được vượt quá 5MB');
+                this.notificationMessage = 'Kích thước ảnh không được vượt quá 5MB';
+                this.notificationType = 'error';
+                this.notificationAutoClose = false;
+                this.showNotification = true;
                 return;
             }
             
@@ -319,7 +340,10 @@ export default {
                 this.formData.coverImage = e.target.result;
             };
             reader.onerror = () => {
-                alert('Không thể đọc file ảnh');
+                this.notificationMessage = 'Không thể đọc file ảnh';
+                this.notificationType = 'error';
+                this.notificationAutoClose = false;
+                this.showNotification = true;
             };
             reader.readAsDataURL(file);
         },

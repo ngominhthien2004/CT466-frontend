@@ -154,7 +154,14 @@
                 </div>
             </div>
         </div>
-    </div>
+    <NotificationModal
+        :show="showNotification"
+        :type="notificationType"
+        :message="notificationMessage"
+        :autoClose="notificationAutoClose"
+        @close="showNotification = false"
+    />
+</div>
 </template>
 
 <script>
@@ -166,6 +173,7 @@ import StatsCards from '@/components/Account/StatsCards.vue';
 import MyNovelsList from '@/components/Account/MyNovelsList.vue';
 import EditEmailModal from '@/components/Account/EditEmailModal.vue';
 import ChangePasswordModal from '@/components/Account/ChangePasswordModal.vue';
+import NotificationModal from '@/components/Common/NotificationModal.vue';
 
 export default {
     name: 'AccountPage',
@@ -175,7 +183,8 @@ export default {
         StatsCards,
         MyNovelsList,
         EditEmailModal,
-        ChangePasswordModal
+        ChangePasswordModal,
+        NotificationModal
     },
     data() {
         return {
@@ -202,7 +211,11 @@ export default {
             passwordError: '',
             profileError: '',
             selectedAvatar: null,
-            avatarPreview: null
+            avatarPreview: null,
+            showNotification: false,
+            notificationMessage: '',
+            notificationType: 'success',
+            notificationAutoClose: false
         };
     },
     computed: {
@@ -315,12 +328,18 @@ export default {
 
             try {
                 await NovelService.delete(novel._id);
-                alert('Xóa tiểu thuyết thành công!');
+                this.notificationMessage = 'Xóa tiểu thuyết thành công!';
+                this.notificationType = 'success';
+                this.notificationAutoClose = true;
+                this.showNotification = true;
                 await this.loadMyNovels();
                 await this.loadStats();
             } catch (error) {
                 console.error('Error deleting novel:', error);
-                alert('Không thể xóa tiểu thuyết!');
+                this.notificationMessage = 'Không thể xóa tiểu thuyết!';
+                this.notificationType = 'error';
+                this.notificationAutoClose = false;
+                this.showNotification = true;
             }
         },
         openEditNovel(novel) {
@@ -337,12 +356,18 @@ export default {
             this.submitting = true;
             try {
                 await NovelService.update(this.editNovelTarget._id, formData);
-                alert('Cập nhật tiểu thuyết thành công!');
+                this.notificationMessage = 'Cập nhật tiểu thuyết thành công!';
+                this.notificationType = 'success';
+                this.notificationAutoClose = true;
+                this.showNotification = true;
                 this.closeEditNovel();
                 await this.loadMyNovels();
             } catch (error) {
                 console.error('Error updating novel:', error);
-                alert('Không thể cập nhật tiểu thuyết!');
+                this.notificationMessage = 'Không thể cập nhật tiểu thuyết!';
+                this.notificationType = 'error';
+                this.notificationAutoClose = false;
+                this.showNotification = true;
             } finally {
                 this.submitting = false;
             }
@@ -363,7 +388,10 @@ export default {
                 this.authStore.updateUser(response);
             } catch (error) {
                 console.error('Error updating username:', error);
-                alert(error.response?.data?.message || 'Không thể cập nhật tên người dùng!');
+                this.notificationMessage = error.response?.data?.message || 'Không thể cập nhật tên người dùng!';
+                this.notificationType = 'error';
+                this.notificationAutoClose = false;
+                this.showNotification = true;
             } finally {
                 this.submitting = false;
             }
@@ -404,13 +432,18 @@ export default {
                 
                 // Update from API response
                 this.authStore.updateUser(response);
-                
-                alert('Cập nhật email thành công!');
+                this.notificationMessage = 'Cập nhật email thành công!';
+                this.notificationType = 'success';
+                this.notificationAutoClose = true;
+                this.showNotification = true;
                 this.closeEditProfile();
             } catch (error) {
                 console.error('Error updating email:', error);
                 this.profileError = error.response?.data?.message || 'Không thể cập nhật email!';
-                alert(this.profileError);
+                this.notificationMessage = this.profileError;
+                this.notificationType = 'error';
+                this.notificationAutoClose = false;
+                this.showNotification = true;
             } finally {
                 this.submitting = false;
             }
@@ -426,13 +459,19 @@ export default {
             const validationError = this.validatePassword(newPassword);
             if (validationError) {
                 this.passwordError = validationError;
-                alert(validationError);
+                this.notificationMessage = validationError;
+                this.notificationType = 'error';
+                this.notificationAutoClose = false;
+                this.showNotification = true;
                 return;
             }
             
             if (newPassword !== confirmPassword) {
                 this.passwordError = 'Mật khẩu xác nhận không khớp!';
-                alert(this.passwordError);
+                this.notificationMessage = this.passwordError;
+                this.notificationType = 'error';
+                this.notificationAutoClose = false;
+                this.showNotification = true;
                 return;
             }
 
@@ -444,12 +483,18 @@ export default {
                     newPassword
                 });
                 
-                alert('Đổi mật khẩu thành công!');
+                this.notificationMessage = 'Đổi mật khẩu thành công!';
+                this.notificationType = 'success';
+                this.notificationAutoClose = true;
+                this.showNotification = true;
                 this.closeChangePassword();
             } catch (error) {
                 console.error('Error changing password:', error);
                 this.passwordError = error.response?.data?.message || 'Không thể đổi mật khẩu!';
-                alert(this.passwordError);
+                this.notificationMessage = this.passwordError;
+                this.notificationType = 'error';
+                this.notificationAutoClose = false;
+                this.showNotification = true;
             } finally {
                 this.submitting = false;
             }
@@ -463,13 +508,19 @@ export default {
 
             // Validate file type
             if (!file.type.startsWith('image/')) {
-                alert('Vui lòng chọn file ảnh!');
+                this.notificationMessage = 'Vui lòng chọn file ảnh!';
+                this.notificationType = 'error';
+                this.notificationAutoClose = false;
+                this.showNotification = true;
                 return;
             }
 
             // Validate file size (5MB)
             if (file.size > 5 * 1024 * 1024) {
-                alert('Kích thước ảnh không được vượt quá 5MB!');
+                this.notificationMessage = 'Kích thước ảnh không được vượt quá 5MB!';
+                this.notificationType = 'error';
+                this.notificationAutoClose = false;
+                this.showNotification = true;
                 return;
             }
 
@@ -501,11 +552,17 @@ export default {
                 // Update auth store with new avatar
                 this.authStore.updateUser({ avatar: response.avatar });
                 
-                alert('Cập nhật ảnh đại diện thành công!');
+                this.notificationMessage = 'Cập nhật ảnh đại diện thành công!';
+                this.notificationType = 'success';
+                this.notificationAutoClose = true;
+                this.showNotification = true;
                 this.closeAvatarUpload();
             } catch (error) {
                 console.error('Error uploading avatar:', error);
-                alert(error.response?.data?.message || 'Không thể tải lên ảnh đại diện!');
+                this.notificationMessage = error.response?.data?.message || 'Không thể tải lên ảnh đại diện!';
+                this.notificationType = 'error';
+                this.notificationAutoClose = false;
+                this.showNotification = true;
             } finally {
                 this.submitting = false;
             }

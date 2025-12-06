@@ -45,6 +45,15 @@
                 />
             </section>
         </div>
+        
+        <!-- Notification Modal -->
+        <NotificationModal
+            :show="showNotification"
+            :type="notificationType"
+            :message="notificationMessage"
+            :auto-close="notificationAutoClose"
+            @close="() => { showNotification = false; notificationAutoClose = false; notificationMessage = ''; notificationType = 'info' }"
+        />
     </div>
 </template>
 
@@ -52,6 +61,7 @@
 import NovelList from '@/components/Novel/NovelList.vue';
 import SearchNovel from '@/components/Novel/SearchNovel.vue';
 import EmptyState from '@/components/Common/EmptyState.vue';
+import NotificationModal from '@/components/Common/NotificationModal.vue';
 import { NovelService } from '@/services';
 import { useNovelStore, useAuthStore } from '@/stores';
 
@@ -60,14 +70,20 @@ export default {
     components: {
         NovelList,
         SearchNovel,
-        EmptyState
+        EmptyState,
+        NotificationModal
     },
     data() {
         return {
             novelStore: useNovelStore(),
             authStore: useAuthStore(),
             loadingNew: false,
-            loadingFeatured: false
+            loadingFeatured: false,
+            // notification state
+            showNotification: false,
+            notificationMessage: '',
+            notificationType: 'info',
+            notificationAutoClose: false
         };
     },
     computed: {
@@ -102,7 +118,9 @@ export default {
 
             } catch (error) {
                 console.error('Error fetching novels:', error);
-                alert('Không thể tải danh sách tiểu thuyết');
+                this.showNotification = true;
+                this.notificationType = 'error';
+                this.notificationMessage = 'Không thể tải danh sách tiểu thuyết';
             } finally {
                 this.loadingNew = false;
                 this.loadingFeatured = false;
@@ -112,7 +130,9 @@ export default {
             try {
                 const userId = this.authStore.user?._id;
                 if (!userId) {
-                    alert('Vui lòng đăng nhập để yêu thích tiểu thuyết');
+                    this.showNotification = true;
+                    this.notificationType = 'warning';
+                    this.notificationMessage = 'Vui lòng đăng nhập để yêu thích tiểu thuyết';
                     return;
                 }
                 
@@ -120,7 +140,9 @@ export default {
                 await this.novelStore.toggleFavoriteWithApi(novelId, userId);
             } catch (error) {
                 console.error('Error updating favorite:', error);
-                alert('Không thể cập nhật yêu thích');
+                this.showNotification = true;
+                this.notificationType = 'error';
+                this.notificationMessage = 'Không thể cập nhật yêu thích';
             }
         },
         handleSearch(query) {

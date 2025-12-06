@@ -138,6 +138,15 @@
                 Xóa bộ lọc
             </button>
         </div>
+        
+        <!-- Notification Modal -->
+        <NotificationModal
+            :show="showNotification"
+            :type="notificationType"
+            :message="notificationMessage"
+            :auto-close="notificationAutoClose"
+            @close="() => { showNotification = false; notificationAutoClose = false; notificationMessage = ''; notificationType = 'info' }"
+        />
     </div>
 </template>
 
@@ -145,11 +154,13 @@
 import { NovelService } from '@/services';
 import { useAuthStore, useNovelStore } from '@/stores';
 import NovelCard from '@/components/Novel/NovelCard.vue';
+import NotificationModal from '@/components/Common/NotificationModal.vue';
 
 export default {
     name: 'FavoritePage',
     components: {
-        NovelCard
+        NovelCard,
+        NotificationModal
     },
     data() {
         return {
@@ -162,7 +173,12 @@ export default {
             currentPage: 1,
             itemsPerPage: 12,
             authStore: useAuthStore(),
-            novelStore: useNovelStore()
+            novelStore: useNovelStore(),
+            // notification state
+            showNotification: false,
+            notificationMessage: '',
+            notificationType: 'info',
+            notificationAutoClose: false
         };
     },
     computed: {
@@ -278,7 +294,9 @@ export default {
             try {
                 const userId = this.authStore.user?._id;
                 if (!userId) {
-                    alert('Vui lòng đăng nhập');
+                    this.showNotification = true;
+                    this.notificationType = 'warning';
+                    this.notificationMessage = 'Vui lòng đăng nhập';
                     return;
                 }
                 
@@ -290,7 +308,9 @@ export default {
                 this.applyFilters();
             } catch (error) {
                 console.error('Error removing from favorites:', error);
-                alert('Không thể bỏ yêu thích. Vui lòng thử lại!');
+                this.showNotification = true;
+                this.notificationType = 'error';
+                this.notificationMessage = 'Không thể bỏ yêu thích. Vui lòng thử lại!';
             }
         },
         handleToggleFavorite(novelId) {

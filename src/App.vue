@@ -35,7 +35,7 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  zoom: 0.8; /* Thu nhỏ toàn bộ hệ thống xuống 80% */
+  zoom: 0.8; 
 }
 
 #app {
