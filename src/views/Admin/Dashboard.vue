@@ -68,7 +68,7 @@
                 <div class="card-header">
                     <h3>
                         <i class="fas fa-star"></i>
-                        Top Novels
+                        Top Tiểu thuyết phổ biến
                     </h3>
                 </div>
                 <div class="card-body">
@@ -111,7 +111,7 @@ export default {
             novelStore: useNovelStore(),
             stats: [
                 {
-                    title: 'Tổng Novels',
+                    title: 'Tổng Tiểu thuyết',
                     label: 'Tiểu thuyết',
                     icon: 'fas fa-book',
                     color: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -119,7 +119,7 @@ export default {
                     changeType: 'up'
                 },
                 {
-                    title: 'Tổng Views',
+                    title: 'Tổng Lượt xem',
                     label: 'Lượt xem',
                     icon: 'fas fa-eye',
                     color: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',

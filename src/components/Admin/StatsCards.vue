@@ -19,7 +19,6 @@ export default {
         stats: {
             type: Array,
             required: true,
-            // Example: [{ icon: 'fas fa-users', value: 100, label: 'Total Users', color: 'blue' }]
         }
     }
 };

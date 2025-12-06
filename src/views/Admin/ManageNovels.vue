@@ -1,7 +1,7 @@
 <template>
     <div class="manage-novels">
         <PageHeader
-            title="Quản lý Novels"
+            title="Quản lý Tiểu thuyết"
             subtitle="Quản lý tất cả tiểu thuyết trong hệ thống"
             icon="fas fa-book"
         />
@@ -160,7 +160,7 @@
             </button>
 
             <span class="pagination-info">
-                Tổng {{ filteredNovels.length }} novels
+                Tổng {{ filteredNovels.length }}
             </span>
         </div>
 
@@ -245,7 +245,7 @@ export default {
             const avgViews = this.novels.length > 0 ? Math.round(totalViews / this.novels.length) : 0;
             
             return [
-                { icon: 'fas fa-book', value: this.novels.length, label: 'Tổng Novels', color: 'blue' },
+                { icon: 'fas fa-book', value: this.novels.length, label: 'Tổng Tiểu thuyết', color: 'blue' },
                 { icon: 'fas fa-eye', value: totalViews, label: 'Tổng Lượt xem', color: 'green' },
                 { icon: 'fas fa-heart', value: totalLikes, label: 'Tổng Lượt thích', color: 'red' },
                 { icon: 'fas fa-chart-line', value: avgViews, label: 'Trung bình Views', color: 'purple' }

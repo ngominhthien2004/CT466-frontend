@@ -95,15 +95,13 @@
         @cancel="closeModal"
     />
 
-    <ConfirmModal
+    <!-- Delete Confirmation Modal -->
+    <DeleteModal
         :show="confirmVisible"
-        title="Xóa thể loại"
+        :item-name="deleteTargetName"
         message="Khi xóa thể loại, hệ thống sẽ bỏ thể loại khỏi các tiểu thuyết liên quan. Bạn có chắc muốn tiếp tục?"
-        confirmText="Xóa"
-        cancelText="Hủy"
-        confirmType="danger"
         @confirm="onConfirmDelete"
-        @update:show="(v) => (confirmVisible = v)"
+        @cancel="confirmVisible = false"
     />
 </template>
 
@@ -113,7 +111,7 @@ import { ref, computed } from 'vue';
 import LoadingSpinner from '@/components/Common/LoadingSpinner.vue';
 import EmptyState from '@/components/Common/EmptyState.vue';
 import GenreForm from '@/components/Genre/GenreForm.vue';
-import ConfirmModal from '@/components/Common/ConfirmModal.vue';
+import DeleteModal from '@/components/Common/DeleteModal.vue';
 import PageHeader from '@/components/Admin/PageHeader.vue';
 import StatsCards from '@/components/Admin/StatsCards.vue';
 import SearchFilter from '@/components/Admin/SearchFilter.vue';
@@ -125,7 +123,7 @@ export default {
         LoadingSpinner, 
         EmptyState,
         GenreForm,
-        ConfirmModal,
+        DeleteModal,
         PageHeader,
         StatsCards,
         SearchFilter
@@ -138,6 +136,7 @@ export default {
         const form = ref({ name: '', slug: '', description: '' });
         const confirmVisible = ref(false);
         const deleteTargetId = ref(null);
+        const deleteTargetName = ref('');
         const searchQuery = ref('');
         const submitting = ref(false);
 
@@ -161,12 +160,6 @@ export default {
                 value: genreStore.genres.length,
                 label: 'Tổng Thể loại',
                 color: 'purple'
-            },
-            {
-                icon: 'fas fa-book',
-                value: totalNovels.value,
-                label: 'Tổng Truyện',
-                color: 'green'
             },
             {
                 icon: 'fas fa-star',
@@ -263,7 +256,9 @@ export default {
         };
 
         const deleteGenre = (id) => {
+            const genre = genreStore.genres.find(g => g._id === id);
             deleteTargetId.value = id;
+            deleteTargetName.value = genre?.name || 'thể loại này';
             confirmVisible.value = true;
         };
 
@@ -295,7 +290,8 @@ export default {
             statsData,
             searchQuery,
             filteredGenres,
-            submitting
+            submitting,
+            deleteTargetName
         };
     }
 };

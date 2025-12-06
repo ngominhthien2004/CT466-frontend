@@ -20,13 +20,13 @@
                 
                 <router-link to="/admin/novels" class="nav-item" active-class="active">
                     <i class="fas fa-book"></i>
-                    <span v-show="!sidebarCollapsed">Quản lý Novels</span>
+                    <span v-show="!sidebarCollapsed">Quản lý Tiểu thuyết</span>
                 </router-link>
                 
                 
                 <router-link to="/admin/users" class="nav-item" active-class="active">
                     <i class="fas fa-users"></i>
-                    <span v-show="!sidebarCollapsed">Quản lý Users</span>
+                    <span v-show="!sidebarCollapsed">Quản lý Người dùng </span>
                 </router-link>
                 
 
