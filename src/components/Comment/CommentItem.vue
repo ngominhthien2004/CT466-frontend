@@ -17,7 +17,7 @@
                     Trả lời
                 </button>
                 <button 
-                    v-if="!isReply && currentUserId && currentUserId !== comment.userId" 
+                    v-if="currentUserId && currentUserId !== comment.userId" 
                     @click="showReportModal = true" 
                     class="action-btn report-btn"
                     title="Báo cáo bình luận vi phạm"
@@ -55,15 +55,16 @@
             </div>
             
             <!-- Replies List -->
-            <div v-if="replies.length > 0" class="replies-list">
+            <div v-if="!isReply && replies.length > 0" class="replies-list">
                 <CommentItem 
                     v-for="reply in replies" 
                     :key="reply._id"
                     :comment="reply"
                     :currentUserId="currentUserId"
                     :isReply="true"
+                    :reloadTrigger="reloadTrigger"
                     @like="$emit('like', $event)"
-                    @reply="$emit('reply', $event)"
+                    @reply="handleReplyToReply"
                     @delete="handleDeleteReply"
                 />
             </div>
@@ -123,6 +124,10 @@ export default {
         isReply: {
             type: Boolean,
             default: false
+        },
+        reloadTrigger: {
+            type: Number,
+            default: 0
         }
     },
     emits: ['like', 'reply', 'delete'],
@@ -139,7 +144,29 @@ export default {
     },
     computed: {
         avatar() {
-            return this.comment.userAvatar || this.comment.avatar || '/assets/default-avatar.svg';
+            // Ưu tiên userAvatar, sau đó avatar, cuối cùng default
+            const avatarPath = this.comment.userAvatar || this.comment.avatar;
+            
+            if (!avatarPath || avatarPath === '') {
+                return '/assets/default-avatar.svg';
+            }
+            
+            // Nếu là URL đầy đủ
+            if (avatarPath.startsWith('http://') || avatarPath.startsWith('https://')) {
+                return avatarPath;
+            }
+            
+            // Nếu là path tương đối
+            if (avatarPath.startsWith('/assets/')) {
+                return avatarPath;
+            }
+            
+            // Nếu chỉ là filename, thêm path của user
+            if (this.comment.userId) {
+                return `/assets/user/${this.comment.userId}/${avatarPath}`;
+            }
+            
+            return '/assets/default-avatar.svg';
         },
         canDelete() {
             return this.currentUserId && this.currentUserId === this.comment.userId;
@@ -170,6 +197,20 @@ export default {
                 this.checkLikeStatus();
             },
             deep: true
+        },
+        'comment._id': {
+            handler() {
+                // Reload replies khi comment ID thay đổi
+                this.loadReplies();
+            },
+            immediate: false
+        },
+        reloadTrigger: {
+            handler(newVal, oldVal) {
+                if (newVal !== oldVal && newVal > 0) {
+                    this.loadReplies();
+                }
+            }
         }
     },
     methods: {
@@ -224,18 +265,21 @@ export default {
                 
                 this.replyContent = '';
                 this.showReplyForm = false;
-                
-                // Reload replies after submission
-                await this.loadReplies();
             } catch (error) {
                 console.error('Error submitting reply:', error);
             }
         },
         async loadReplies() {
-            if (this.isReply) return; // Không load replies cho reply
+            // Không load replies cho reply (ngăn nested replies)
+            if (this.isReply) {
+                this.replies = [];
+                return;
+            }
             
             try {
-                this.replies = await CommentService.getReplies(this.comment._id);
+                const allReplies = await CommentService.getReplies(this.comment._id);
+                // Chỉ lấy replies cấp 1, không lấy reply của reply
+                this.replies = allReplies.filter(reply => !reply.parentId || reply.parentId === this.comment._id);
             } catch (error) {
                 console.error('Error loading replies:', error);
                 this.replies = [];
@@ -244,6 +288,19 @@ export default {
         async handleDeleteReply(replyId) {
             // Emit lên parent để xóa (không cần confirmation ở đây vì parent sẽ xử lý)
             this.$emit('delete', replyId);
+            // Reload replies sau khi xóa
+            setTimeout(() => this.loadReplies(), 500);
+        },
+        handleReplyToReply(replyData) {
+            // Reply to reply sẽ được chuyển thành reply to parent comment
+            this.$emit('reply', {
+                parentId: this.comment._id, // Reply to parent, not to the reply
+                content: replyData.content
+            });
+        },
+        // Public method để parent có thể gọi reload
+        async refreshReplies() {
+            await this.loadReplies();
         },
         async submitReport() {
             if (this.reportReason.trim().length < 10) {

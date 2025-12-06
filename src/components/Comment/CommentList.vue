@@ -9,6 +9,7 @@
             :key="comment._id"
             :comment="comment"
             :current-user-id="currentUserId"
+            :reload-trigger="reloadTrigger"
             @like="$emit('like', $event)"
             @reply="$emit('reply', $event)"
             @delete="$emit('delete', $event)"
@@ -32,6 +33,10 @@ export default {
         currentUserId: {
             type: String,
             default: null
+        },
+        reloadTrigger: {
+            type: Number,
+            default: 0
         }
     },
     emits: ['like', 'reply', 'delete']

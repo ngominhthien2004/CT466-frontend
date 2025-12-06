@@ -22,6 +22,7 @@
         <CommentList
             :comments="comments"
             :current-user-id="currentUserId"
+            :reload-trigger="reloadTrigger"
             @like="handleLike"
             @reply="handleReply"
             @delete="handleDelete"
@@ -59,6 +60,10 @@ export default {
         isSubmitting: {
             type: Boolean,
             default: false
+        },
+        reloadTrigger: {
+            type: Number,
+            default: 0
         }
     },
     emits: ['submit', 'like', 'reply', 'delete'],

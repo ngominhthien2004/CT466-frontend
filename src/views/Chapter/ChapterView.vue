@@ -185,6 +185,7 @@
                 :user-avatar="userAvatar"
                 :current-user-id="authStore.user?._id"
                 :is-submitting="submittingComment"
+                :reload-trigger="reloadTrigger"
                 @submit="handleSubmitComment"
                 @like="handleLikeComment"
                 @reply="handleReplyComment"
@@ -244,7 +245,8 @@ export default {
             submittingComment: false,
             deleting: false,
             showDeleteModal: false,
-            deleteTargetId: null
+            deleteTargetId: null,
+            reloadTrigger: 0
         };
     },
     computed: {
@@ -452,7 +454,12 @@ export default {
                 };
                 
                 await CommentService.create(commentData);
-                // Không reload toàn bộ comments - CommentItem sẽ tự load replies
+                
+                // Tăng reloadTrigger để trigger reload replies
+                this.reloadTrigger++;
+                
+                // Cũng reload toàn bộ comments để đảm bảo
+                await this.loadComments();
             } catch (error) {
                 console.error('Error replying to comment:', error);
                 alert('Không thể gửi phản hồi. Vui lòng thử lại!');

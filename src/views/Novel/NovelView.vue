@@ -44,6 +44,7 @@
                     :user-avatar="userAvatar"
                     :current-user-id="currentUserId"
                     :is-submitting="submittingComment"
+                    :reload-trigger="reloadTrigger"
                     @submit="handleSubmitComment"
                     @like="handleLikeComment"
                     @reply="handleReplyComment"
@@ -107,7 +108,8 @@ export default {
             authStore: useAuthStore(),
             novelStore: useNovelStore(),
             showDeleteChapterModal: false,
-            chapterToDelete: null
+            chapterToDelete: null,
+            reloadTrigger: 0
         };
     },
     computed: {
@@ -283,7 +285,7 @@ export default {
         async handleReplyComment(replyData) {
             try {
                 const commentData = {
-                    novelId: this.$route.params.id,
+                    novelId: this.novelId,
                     parentId: replyData.parentId,
                     userId: this.authStore.user._id,
                     userName: this.authStore.user.username,
@@ -292,7 +294,12 @@ export default {
                 };
                 
                 await CommentService.create(commentData);
-                // Không reload toàn bộ comments - CommentItem sẽ tự load replies
+                
+                // Tăng reloadTrigger để trigger reload replies
+                this.reloadTrigger++;
+                
+                // Cũng reload toàn bộ comments để đảm bảo
+                await this.loadComments();
             } catch (error) {
                 console.error('Error replying to comment:', error);
                 alert('Không thể gửi phản hồi. Vui lòng thử lại!');
