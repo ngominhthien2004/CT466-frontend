@@ -54,7 +54,7 @@
                                 id="password"
                                 v-model="formData.password"
                                 :type="showPassword ? 'text' : 'password'"
-                                placeholder="Mật khẩu (tối thiểu 6 ký tự, gồm chữ thường và hoa và số, kí tự đặc biệt)..."
+                                placeholder="Mật khẩu (tối thiểu 6 ký tự)..."
                                 required
                                 :disabled="loading"
                             />
@@ -437,7 +437,7 @@ export default {
 }
 
 .card-footer p {
-    margin: 0 0 1rem 0;
+    margin: 0 0 0.75rem 0;
     color: #7f8c8d;
 }
 
@@ -458,6 +458,7 @@ export default {
     gap: 0.5rem;
     color: #7f8c8d !important;
     font-weight: 500 !important;
+    margin: 0;
 }
 
 /* Responsive */

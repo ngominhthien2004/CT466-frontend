@@ -109,6 +109,17 @@ export default {
             error: null
         };
     },
+    mounted() {
+        // Load remembered credentials
+        const rememberedEmail = localStorage.getItem('rememberedEmail');
+        const rememberedPassword = localStorage.getItem('rememberedPassword');
+        
+        if (rememberedEmail && rememberedPassword) {
+            this.formData.email = rememberedEmail;
+            this.formData.password = atob(rememberedPassword); // Decode base64
+            this.rememberMe = true;
+        }
+    },
     methods: {
         async handleLogin() {
             this.loading = true;
@@ -130,6 +141,15 @@ export default {
                     ...response.user,
                     token: response.token
                 });
+
+                // Xử lý remember me
+                if (this.rememberMe) {
+                    localStorage.setItem('rememberedEmail', this.formData.email);
+                    localStorage.setItem('rememberedPassword', btoa(this.formData.password)); // Encode base64
+                } else {
+                    localStorage.removeItem('rememberedEmail');
+                    localStorage.removeItem('rememberedPassword');
+                }
 
                 // Redirect về trang trước hoặc home
                 const redirect = this.$route.query.redirect || '/';
@@ -341,7 +361,7 @@ export default {
 }
 
 .card-footer p {
-    margin: 0 0 1rem 0;
+    margin: 0 0 0.75rem 0;
     color: #7f8c8d;
 }
 
@@ -362,6 +382,7 @@ export default {
     gap: 0.5rem;
     color: #7f8c8d !important;
     font-weight: 500 !important;
+    margin: 0;
 }
 
 /* Responsive */
