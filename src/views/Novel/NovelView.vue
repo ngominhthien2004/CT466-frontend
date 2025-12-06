@@ -62,6 +62,15 @@
             confirm-type="danger"
             @confirm="confirmDelete"
         />
+
+        <!-- Delete Chapter Modal -->
+        <DeleteModal
+            :show="showDeleteChapterModal"
+            :item-name="chapterToDelete?.title"
+            message="Bạn có chắc chắn muốn XÓA chương này? Hành động này không thể hoàn tác!"
+            @confirm="confirmDeleteChapter"
+            @cancel="showDeleteChapterModal = false"
+        />
     </div>
 </template>
 
@@ -70,6 +79,7 @@ import NovelDetail from '@/components/Novel/NovelDetail.vue';
 import ChapterList from '@/components/Chapter/ChapterList.vue';
 import CommentSection from '@/components/Comment/CommentSection.vue';
 import ConfirmModal from '@/components/Common/ConfirmModal.vue';
+import DeleteModal from '@/components/Common/DeleteModal.vue';
 import { NovelService, ChapterService, CommentService } from '@/services';
 import { useAuthStore, useNovelStore } from '@/stores';
 
@@ -79,7 +89,8 @@ export default {
         NovelDetail,
         ChapterList,
         CommentSection,
-        ConfirmModal
+        ConfirmModal,
+        DeleteModal
     },
     data() {
         return {
@@ -94,7 +105,9 @@ export default {
             deleteTargetId: null,
             error: null,
             authStore: useAuthStore(),
-            novelStore: useNovelStore()
+            novelStore: useNovelStore(),
+            showDeleteChapterModal: false,
+            chapterToDelete: null
         };
     },
     computed: {
@@ -201,13 +214,18 @@ export default {
         },
         async handleDeleteChapter(chapterId) {
             const chapter = this.chapters.find(c => c._id === chapterId);
-            const confirmed = confirm(`Bạn có chắc chắn muốn xóa chương "${chapter?.title || 'này'}"?`);
-            if (!confirmed) return;
+            this.chapterToDelete = chapter;
+            this.showDeleteChapterModal = true;
+        },
+
+        async confirmDeleteChapter() {
+            if (!this.chapterToDelete) return;
 
             try {
-                await ChapterService.delete(chapterId);
+                await ChapterService.delete(this.chapterToDelete._id);
                 alert('Xóa chương thành công!');
-                // Reload chapters
+                this.showDeleteChapterModal = false;
+                this.chapterToDelete = null;
                 await this.loadChapters();
             } catch (error) {
                 console.error('Error deleting chapter:', error);

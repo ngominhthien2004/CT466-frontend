@@ -1,10 +1,12 @@
 <script>
 import AppHeader from './components/AppHeader.vue';
+import ScrollToTop from './components/Common/ScrollToTop.vue';
 
 export default {
   name: 'App',
   components: {
-    AppHeader
+    AppHeader,
+    ScrollToTop
   }
 }
 </script>
@@ -15,6 +17,7 @@ export default {
     <main>
       <router-view />
     </main>
+    <ScrollToTop />
   </div>
 </template>
 

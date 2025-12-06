@@ -68,7 +68,7 @@
                                 <td>
                                     <div class="action-buttons">
                                         <button 
-                                            @click="unreportComment(comment._id)" 
+                                            @click="confirmUnreport(comment)" 
                                             class="btn-action btn-edit"
                                             title="Gỡ báo cáo"
                                         >
@@ -88,6 +88,26 @@
                     </table>
                 </div>
     </div>
+
+    <!-- Delete Comment Modal -->
+    <DeleteModal
+        :show="showDeleteModal"
+        :item-name="deleteTarget?.content?.substring(0, 50) + '...'"
+        message="Bạn có chắc chắn muốn XÓA bình luận này? Hành động này không thể hoàn tác!"
+        @confirm="handleDelete"
+        @cancel="closeDeleteModal"
+    />
+
+    <!-- Unreport Comment Modal -->
+    <ConfirmModal
+        :show="showUnreportModal"
+        title="Gỡ báo cáo"
+        :message="`Bạn có chắc muốn gỡ báo cáo cho bình luận này?`"
+        confirmText="Gỡ báo cáo"
+        cancelText="Hủy"
+        @confirm="handleUnreport"
+        @update:show="(v) => showUnreportModal = v"
+    />
 </template>
 
 <script>
@@ -95,6 +115,8 @@ import PageHeader from '@/components/Admin/PageHeader.vue';
 import StatsCards from '@/components/Admin/StatsCards.vue';
 import LoadingSpinner from '@/components/Common/LoadingSpinner.vue';
 import EmptyState from '@/components/Common/EmptyState.vue';
+import DeleteModal from '@/components/Common/DeleteModal.vue';
+import ConfirmModal from '@/components/Common/ConfirmModal.vue';
 import CommentService from '@/services/comment.service';
 
 export default {
@@ -103,12 +125,18 @@ export default {
         PageHeader,
         StatsCards,
         LoadingSpinner,
-        EmptyState
+        EmptyState,
+        DeleteModal,
+        ConfirmModal
     },
     data() {
         return {
             reportedComments: [],
             loading: false,
+            showDeleteModal: false,
+            deleteTarget: null,
+            showUnreportModal: false,
+            unreportTarget: null
         };
     },
     computed: {
@@ -141,7 +169,7 @@ export default {
         },
 
         async unreportComment(commentId) {
-            if (!confirm('Bạn có chắc muốn gỡ báo cáo cho bình luận này?')) {
+            if (!confirm('Bạn có chắc muốn gỡ báo cáo cho bình luẫn này?')) {
                 return;
             }
 
@@ -155,15 +183,45 @@ export default {
             }
         },
 
-        async deleteComment(commentId) {
-            if (!confirm('Bạn có chắc muốn XÓA bình luận này? Hành động này không thể hoàn tác!')) {
-                return;
-            }
+        confirmUnreport(comment) {
+            this.unreportTarget = comment;
+            this.showUnreportModal = true;
+        },
+
+        async handleUnreport() {
+            if (!this.unreportTarget) return;
 
             try {
-                await CommentService.delete(commentId);
+                await CommentService.unreportComment(this.unreportTarget._id);
+                alert('Đã gỡ báo cáo thành công');
+                await this.loadReportedComments();
+                this.showUnreportModal = false;
+                this.unreportTarget = null;
+            } catch (error) {
+                console.error('Error unreporting comment:', error);
+                alert('Không thể gỡ báo cáo');
+            }
+        },
+
+        async deleteComment(commentId) {
+            const comment = this.reportedComments.find(c => c._id === commentId);
+            this.deleteTarget = comment;
+            this.showDeleteModal = true;
+        },
+
+        closeDeleteModal() {
+            this.showDeleteModal = false;
+            this.deleteTarget = null;
+        },
+
+        async handleDelete() {
+            if (!this.deleteTarget) return;
+
+            try {
+                await CommentService.delete(this.deleteTarget._id);
                 alert('Đã xóa bình luận thành công');
                 await this.loadReportedComments();
+                this.closeDeleteModal();
             } catch (error) {
                 console.error('Error deleting comment:', error);
                 alert('Không thể xóa bình luận');

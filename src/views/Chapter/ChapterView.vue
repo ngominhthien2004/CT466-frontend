@@ -192,11 +192,6 @@
             />
         </div>
 
-        <!-- Scroll to Top Button -->
-        <button v-if="showScrollTop" @click="scrollToTop" class="scroll-top-btn">
-            <i class="fas fa-arrow-up"></i>
-        </button>
-
         <!-- Delete Confirmation Modal -->
         <ConfirmModal
             v-model:show="showDeleteModal"
@@ -244,7 +239,6 @@ export default {
             fontSize: 18,
             isDarkMode: false,
             isFullscreen: false,
-            showScrollTop: false,
             
             // Comments
             submittingComment: false,
@@ -298,9 +292,6 @@ export default {
         this.loadSettings();
         this.saveToHistory();
         
-        // Scroll event
-        window.addEventListener('scroll', this.handleScroll);
-        
         // Close dropdown when clicking outside
         document.addEventListener('click', this.handleClickOutside);
         
@@ -308,7 +299,6 @@ export default {
         document.addEventListener('keydown', this.handleKeyPress);
     },
     beforeUnmount() {
-        window.removeEventListener('scroll', this.handleScroll);
         document.removeEventListener('click', this.handleClickOutside);
         document.removeEventListener('keydown', this.handleKeyPress);
     },
@@ -569,14 +559,6 @@ export default {
                     console.error('Error loading settings:', error);
                 }
             }
-        },
-        
-        // Scroll
-        handleScroll() {
-            this.showScrollTop = window.pageYOffset > 300;
-        },
-        scrollToTop() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         },
         
         // Formatters
@@ -904,9 +886,9 @@ export default {
 }
 
 .btn-back-novel {
-    background: white;
-    border: 2px solid #dfe6e9;
-    color: #2c3e50;
+    background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
+    border: 2px solid #c9a9a6;
+    color: white;
     padding: 0.75rem 1.5rem;
     border-radius: 8px;
     text-decoration: none;
@@ -915,37 +897,13 @@ export default {
     align-items: center;
     gap: 0.5rem;
     transition: all 0.3s;
+    box-shadow: 0 2px 8px rgba(201, 169, 166, 0.3);
 }
 
 .btn-back-novel:hover {
-    border-color: #c9a9a6;
-    color: #c9a9a6;
-}
-
-/* Scroll to Top */
-.scroll-top-btn {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    width: 50px;
-    height: 50px;
-    background: #c9a9a6;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    transition: all 0.3s;
-    z-index: 1000;
-}
-
-.scroll-top-btn:hover {
-    background: #b8a39e;
-    transform: translateY(-3px);
+    background: linear-gradient(135deg, #b8a39e 0%, #a89491 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(201, 169, 166, 0.4);
 }
 
 /* Responsive */
