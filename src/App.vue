@@ -1,12 +1,14 @@
 <script>
 import AppHeader from './components/AppHeader.vue';
 import ScrollToTop from './components/Common/ScrollToTop.vue';
+import SiteFooter from './components/Common/Footer.vue';
 
 export default {
   name: 'App',
   components: {
     AppHeader,
     ScrollToTop
+    ,SiteFooter
   }
 }
 </script>
@@ -17,6 +19,7 @@ export default {
     <main>
       <router-view />
     </main>
+    <SiteFooter />
     <ScrollToTop />
   </div>
 </template>

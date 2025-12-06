@@ -1,31 +1,6 @@
 <template>
     <div class="home">
-        <!-- Hero Banner -->
-        <div class="hero-banner">
-            <div class="hero-content">
-                <h1 class="hero-title">
-                    <i class="fas fa-book-open"></i>
-                    Chào mừng đến với NovelMT
-                </h1>
-                <p class="hero-subtitle">Khám phá thế giới tiểu thuyết đầy màu sắc</p>
-                <div class="hero-stats">
-                    <div class="stat-item">
-                        <i class="fas fa-book"></i>
-                        <div class="stat-info">
-                            <span class="stat-number">{{ totalNovels }}</span>
-                            <span class="stat-label">Tiểu thuyết</span>
-                        </div>
-                    </div>
-                    <div class="stat-item">
-                        <i class="fas fa-eye"></i>
-                        <div class="stat-info">
-                            <span class="stat-number">{{ totalViews }}</span>
-                            <span class="stat-label">Lượt xem</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- Hero banner removed per request -->
 
         <div class="container">
             <!-- Search Section -->
@@ -172,88 +147,6 @@ export default {
     background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
 }
 
-/* Hero Banner */
-.hero-banner {
-    background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
-    padding: 4rem 0;
-    margin-bottom: 3rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-.hero-content {
-    max-width: 1400px;
-    width: 95%;
-    margin: 0 auto;
-    padding: 0 2rem;
-    text-align: center;
-}
-
-.hero-title {
-    font-size: 3rem;
-    font-weight: 800;
-    color: white;
-    margin: 0 0 1rem 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.hero-subtitle {
-    font-size: 1.5rem;
-    color: rgba(255, 255, 255, 0.95);
-    margin: 0 0 2.5rem 0;
-    font-weight: 300;
-}
-
-.hero-stats {
-    display: flex;
-    justify-content: center;
-    gap: 3rem;
-    flex-wrap: wrap;
-}
-
-.stat-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    background: rgba(255, 255, 255, 0.2);
-    padding: 1.25rem 2rem;
-    border-radius: 15px;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s;
-}
-
-.stat-item:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: translateY(-5px);
-}
-
-.stat-item i {
-    font-size: 2.5rem;
-    color: white;
-}
-
-.stat-info {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.stat-number {
-    font-size: 2rem;
-    font-weight: 700;
-    color: white;
-    line-height: 1;
-}
-
-.stat-label {
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.9);
-    margin-top: 0.25rem;
-}
-
 /* Container */
 .container {
     max-width: 1400px;
@@ -302,31 +195,7 @@ export default {
 
 /* Responsive */
 @media (max-width: 768px) {
-    .hero-title {
-        font-size: 2rem;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .hero-subtitle {
-        font-size: 1.1rem;
-    }
-
-    .hero-stats {
-        gap: 1.5rem;
-    }
-
-    .stat-item {
-        padding: 1rem 1.5rem;
-    }
-
-    .stat-item i {
-        font-size: 2rem;
-    }
-
-    .stat-number {
-        font-size: 1.5rem;
-    }
+    /* Responsive tweaks preserved for page content */
 
     .container {
         width: 100%;
@@ -345,26 +214,6 @@ export default {
 }
 
 @media (max-width: 480px) {
-    .hero-banner {
-        padding: 2.5rem 0;
-    }
-
-    .hero-title {
-        font-size: 1.5rem;
-    }
-
-    .hero-subtitle {
-        font-size: 1rem;
-    }
-
-    .hero-stats {
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    .stat-item {
-        width: 100%;
-        justify-content: center;
-    }
+    /* Small screen tweaks preserved for page content */
 }
 </style>
