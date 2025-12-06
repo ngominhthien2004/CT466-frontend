@@ -129,6 +129,15 @@
             @close="closeEditModal"
             @submit="handleEditUser"
         />
+        
+        <!-- Notification Modal -->
+        <NotificationModal
+            :show="showNotification"
+            :type="notificationType"
+            :message="notificationMessage"
+            :auto-close="notificationAutoClose"
+            @close="() => { showNotification = false; notificationAutoClose = false; notificationMessage = ''; notificationType = 'info' }"
+        />
     </div>
 </template>
 
@@ -137,6 +146,7 @@ import UserService from '@/services/user.service';
 import LoadingSpinner from '@/components/Common/LoadingSpinner.vue';
 import EmptyState from '@/components/Common/EmptyState.vue';
 import DeleteModal from '@/components/Common/DeleteModal.vue';
+import NotificationModal from '@/components/Common/NotificationModal.vue';
 import UserForm from '@/components/User/UserForm.vue';
 import PageHeader from '@/components/Admin/PageHeader.vue';
 import StatsCards from '@/components/Admin/StatsCards.vue';
@@ -152,7 +162,8 @@ export default {
         UserForm,
         PageHeader,
         StatsCards,
-        SearchFilter
+        SearchFilter,
+        NotificationModal
     },
     data() {
         return {
@@ -171,6 +182,12 @@ export default {
             deleting: false,
             submitting: false,
             authStore: useAuthStore()
+            ,
+            // notification state
+            showNotification: false,
+            notificationMessage: '',
+            notificationType: 'info',
+            notificationAutoClose: false
         };
     },
     computed: {
@@ -228,7 +245,9 @@ export default {
                 this.applyFilters();
             } catch (error) {
                 console.error('Error fetching users:', error);
-                alert('Không thể tải danh sách users');
+                this.showNotification = true;
+                this.notificationType = 'error';
+                this.notificationMessage = 'Không thể tải danh sách users';
             } finally {
                 this.loading = false;
             }
@@ -306,16 +325,23 @@ export default {
                 // Check if role changed for currently logged-in user
                 const currentUser = this.authStore.user;
                 if (currentUser && currentUser._id === userId && oldRole !== formData.role) {
-                    alert('Vai trò của bạn đã được thay đổi. Vui lòng đăng nhập lại!');
+                    this.showNotification = true;
+                    this.notificationType = 'warning';
+                    this.notificationMessage = 'Vai trò của bạn đã được thay đổi. Vui lòng đăng nhập lại!';
                     // Force logout
                     this.authStore.logout();
                     this.$router.push('/login');
                 } else {
-                    alert('Đã cập nhật user thành công!');
+                    this.showNotification = true;
+                    this.notificationType = 'success';
+                    this.notificationMessage = 'Đã cập nhật user thành công!';
+                    this.notificationAutoClose = true;
                 }
             } catch (error) {
                 console.error('Error updating user:', error);
-                alert(error.response?.data?.message || 'Không thể cập nhật user');
+                this.showNotification = true;
+                this.notificationType = 'error';
+                this.notificationMessage = error.response?.data?.message || 'Không thể cập nhật user';
             } finally {
                 this.submitting = false;
             }
@@ -339,10 +365,15 @@ export default {
                 this.applyFilters();
                 
                 this.closeDeleteModal();
-                alert('Đã xóa user thành công!');
+                this.showNotification = true;
+                this.notificationType = 'success';
+                this.notificationMessage = 'Đã xóa user thành công!';
+                this.notificationAutoClose = true;
             } catch (error) {
                 console.error('Error deleting user:', error);
-                alert('Không thể xóa user');
+                this.showNotification = true;
+                this.notificationType = 'error';
+                this.notificationMessage = 'Không thể xóa user';
             } finally {
                 this.deleting = false;
             }

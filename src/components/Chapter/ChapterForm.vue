@@ -40,6 +40,7 @@
                     required
                 ></textarea>
                 <small class="help-text">{{ contentLength }} ký tự</small>
+                <small class="help-text">{{ maxInfoMessage }}</small>
             </div>
 
             <div class="form-actions">
@@ -89,6 +90,13 @@ export default {
         },
         contentLength() {
             return this.formData.content.length;
+        }
+        ,
+        // Practical maximum info (MongoDB document size)
+        maxInfoMessage() {
+            const maxBytes = 16 * 1024 * 1024; // 16 MB
+            const approxMillions = Math.floor(maxBytes / 1000000);
+            return `Giới hạn 200.000 kí tự`;
         }
     },
     watch: {

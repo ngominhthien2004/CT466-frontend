@@ -203,6 +203,15 @@
             confirm-type="danger"
             @confirm="confirmDelete"
         />
+        
+        <!-- Notification Modal -->
+        <NotificationModal
+            :show="showNotification"
+            :type="notificationType"
+            :message="notificationMessage"
+            :auto-close="notificationAutoClose"
+            @close="() => { showNotification = false; notificationAutoClose = false; notificationMessage = ''; notificationType = 'info' }"
+        />
     </div>
 </template>
 
@@ -211,12 +220,14 @@ import { ChapterService, NovelService, CommentService, ReadingHistoryService } f
 import { useAuthStore } from '@/stores';
 import CommentSection from '@/components/Comment/CommentSection.vue';
 import ConfirmModal from '@/components/Common/ConfirmModal.vue';
+import NotificationModal from '@/components/Common/NotificationModal.vue';
 
 export default {
     name: 'ChapterView',
     components: {
         CommentSection,
-        ConfirmModal
+        ConfirmModal,
+        NotificationModal
     },
     data() {
         return {
@@ -247,6 +258,12 @@ export default {
             showDeleteModal: false,
             deleteTargetId: null,
             reloadTrigger: 0
+            ,
+            // notification state
+            showNotification: false,
+            notificationMessage: '',
+            notificationType: 'info',
+            notificationAutoClose: false
         };
     },
     computed: {
@@ -432,7 +449,9 @@ export default {
                 await this.loadComments();
             } catch (error) {
                 console.error('Error submitting comment:', error);
-                alert('Không thể gửi bình luận. Vui lòng thử lại!');
+                this.showNotification = true;
+                this.notificationType = 'error';
+                this.notificationMessage = 'Không thể gửi bình luận. Vui lòng thử lại!';
             } finally {
                 this.submittingComment = false;
             }
@@ -462,7 +481,9 @@ export default {
                 await this.loadComments();
             } catch (error) {
                 console.error('Error replying to comment:', error);
-                alert('Không thể gửi phản hồi. Vui lòng thử lại!');
+                this.showNotification = true;
+                this.notificationType = 'error';
+                this.notificationMessage = 'Không thể gửi phản hồi. Vui lòng thử lại!';
             }
         },
         async handleDeleteComment(commentId) {
@@ -480,7 +501,9 @@ export default {
                 await this.loadComments();
             } catch (error) {
                 console.error('Error deleting comment:', error);
-                alert('Không thể xóa bình luận. Vui lòng thử lại!');
+                this.showNotification = true;
+                this.notificationType = 'error';
+                this.notificationMessage = 'Không thể xóa bình luận. Vui lòng thử lại!';
             } finally {
                 this.deleting = false;
                 this.deleteTargetId = null;

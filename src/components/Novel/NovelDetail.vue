@@ -97,6 +97,15 @@
             @submit-form="handleEditSubmit"
             @close="closeEditModal"
         />
+        
+        <!-- Notification Modal -->
+        <NotificationModal
+            :show="showNotification"
+            :type="notificationType"
+            :message="notificationMessage"
+            :auto-close="notificationAutoClose"
+            @close="() => { showNotification = false; notificationAutoClose = false; notificationMessage = ''; notificationType = 'info' }"
+        />
     </div>
 </template>
 
@@ -105,6 +114,7 @@ import NovelForm from '@/components/Novel/NovelForm.vue';
 import NovelService from '@/services/novel.service';
 import { useAuthStore } from '@/stores/auth';
 import { UserService } from '@/services';
+import NotificationModal from '@/components/Common/NotificationModal.vue';
 
 export default {
     name: 'NovelDetail',
@@ -119,7 +129,8 @@ export default {
         }
     },
     components: {
-        NovelForm
+        NovelForm,
+        NotificationModal
     },
     data() {
         return {
@@ -127,6 +138,12 @@ export default {
             showEditModal: false,
             isUpdating: false,
             creatorUsername: null
+            ,
+            // notification state
+            showNotification: false,
+            notificationMessage: '',
+            notificationType: 'info',
+            notificationAutoClose: false
         };
     },
     computed: {
@@ -215,10 +232,15 @@ export default {
                 // emit updated novel to parent instead of mutating prop
                 this.$emit('updated', updated);
                 this.showEditModal = false;
-                alert('Cập nhật thành công!');
+                this.showNotification = true;
+                this.notificationType = 'success';
+                this.notificationMessage = 'Cập nhật thành công!';
+                this.notificationAutoClose = true;
             } catch (error) {
                 console.error('Error updating novel from modal:', error);
-                alert('Cập nhật thất bại. Vui lòng thử lại.');
+                this.showNotification = true;
+                this.notificationType = 'error';
+                this.notificationMessage = 'Cập nhật thất bại. Vui lòng thử lại.';
             } finally {
                 this.isUpdating = false;
             }

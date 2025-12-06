@@ -108,6 +108,13 @@
         @confirm="handleUnreport"
         @update:show="(v) => showUnreportModal = v"
     />
+    <!-- Notification Modal -->
+    <NotificationModal
+        :show="showNotification"
+        :type="notificationType"
+        :message="notificationMessage"
+        @close="showNotification = false"
+    />
 </template>
 
 <script>
@@ -117,6 +124,7 @@ import LoadingSpinner from '@/components/Common/LoadingSpinner.vue';
 import EmptyState from '@/components/Common/EmptyState.vue';
 import DeleteModal from '@/components/Common/DeleteModal.vue';
 import ConfirmModal from '@/components/Common/ConfirmModal.vue';
+import NotificationModal from '@/components/Common/NotificationModal.vue';
 import CommentService from '@/services/comment.service';
 
 export default {
@@ -127,7 +135,8 @@ export default {
         LoadingSpinner,
         EmptyState,
         DeleteModal,
-        ConfirmModal
+        ConfirmModal,
+        NotificationModal
     },
     data() {
         return {
@@ -136,7 +145,11 @@ export default {
             showDeleteModal: false,
             deleteTarget: null,
             showUnreportModal: false,
-            unreportTarget: null
+            unreportTarget: null,
+            // Notification state
+            showNotification: false,
+            notificationMessage: '',
+            notificationType: 'info'
         };
     },
     computed: {
@@ -162,25 +175,18 @@ export default {
                 this.reportedComments = await CommentService.getReportedComments();
             } catch (error) {
                 console.error('Error loading reported comments:', error);
-                alert('Không thể tải danh sách bình luận bị báo cáo');
+                this.notificationMessage = 'Không thể tải danh sách bình luận bị báo cáo';
+                this.notificationType = 'error';
+                this.showNotification = true;
             } finally {
                 this.loading = false;
             }
         },
 
         async unreportComment(commentId) {
-            if (!confirm('Bạn có chắc muốn gỡ báo cáo cho bình luẫn này?')) {
-                return;
-            }
-
-            try {
-                await CommentService.unreportComment(commentId);
-                alert('Đã gỡ báo cáo thành công');
-                await this.loadReportedComments();
-            } catch (error) {
-                console.error('Error unreporting comment:', error);
-                alert('Không thể gỡ báo cáo');
-            }
+            // Use confirm modal flow instead of browser confirm
+            this.unreportTarget = this.reportedComments.find(c => c._id === commentId);
+            this.showUnreportModal = true;
         },
 
         confirmUnreport(comment) {
@@ -193,13 +199,17 @@ export default {
 
             try {
                 await CommentService.unreportComment(this.unreportTarget._id);
-                alert('Đã gỡ báo cáo thành công');
+                this.notificationMessage = 'Đã gỡ báo cáo thành công';
+                this.notificationType = 'success';
+                this.showNotification = true;
                 await this.loadReportedComments();
                 this.showUnreportModal = false;
                 this.unreportTarget = null;
             } catch (error) {
                 console.error('Error unreporting comment:', error);
-                alert('Không thể gỡ báo cáo');
+                this.notificationMessage = 'Không thể gỡ báo cáo';
+                this.notificationType = 'error';
+                this.showNotification = true;
             }
         },
 
@@ -219,12 +229,16 @@ export default {
 
             try {
                 await CommentService.delete(this.deleteTarget._id);
-                alert('Đã xóa bình luận thành công');
+                this.notificationMessage = 'Đã xóa bình luận thành công';
+                this.notificationType = 'success';
+                this.showNotification = true;
                 await this.loadReportedComments();
                 this.closeDeleteModal();
             } catch (error) {
                 console.error('Error deleting comment:', error);
-                alert('Không thể xóa bình luận');
+                this.notificationMessage = 'Không thể xóa bình luận';
+                this.notificationType = 'error';
+                this.showNotification = true;
             }
         },
 

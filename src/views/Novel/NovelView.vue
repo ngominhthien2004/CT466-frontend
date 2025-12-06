@@ -72,6 +72,15 @@
             @confirm="confirmDeleteChapter"
             @cancel="showDeleteChapterModal = false"
         />
+        
+        <!-- Notification Modal -->
+        <NotificationModal
+            :show="showNotification"
+            :type="notificationType"
+            :message="notificationMessage"
+            :auto-close="notificationAutoClose"
+            @close="() => { showNotification = false; notificationAutoClose = false; notificationMessage = ''; notificationType = 'info' }"
+        />
     </div>
 </template>
 
@@ -81,6 +90,7 @@ import ChapterList from '@/components/Chapter/ChapterList.vue';
 import CommentSection from '@/components/Comment/CommentSection.vue';
 import ConfirmModal from '@/components/Common/ConfirmModal.vue';
 import DeleteModal from '@/components/Common/DeleteModal.vue';
+import NotificationModal from '@/components/Common/NotificationModal.vue';
 import { NovelService, ChapterService, CommentService } from '@/services';
 import { useAuthStore, useNovelStore } from '@/stores';
 
@@ -91,7 +101,8 @@ export default {
         ChapterList,
         CommentSection,
         ConfirmModal,
-        DeleteModal
+        DeleteModal,
+        NotificationModal
     },
     data() {
         return {
@@ -110,6 +121,12 @@ export default {
             showDeleteChapterModal: false,
             chapterToDelete: null,
             reloadTrigger: 0
+            ,
+            // notification state
+            showNotification: false,
+            notificationMessage: '',
+            notificationType: 'info',
+            notificationAutoClose: false
         };
     },
     computed: {
@@ -179,7 +196,9 @@ export default {
             try {
                 const userId = this.authStore.user?._id;
                 if (!userId) {
-                    alert('Vui lòng đăng nhập để yêu thích');
+                    this.showNotification = true;
+                    this.notificationType = 'warning';
+                    this.notificationMessage = 'Vui lòng đăng nhập để yêu thích';
                     return;
                 }
 
@@ -191,7 +210,9 @@ export default {
                 this.novel.likes = updatedNovel.likes || 0;
             } catch (error) {
                 console.error('Error updating favorite:', error);
-                alert('Không thể cập nhật yêu thích');
+                this.showNotification = true;
+                this.notificationType = 'error';
+                this.notificationMessage = 'Không thể cập nhật yêu thích';
             }
         },
         handleReadChapter(chapterId) {
@@ -225,13 +246,18 @@ export default {
 
             try {
                 await ChapterService.delete(this.chapterToDelete._id);
-                alert('Xóa chương thành công!');
+                this.showNotification = true;
+                this.notificationType = 'success';
+                this.notificationMessage = 'Xóa chương thành công!';
+                this.notificationAutoClose = true;
                 this.showDeleteChapterModal = false;
                 this.chapterToDelete = null;
                 await this.loadChapters();
             } catch (error) {
                 console.error('Error deleting chapter:', error);
-                alert('Không thể xóa chương!');
+                this.showNotification = true;
+                this.notificationType = 'error';
+                this.notificationMessage = 'Không thể xóa chương!';
             }
         },
         async loadComments() {
@@ -262,7 +288,9 @@ export default {
                 await this.loadComments();
             } catch (error) {
                 console.error('Error submitting comment:', error);
-                alert('Không thể gửi bình luận. Vui lòng thử lại!');
+                this.showNotification = true;
+                this.notificationType = 'error';
+                this.notificationMessage = 'Không thể gửi bình luận. Vui lòng thử lại!';
             } finally {
                 this.submittingComment = false;
             }
@@ -302,7 +330,9 @@ export default {
                 await this.loadComments();
             } catch (error) {
                 console.error('Error replying to comment:', error);
-                alert('Không thể gửi phản hồi. Vui lòng thử lại!');
+                this.showNotification = true;
+                this.notificationType = 'error';
+                this.notificationMessage = 'Không thể gửi phản hồi. Vui lòng thử lại!';
             }
         },
         async handleDeleteComment(commentId) {
@@ -322,7 +352,9 @@ export default {
                 await this.loadComments();
             } catch (error) {
                 console.error('Error deleting comment:', error);
-                alert('Không thể xóa bình luận. Vui lòng thử lại!');
+                this.showNotification = true;
+                this.notificationType = 'error';
+                this.notificationMessage = 'Không thể xóa bình luận. Vui lòng thử lại!';
             } finally {
                 this.deleting = false;
                 this.deleteTargetId = null;

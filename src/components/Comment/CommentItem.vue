@@ -104,14 +104,25 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Notification Modal -->
+        <NotificationModal
+            :show="showNotification"
+            :type="notificationType"
+            :message="notificationMessage"
+            :auto-close="notificationAutoClose"
+            @close="() => { showNotification = false; notificationAutoClose = false; notificationMessage = ''; notificationType = 'info' }"
+        />
     </div>
 </template>
 
 <script>
 import CommentService from '@/services/comment.service';
+import NotificationModal from '@/components/Common/NotificationModal.vue';
 
 export default {
     name: 'CommentItem',
+    components: { NotificationModal },
     props: {
         comment: {
             type: Object,
@@ -140,6 +151,12 @@ export default {
             likeCount: 0,
             showReportModal: false,
             reportReason: ''
+            ,
+            // notification state
+            showNotification: false,
+            notificationMessage: '',
+            notificationType: 'info',
+            notificationAutoClose: false
         };
     },
     computed: {
@@ -221,7 +238,9 @@ export default {
         },
         async handleLike() {
             if (!this.currentUserId) {
-                alert('Vui lòng đăng nhập để thích bình luận');
+                this.showNotification = true;
+                this.notificationType = 'warning';
+                this.notificationMessage = 'Vui lòng đăng nhập để thích bình luận';
                 return;
             }
             
@@ -238,12 +257,16 @@ export default {
                 this.$emit('like', this.comment._id);
             } catch (error) {
                 console.error('Error liking comment:', error);
-                alert('Có lỗi xảy ra khi thích bình luận');
+                this.showNotification = true;
+                this.notificationType = 'error';
+                this.notificationMessage = 'Có lỗi xảy ra khi thích bình luận';
             }
         },
         toggleReply() {
             if (!this.currentUserId) {
-                alert('Vui lòng đăng nhập để trả lời bình luận');
+                this.showNotification = true;
+                this.notificationType = 'warning';
+                this.notificationMessage = 'Vui lòng đăng nhập để trả lời bình luận';
                 return;
             }
             this.showReplyForm = !this.showReplyForm;
@@ -304,7 +327,9 @@ export default {
         },
         async submitReport() {
             if (this.reportReason.trim().length < 10) {
-                alert('Vui lòng nhập lý do báo cáo (tối thiểu 10 ký tự)');
+                this.showNotification = true;
+                this.notificationType = 'warning';
+                this.notificationMessage = 'Vui lòng nhập lý do báo cáo (tối thiểu 10 ký tự)';
                 return;
             }
             
@@ -314,16 +339,22 @@ export default {
                     reason: this.reportReason.trim()
                 });
                 
-                alert('Đã gửi báo cáo thành công. Cảm ơn bạn đã giúp duy trì cộng đồng văn minh!');
+                this.showNotification = true;
+                this.notificationType = 'success';
+                this.notificationMessage = 'Đã gửi báo cáo thành công. Cảm ơn bạn đã giúp duy trì cộng đồng văn minh!';
+                this.notificationAutoClose = true;
                 this.showReportModal = false;
                 this.reportReason = '';
             } catch (error) {
                 console.error('Error reporting comment:', error);
                 if (error.response?.data?.message) {
-                    alert(error.response.data.message);
+                    this.notificationMessage = error.response.data.message;
                 } else {
-                    alert('Có lỗi xảy ra khi gửi báo cáo. Vui lòng thử lại sau.');
+                    this.notificationMessage = 'Có lỗi xảy ra khi gửi báo cáo. Vui lòng thử lại sau.';
                 }
+                this.showNotification = true;
+                this.notificationType = 'error';
+                this.notificationAutoClose = false;
             }
         }
     }

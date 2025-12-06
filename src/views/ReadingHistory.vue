@@ -190,6 +190,14 @@
             @confirm="deleteAll ? handleClearAll() : handleRemove()"
             @cancel="closeDeleteModal"
         />
+        
+        <!-- Notification Modal -->
+        <NotificationModal
+            :show="showNotification"
+            :type="notificationType"
+            :message="notificationMessage"
+            @close="() => { showNotification = false; notificationMessage = ''; notificationType = 'info' }"
+        />
     </div>
 </template>
 
@@ -197,10 +205,11 @@
 import { ReadingHistoryService } from '@/services';
 import { useAuthStore } from '@/stores';
 import DeleteModal from '@/components/Common/DeleteModal.vue';
+import NotificationModal from '@/components/Common/NotificationModal.vue';
 
 export default {
     name: 'ReadingHistoryPage',
-    components: { DeleteModal },
+    components: { DeleteModal, NotificationModal },
     data() {
         return {
             historyList: [],
@@ -214,7 +223,11 @@ export default {
             showDeleteModal: false,
             itemToDelete: null,
             deleteAll: false,
-            deleting: false
+            deleting: false,
+            // notification state
+            showNotification: false,
+            notificationMessage: '',
+            notificationType: 'info'
         };
     },
     computed: {
@@ -350,7 +363,9 @@ export default {
                 this.closeDeleteModal();
             } catch (error) {
                 console.error('Error removing from history:', error);
-                alert('Không thể xóa. Vui lòng thử lại!');
+                    this.showNotification = true;
+                    this.notificationType = 'error';
+                    this.notificationMessage = 'Không thể xóa. Vui lòng thử lại!';
             } finally {
                 this.deleting = false;
             }
@@ -366,7 +381,9 @@ export default {
                 this.closeDeleteModal();
             } catch (error) {
                 console.error('Error clearing history:', error);
-                alert('Không thể xóa. Vui lòng thử lại!');
+                this.showNotification = true;
+                this.notificationType = 'error';
+                this.notificationMessage = 'Không thể xóa. Vui lòng thử lại!';
             } finally {
                 this.deleting = false;
             }
