@@ -119,6 +119,11 @@ const routes = [
         name: "register",
         component: () => import("@/views/Auth/Register.vue"),
     },
+    {
+        path: "/auth/google/callback",
+        name: "google-callback",
+        component: () => import("@/views/Auth/GoogleCallback.vue"),
+    },
     // Favorites Route
     {
         path: "/favorites",
