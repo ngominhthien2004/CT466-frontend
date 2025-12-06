@@ -3,7 +3,7 @@
         <div class="list-header">
             <h2>Danh sách chương</h2>
             <div class="list-controls">
-                <button class="btn-add-chapter" @click="addChapter">
+                <button class="btn-add-chapter" @click="addChapter" v-if="canEdit">
                     <i class="fas fa-plus"></i>
                     Thêm chương
                 </button>
@@ -32,8 +32,10 @@
                 v-for="chapter in sortedChapters" 
                 :key="chapter._id"
                 :chapter="chapter"
+                :novel="novel"
                 @read="handleReadChapter"
                 @edit="handleEditChapter"
+                @delete="handleDeleteChapter"
             />
         </div>
     </div>
@@ -41,6 +43,7 @@
 
 <script>
 import ChapterCard from './ChapterCard.vue';
+import { useAuthStore } from '@/stores/auth';
 
 export default {
     name: 'ChapterList',
@@ -59,6 +62,10 @@ export default {
         novelId: {
             type: String,
             required: true
+        },
+        novel: {
+            type: Object,
+            default: null
         }
     },
     data() {
@@ -67,6 +74,20 @@ export default {
         };
     },
     computed: {
+        authStore() {
+            return useAuthStore();
+        },
+        currentUserId() {
+            return this.authStore.user?._id;
+        },
+        isAdmin() {
+            return this.authStore.isAuthenticated && this.authStore.user?.role === 'admin';
+        },
+        canEdit() {
+            // Cho phép thêm chương nếu là người đăng hoặc là admin
+            if (!this.novel) return false;
+            return this.isAdmin || this.currentUserId === this.novel.createdBy;
+        },
         sortedChapters() {
             const sorted = [...this.chapters];
             sorted.sort((a, b) => {
@@ -89,6 +110,9 @@ export default {
         },
         handleEditChapter(chapterId) {
             this.$router.push(`/chapters/edit/${chapterId}`);
+        },
+        handleDeleteChapter(chapterId) {
+            this.$emit('delete-chapter', chapterId);
         }
     }
 };

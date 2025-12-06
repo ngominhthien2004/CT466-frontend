@@ -12,20 +12,45 @@
                 <i class="fas fa-eye"></i>
                 {{ formatNumber(chapter.views || 0) }}
             </span>
-            <button class="btn-edit" @click.stop="editChapter" title="Chỉnh sửa">
+            <button class="btn-edit" @click.stop="editChapter" title="Chỉnh sửa" v-if="canEdit">
                 <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn-delete" @click.stop="deleteChapter" title="Xóa" v-if="canEdit">
+                <i class="fas fa-trash"></i>
             </button>
         </div>
     </div>
 </template>
 
 <script>
+import { useAuthStore } from '@/stores/auth';
+
 export default {
     name: 'ChapterCard',
     props: {
         chapter: {
             type: Object,
             required: true
+        },
+        novel: {
+            type: Object,
+            default: null
+        }
+    },
+    computed: {
+        authStore() {
+            return useAuthStore();
+        },
+        currentUserId() {
+            return this.authStore.user?._id;
+        },
+        isAdmin() {
+            return this.authStore.isAuthenticated && this.authStore.user?.role === 'admin';
+        },
+        canEdit() {
+            // Cho phép chỉnh sửa nếu là người đăng novel hoặc là admin
+            if (!this.novel) return false;
+            return this.isAdmin || this.currentUserId === this.novel.createdBy;
         }
     },
     methods: {
@@ -34,6 +59,9 @@ export default {
         },
         editChapter() {
             this.$emit('edit', this.chapter._id);
+        },
+        deleteChapter() {
+            this.$emit('delete', this.chapter._id);
         },
         formatDate(date) {
             if (!date) return '';
@@ -56,8 +84,9 @@ export default {
 <style scoped>
 /* Card styles moved to cards.css */
 
-/* Custom transparent edit button for this component */
-.btn-edit {
+/* Custom transparent buttons for this component */
+.btn-edit,
+.btn-delete {
     background: transparent;
     border: none;
     color: #7f8c8d;
@@ -73,6 +102,12 @@ export default {
 .btn-edit:hover {
     background: #f0f0f0;
     color: #c9a9a6;
+    transform: scale(1.1);
+}
+
+.btn-delete:hover {
+    background: #fee;
+    color: #e74c3c;
     transform: scale(1.1);
 }
 </style>

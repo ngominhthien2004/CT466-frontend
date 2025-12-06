@@ -54,7 +54,7 @@
                                 id="password"
                                 v-model="formData.password"
                                 :type="showPassword ? 'text' : 'password'"
-                                placeholder="Mật khẩu (tối thiểu 6 ký tự)..."
+                                placeholder="Mật khẩu (tối thiểu 6 ký tự, gồm chữ thường và hoa và số, kí tự đặc biệt)..."
                                 required
                                 :disabled="loading"
                             />
@@ -91,21 +91,6 @@
                                 <i :class="showConfirmPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
                             </button>
                         </div>
-                    </div>
-
-                    <!-- Full Name (Optional) -->
-                    <div class="form-group">
-                        <label for="fullName">
-                            <i class="fas fa-id-card"></i>
-                            Họ và tên
-                        </label>
-                        <input
-                            id="fullName"
-                            v-model="formData.fullName"
-                            type="text"
-                            placeholder="Họ và tên của bạn (tùy chọn)..."
-                            :disabled="loading"
-                        />
                     </div>
 
                     <!-- Terms -->
@@ -168,8 +153,7 @@ export default {
             formData: {
                 username: '',
                 email: '',
-                password: '',
-                fullName: ''
+                password: ''
             },
             confirmPassword: '',
             showPassword: false,

@@ -94,7 +94,16 @@
 }
 
 /* Title/Name */
-.novel-title,
+.novel-title{
+
+    font-weight: 600;
+    color: #2c3e50;
+    max-width: 1200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .table-title {
     font-weight: 600;
     color: #2c3e50;

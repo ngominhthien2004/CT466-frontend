@@ -32,7 +32,9 @@
                     :chapters="chapters"
                     :loading="loadingChapters"
                     :novel-id="novelId"
+                    :novel="novel"
                     @read-chapter="handleReadChapter"
+                    @delete-chapter="handleDeleteChapter"
                 />
 
                 <!-- Comments Section (Novel-level comments) -->
@@ -196,6 +198,21 @@ export default {
             
             // Chuyển đến trang đọc chapter
             this.$router.push(`/chapters/${chapterId}`);
+        },
+        async handleDeleteChapter(chapterId) {
+            const chapter = this.chapters.find(c => c._id === chapterId);
+            const confirmed = confirm(`Bạn có chắc chắn muốn xóa chương "${chapter?.title || 'này'}"?`);
+            if (!confirmed) return;
+
+            try {
+                await ChapterService.delete(chapterId);
+                alert('Xóa chương thành công!');
+                // Reload chapters
+                await this.loadChapters();
+            } catch (error) {
+                console.error('Error deleting chapter:', error);
+                alert('Không thể xóa chương!');
+            }
         },
         async loadComments() {
             try {

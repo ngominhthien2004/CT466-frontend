@@ -81,7 +81,7 @@
                         <i class="fas fa-bookmark"></i>
                         Đọc tiếp
                     </button>
-                    <button class="btn-edit" @click="editNovel">
+                    <button class="btn-edit" @click="editNovel" v-if="canEdit">
                         <i class="fas fa-edit"></i>
                         Chỉnh sửa
                     </button>
@@ -134,7 +134,14 @@ export default {
             return useAuthStore();
         },
         currentUserId() {
-            return this.authStore.user?.id;
+            return this.authStore.user?._id;
+        },
+        isAdmin() {
+            return this.authStore.isAuthenticated && this.authStore.user?.role === 'admin';
+        },
+        canEdit() {
+            // Cho phép chỉnh sửa nếu là người đăng hoặc là admin
+            return this.isAdmin || this.currentUserId === this.novel.createdBy;
         }
     },
     mounted() {

@@ -8,7 +8,7 @@
                     Tiểu thuyết yêu thích
                 </h1>
                 <p class="subtitle">
-                    Danh sách các yêu thích
+                    Danh sách các tiểu thuyết yêu thích
                 </p>
             </div>
         </div>
