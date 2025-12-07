@@ -212,8 +212,7 @@ export default {
                 const query = this.searchQuery.toLowerCase();
                 result = result.filter(novel =>
                     novel.title?.toLowerCase().includes(query) ||
-                    novel.author?.toLowerCase().includes(query) ||
-                    novel.description?.toLowerCase().includes(query)
+                    novel.author?.toLowerCase().includes(query)
                 );
             }
 

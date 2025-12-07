@@ -8,28 +8,28 @@
 
         <StatsCards :stats="statsData" />
 
-        <!-- Header Actions -->
-        <div class="page-actions">
-            <SearchNovel
-                placeholder="Tìm kiếm theo tên, tác giả..."
-                @input="searchQuery = $event"
-                @search="handleSearch"
-                @clear="searchQuery = ''; handleSearch();"
-            />
-        </div>
-
         <!-- Filters -->
-        <FilterBar
-            :status-filter="filterStatus"
-            :sort-by="sortBy"
-            :status-options="statusOptions"
-            :sort-options="sortOptions"
-            @update:statusFilter="filterStatus = $event"
-            @update:sortBy="sortBy = $event"
-            @filter-change="applyFilters"
-            @sort-change="applySorting"
+        <SearchFilter
+            v-model="searchQuery"
+            placeholder="Tìm kiếm theo tên, tác giả..."
+            @update:modelValue="applyFilters"
             @reset="resetFilters"
-        />
+        >
+            <select v-model="filterStatus" @change="applyFilters" class="filter-select">
+                <option value="">Tất cả trạng thái</option>
+                <option value="ongoing">Đang ra</option>
+                <option value="completed">Hoàn thành</option>
+                <option value="paused">Tạm dừng</option>
+                <option value="dropped">Ngưng</option>
+            </select>
+
+            <select v-model="sortBy" @change="applyFilters" class="filter-select">
+                <option value="createdAt">Mới nhất</option>
+                <option value="views">Lượt xem</option>
+                <option value="likes">Lượt thích</option>
+                <option value="title">Tên A-Z</option>
+            </select>
+        </SearchFilter>
         
         <!-- Loading State -->
         <LoadingSpinner v-if="loading" />
@@ -178,15 +178,14 @@ import StatsCards from '@/components/Admin/StatsCards.vue';
 import NovelForm from '@/components/Novel/NovelForm.vue';
 import DeleteModal from '@/components/Common/DeleteModal.vue';
 import NotificationModal from '@/components/Common/NotificationModal.vue';
-import SearchNovel from '@/components/Novel/SearchNovel.vue';
-import FilterBar from '@/components/Common/FilterBar.vue';
+import SearchFilter from '@/components/Admin/SearchFilter.vue';
 import LoadingSpinner from '@/components/Common/LoadingSpinner.vue';
 import EmptyState from '@/components/Common/EmptyState.vue';
 import Pagination from '@/components/Common/Pagination.vue';
 
 export default {
     name: 'ManageNovels',
-    components: { PageHeader, StatsCards, NovelForm, DeleteModal, NotificationModal, SearchNovel, FilterBar, LoadingSpinner, EmptyState, Pagination },
+    components: { PageHeader, StatsCards, NovelForm, DeleteModal, NotificationModal, SearchFilter, LoadingSpinner, EmptyState, Pagination },
     data() {
         return {
             novelStore: useNovelStore(),
@@ -205,24 +204,7 @@ export default {
             showNotification: false,
             notificationMessage: '',
             notificationType: 'success',
-            notificationAutoClose: false,
-            statusOptions: {
-                placeholder: 'Tất cả trạng thái',
-                options: [
-                    { value: 'ongoing', label: 'Đang ra' },
-                    { value: 'completed', label: 'Hoàn thành' },
-                    { value: 'paused', label: 'Tạm dừng' },
-                    { value: 'dropped', label: 'Ngưng' }
-                ]
-            },
-            sortOptions: {
-                options: [
-                    { value: 'createdAt', label: 'Mới nhất' },
-                    { value: 'views', label: 'Lượt xem' },
-                    { value: 'likes', label: 'Lượt thích' },
-                    { value: 'title', label: 'Tên A-Z' }
-                ]
-            }
+            notificationAutoClose: false
         };
     },
     computed: {
@@ -287,10 +269,6 @@ export default {
             if (!userId) return 'N/A';
             return this.creatorUsernames[userId] || 'N/A';
         },
-        handleSearch() {
-            this.currentPage = 1;
-            this.applyFilters();
-        },
         applyFilters() {
             let result = [...this.novels];
 
@@ -310,6 +288,7 @@ export default {
 
             this.filteredNovels = result;
             this.applySorting();
+            this.currentPage = 1;
         },
         applySorting() {
             const sortFunctions = {
