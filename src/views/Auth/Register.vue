@@ -107,13 +107,13 @@
                     </div>
 
                     <!-- Error Message -->
-                    <div v-if="error" class="error-message">
+                    <div v-if="error" class="error">
                         <i class="fas fa-exclamation-circle"></i>
                         {{ error }}
                     </div>
 
                     <!-- Success Message -->
-                    <div v-if="success" class="success-message">
+                    <div v-if="success" class="success">
                         <i class="fas fa-check-circle"></i>
                         {{ success }}
                     </div>
@@ -400,31 +400,6 @@ export default {
     text-decoration: underline;
 }
 
-.error-message {
-    background: #fee;
-    border: 1px solid #fcc;
-    color: #c33;
-    padding: 0.875rem 1rem;
-    border-radius: 8px;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.9rem;
-}
-
-.success-message {
-    background: #d4edda;
-    border: 1px solid #c3e6cb;
-    color: #155724;
-    padding: 0.875rem 1rem;
-    border-radius: 8px;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.9rem;
-}
 
 .btn-submit {
     width: 100%;

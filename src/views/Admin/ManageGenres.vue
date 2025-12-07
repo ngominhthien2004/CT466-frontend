@@ -25,7 +25,7 @@
         />
 
         <!-- Error Message -->
-        <div v-if="genreStore.error" class="error-message">
+        <div v-if="genreStore.error" class="error">
             <i class="fas fa-exclamation-circle"></i>
             {{ genreStore.error }}
         </div>
@@ -304,40 +304,7 @@ export default {
     gap: 1.5rem;
 }
 
-/* Add Button */
-.btn-add {
-    background: white;
-    color: #667eea;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.btn-add:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-/* Error Message */
-.error-message {
-    background: #fee;
-    color: #c33;
-    padding: 1rem;
-    border-radius: 8px;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-/* Table styles moved to tables.css */
+    /* Use global .error utility from utilities.css for boxed alerts */
 
 /* Custom genre table styles */
 .genre-name {
@@ -397,8 +364,6 @@ export default {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(240, 147, 251, 0.4);
 }
-
-/* Modal styles moved to modals.css */
 
 /* Custom modal header for genres */
 .modal-header {

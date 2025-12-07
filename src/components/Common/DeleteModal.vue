@@ -68,7 +68,6 @@ export default {
 </script>
 
 <style scoped>
-/* Modal styles moved to modals.css */
 
 /* Custom delete modal header gradient */
 .modal-header {

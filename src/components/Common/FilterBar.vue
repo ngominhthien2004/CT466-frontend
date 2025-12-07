@@ -53,12 +53,10 @@ export default {
         statusOptions: {
             type: Object,
             default: null
-            // Format: { placeholder: 'text', options: [{ value: 'val', label: 'Label' }] }
         },
         sortOptions: {
             type: Object,
             default: null
-            // Format: { options: [{ value: 'val', label: 'Label' }] }
         }
     },
     data() {

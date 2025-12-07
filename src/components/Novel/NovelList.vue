@@ -221,8 +221,6 @@ export default {
     width: 100%;
 }
 
-/* Utility styles moved to utilities.css */
-
 /* Pagination Styles */
 .pagination {
     display: flex;

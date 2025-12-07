@@ -61,12 +61,6 @@
                         <a href="#" class="forgot-password">Quên mật khẩu?</a>
                     </div>
 
-                    <!-- Error Message -->
-                    <div v-if="error" class="error-message">
-                        <i class="fas fa-exclamation-circle"></i>
-                        {{ error }}
-                    </div>
-
                     <!-- Submit Button -->
                     <button type="submit" class="btn-submit" :disabled="loading">
                         <i v-if="loading" class="fas fa-spinner fa-spin"></i>
@@ -109,27 +103,28 @@
 
 <script>
 import AuthService from '@/services/auth.service';
-import { useAuthStore } from '@/stores';
+import { useAuthStore, useNotificationStore } from '@/stores';
 
 export default {
     name: 'Login',
     data() {
         return {
             authStore: useAuthStore(),
+            notifier: useNotificationStore(),
             formData: {
                 email: '',
                 password: ''
             },
             showPassword: false,
             rememberMe: false,
-            loading: false,
-            error: null
+            loading: false
         };
     },
     mounted() {
         // Check for error from Google OAuth
         if (this.$route.query.error) {
-            this.error = this.$route.query.error;
+            const msg = this.$route.query.error;
+            this.notifier.showNotification(msg, 'error', true, 4000);
         }
 
         // Load remembered credentials
@@ -186,7 +181,9 @@ export default {
             } catch (error) {
                 console.error('Login error:', error);
                 console.error('Error response:', error.response);
-                this.error = error.response?.data?.message || error.message || 'Đăng nhập thất bại! Vui lòng kiểm tra lại thông tin.';
+                const msg = error.response?.data?.message || error.message || 'Đăng nhập thất bại! Vui lòng kiểm tra lại thông tin.';
+                // Show global notification modal for errors
+                this.notifier.showNotification(msg, 'error', true, 4000);
             } finally {
                 this.loading = false;
             }
@@ -342,18 +339,7 @@ export default {
     color: #b8a39e;
 }
 
-.error-message {
-    background: #fee;
-    border: 1px solid #fcc;
-    color: #c33;
-    padding: 0.875rem 1rem;
-    border-radius: 8px;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.9rem;
-}
+    /* Use global .error utility from utilities.css */
 
 .btn-submit {
     width: 100%;

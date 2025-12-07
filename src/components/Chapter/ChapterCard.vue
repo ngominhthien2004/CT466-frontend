@@ -82,7 +82,6 @@ export default {
 </script>
 
 <style scoped>
-/* Card styles moved to cards.css */
 
 /* Custom transparent buttons for this component */
 .btn-edit,

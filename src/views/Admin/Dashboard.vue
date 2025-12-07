@@ -130,7 +130,7 @@ export default {
         };
     },
     computed: {
-        // 👉 Lấy data từ store thay vì local state
+        // Lấy data từ store thay vì local state
         loading() {
             return this.novelStore.loading;
         },
@@ -140,7 +140,7 @@ export default {
         topNovels() {
             return this.novelStore.popularNovels.slice(0, 5);
         },
-        // 👉 Stats tự động cập nhật khi store thay đổi
+        // Stats tự động cập nhật khi store thay đổi
         computedStats() {
             const stats = [...this.stats];
             stats[0].value = this.novelStore.totalNovels;
@@ -149,7 +149,6 @@ export default {
         }
     },
     async mounted() {
-        // 👉 Chỉ gọi 1 lần, data được cache trong store
         await this.novelStore.fetchNovels();
     },
     methods: {
@@ -169,7 +168,6 @@ export default {
             return '';
         },
         async refreshData() {
-            // 👉 Refresh data trong store, tất cả components tự động update
             await this.novelStore.fetchNovels();
         }
     }
@@ -446,9 +444,6 @@ export default {
     font-size: 0.85rem;
     color: #7f8c8d;
 }
-
-/* Quick Actions */
-/* Quick Actions removed - links available in sidebar */
 
 /* Responsive */
 @media (max-width: 1024px) {

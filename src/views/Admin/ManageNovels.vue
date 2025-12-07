@@ -471,8 +471,6 @@ export default {
     align-items: center;
 }
 
-/* Table styles moved to tables.css */
-
 /* Responsive */
 @media (max-width: 1200px) {
     .page-actions {

@@ -3,7 +3,7 @@
         <div class="list-header">
             <h2>Danh sách chương</h2>
             <div class="list-controls">
-                <button class="btn-add-chapter" @click="addChapter" v-if="canEdit">
+                <button class="btn-add" @click="addChapter" v-if="canEdit">
                     <i class="fas fa-plus"></i>
                     Thêm chương
                 </button>
@@ -70,7 +70,7 @@ export default {
     },
     data() {
         return {
-            sortOrder: 'desc' // 'asc' hoặc 'desc'
+            sortOrder: 'desc'
         };
     },
     computed: {
@@ -148,26 +148,7 @@ export default {
     gap: 0.5rem;
 }
 
-/* Custom green outline button for this component */
-.btn-add-chapter {
-    padding: 0.5rem 1rem;
-    background: white;
-    border: 2px solid #27ae60;
-    color: #27ae60;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.btn-add-chapter:hover {
-    background: #27ae60;
-    color: white;
-}
+    /* Use global .btn-add from buttons.css for consistent styling */
 
 .sort-btn {
     padding: 0.5rem 1rem;
@@ -194,8 +175,6 @@ export default {
     border-color: #c9a9a6;
     color: white;
 }
-
-/* Utility styles moved to utilities.css */
 
 .chapters-grid {
     display: flex;

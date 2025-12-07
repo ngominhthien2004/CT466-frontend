@@ -309,7 +309,6 @@ export default {
             }
         },
         async handleDeleteReply(replyId) {
-            // Emit lên parent để xóa (không cần confirmation ở đây vì parent sẽ xử lý)
             this.$emit('delete', replyId);
             // Reload replies sau khi xóa
             setTimeout(() => this.loadReplies(), 500);

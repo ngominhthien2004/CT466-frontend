@@ -11,7 +11,7 @@
                 </button>
             </div>
             <form @submit.prevent="handleSubmit" class="form-body">
-                <div v-if="error" class="error-message">
+                <div v-if="error" class="error">
                     <i class="fas fa-exclamation-circle"></i>
                     {{ error }}
                 </div>
@@ -72,19 +72,5 @@ export default {
 <style scoped>
 @import '@/assets/form.css';
 
-.error-message {
-    background: #fee;
-    border: 1px solid #fcc;
-    color: #c33;
-    padding: 0.75rem 1rem;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.error-message i {
-    font-size: 1.1rem;
-}
+/* Use global .error utility from utilities.css for boxed alert */
 </style>
