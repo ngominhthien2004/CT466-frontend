@@ -187,8 +187,6 @@ export default {
     font-size: 1rem;
 }
 
-/* Utility styles moved to utilities.css */
-
 /* Custom container styling */
 .loading-container,
 .error-container {
@@ -217,8 +215,6 @@ export default {
     margin-bottom: 2rem;
     font-size: 1.1rem;
 }
-
-/* Buttons use global styles from src/assets/buttons.css */
 
 /* Message Banner */
 .message-banner {
@@ -289,9 +285,7 @@ export default {
         align-items: flex-start;
         padding: 1.5rem;
     }
-    
-    /* back button layout handled via global button classes */
-    
+        
     .header-text h1 {
         font-size: 1.5rem;
     }

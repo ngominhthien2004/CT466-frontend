@@ -146,8 +146,6 @@ export default {
     gap: 1.5rem;
 }
 
-/* back button uses global .btn + variant classes from src/assets/buttons.css */
-
 .header-content h1 {
     color: white;
     margin: 0;

@@ -415,7 +415,6 @@ export default {
 <style scoped>
 @import '@/assets/form.css';
 
-/* Page mode (not modal) */
 .form-page {
     max-width: 900px;
     margin: 0 auto;
@@ -452,15 +451,15 @@ export default {
     padding: 0.25rem 0;
 }
 
-/* Hide scrollbar but keep functionality */
+/* Hide scrollbar */
 .suggestions-list::-webkit-scrollbar {
     width: 0;
     height: 0;
 }
 
 .suggestions-list {
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
 .suggestions-list li {

@@ -268,10 +268,6 @@ input:checked + .slider:before {
     color: #2c3e50;
 }
 
-/* Modal footer and button styles moved to modals.css and buttons.css */
-
-/* Button styling moved to global `src/assets/buttons.css` (.btn-submit, .btn-primary, etc.) */
-
 /* Responsive */
 @media (max-width: 640px) {
     .form-row {

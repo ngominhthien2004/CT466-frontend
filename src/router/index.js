@@ -62,7 +62,6 @@ const routes = [
         name: "chapter-view-short",
         component: () => import("@/views/Chapter/ChapterView.vue"),
     },
-    // Chapter Management Routes (accessible to all authenticated users)
     {
         path: "/chapters/add",
         name: "chapter-add",

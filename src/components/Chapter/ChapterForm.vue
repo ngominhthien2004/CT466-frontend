@@ -216,8 +216,6 @@ export default {
     background: #dee2e6;
 }
 
-/* Button styles moved to buttons.css */
-
 @media (max-width: 768px) {
     .chapter-form {
         padding: 1.5rem;

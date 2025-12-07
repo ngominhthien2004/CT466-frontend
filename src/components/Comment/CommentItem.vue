@@ -161,7 +161,6 @@ export default {
     },
     computed: {
         avatar() {
-            // Ưu tiên userAvatar, sau đó avatar, cuối cùng default
             const avatarPath = this.comment.userAvatar || this.comment.avatar;
             
             if (!avatarPath || avatarPath === '') {

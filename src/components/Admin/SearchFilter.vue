@@ -61,8 +61,6 @@ export default {
     flex-wrap: wrap;
 }
 
- 
-
 @media (max-width: 768px) {
     .filter-group {
         flex-direction: column;

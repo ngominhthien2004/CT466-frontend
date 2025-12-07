@@ -148,8 +148,6 @@ export default {
     gap: 0.5rem;
 }
 
-    /* Use global .btn-add from buttons.css for consistent styling */
-
 .sort-btn {
     padding: 0.5rem 1rem;
     background: white;

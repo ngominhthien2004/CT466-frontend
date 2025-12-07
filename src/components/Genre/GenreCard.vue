@@ -23,5 +23,4 @@ export default {
 </script>
 
 <style scoped>
-/* Card styles moved to cards.css */
 </style>

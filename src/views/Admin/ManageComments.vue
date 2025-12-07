@@ -143,7 +143,6 @@ export default {
             deleteTarget: null,
             showUnreportModal: false,
             unreportTarget: null,
-            // Notification state
             showNotification: false,
             notificationMessage: '',
             notificationType: 'info'
@@ -181,7 +180,6 @@ export default {
         },
 
         async unreportComment(commentId) {
-            // Use confirm modal flow instead of browser confirm
             this.unreportTarget = this.reportedComments.find(c => c._id === commentId);
             this.showUnreportModal = true;
         },

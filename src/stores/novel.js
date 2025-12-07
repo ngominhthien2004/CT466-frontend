@@ -34,7 +34,6 @@ export const useNovelStore = defineStore('novel', {
             this.error = null
             try {
                 const response = await NovelService.getAll()
-                // NovelService returns the data payload directly
                 this.novels = response || []
             } catch (error) {
                 this.error = error.message

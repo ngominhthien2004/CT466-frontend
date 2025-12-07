@@ -179,8 +179,6 @@ export default {
     gap: 1.5rem;
 }
 
-/* back button uses global .btn + variant classes from src/assets/buttons.css */
-
 .header-content h1 {
     color: white;
     margin: 0;
@@ -201,8 +199,6 @@ export default {
     margin: 0 auto;
     padding: 0 2rem;
 }
-
-/* Utility styles moved to utilities.css */
 
 /* Custom container styling */
 .loading-state,

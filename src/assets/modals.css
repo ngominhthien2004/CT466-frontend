@@ -1,9 +1,5 @@
-/* ============================================
-   MODAL STYLES
-   Common modal/dialog styles for the app
-   ============================================ */
 
-/* ==================== MODAL OVERLAY ==================== */
+/* MODAL OVERLAY */
 
 .modal-overlay {
     position: fixed;
@@ -43,7 +39,7 @@
     }
 }
 
-/* ==================== MODAL DIALOG ==================== */
+/* MODAL DIALOG */
 
 .modal-dialog,
 .delete-modal,
@@ -96,7 +92,7 @@
     border-radius: 0;
 }
 
-/* Modal Content (for custom implementations) */
+/* Modal Content */
 .modal-content {
     background: white;
     border-radius: 16px;
@@ -110,7 +106,7 @@
     position: relative;
 }
 
-/* ==================== MODAL HEADER ==================== */
+/* MODAL HEADER */
 
 .modal-header {
     padding: 1.5rem 2rem;
@@ -178,7 +174,7 @@
     color: #ed8936;
 }
 
-/* ==================== MODAL BODY ==================== */
+/* MODAL BODY */
 
 .modal-body {
     padding: 2rem;
@@ -214,7 +210,7 @@
     overflow-y: auto;
 }
 
-/* ==================== MODAL FOOTER ==================== */
+/* MODAL FOOTER */
 
 .modal-footer {
     padding: 1.5rem 2rem;
@@ -237,7 +233,7 @@
     min-width: 100px;
 }
 
-/* ==================== MODAL BUTTONS ==================== */
+/* MODAL BUTTONS */
 
 .btn-cancel {
     background: #e9ecef;
@@ -261,7 +257,7 @@
     cursor: not-allowed;
 }
 
-/* ==================== LOADING STATE ==================== */
+/* LOADING STATE */
 
 .modal-loading {
     display: flex;
@@ -285,7 +281,7 @@
     100% { transform: rotate(360deg); }
 }
 
-/* ==================== CONFIRMATION MODALS ==================== */
+/* CONFIRMATION MODALS */
 
 .confirm-modal .modal-body {
     text-align: center;
@@ -308,7 +304,7 @@
     color: #3498db;
 }
 
-/* ==================== FORM MODALS ==================== */
+/* FORM MODALS */
 
 .modal-form .form-group {
     margin-bottom: 1.5rem;
@@ -349,7 +345,7 @@
     resize: vertical;
 }
 
-/* ==================== RESPONSIVE ==================== */
+/* RESPONSIVE  */
 
 @media (max-width: 576px) {
     .modal-dialog,

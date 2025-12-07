@@ -139,7 +139,6 @@ export default {
     gap: 2rem;
 }
 
-/* header back button uses global .btn classes from src/assets/buttons.css */
 .header-content .btn-back {
     transform: translateX(-5px);
 }
@@ -175,8 +174,6 @@ export default {
     font-weight: 500;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
-
-/* Message banner styles moved to utilities.css */
 
 .message-banner i:first-child {
     font-size: 1.5rem;

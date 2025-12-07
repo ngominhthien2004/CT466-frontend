@@ -304,8 +304,6 @@ export default {
     gap: 1.5rem;
 }
 
-    /* Use global .error utility from utilities.css for boxed alerts */
-
 /* Custom genre table styles */
 .genre-name {
     display: flex;
@@ -339,8 +337,6 @@ export default {
     text-align: center;
 }
 
-/* Action buttons use global styles from tables.css */
-
 /* Custom modal header for genres */
 .modal-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -373,4 +369,3 @@ export default {
     }
 }
 </style>
-

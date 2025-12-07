@@ -69,8 +69,6 @@ export default {
 </script>
 
 <style scoped>
-/* Modal styles moved to modals.css */
-
 /* Custom button confirm variants */
 .btn-confirm {
     color: white;

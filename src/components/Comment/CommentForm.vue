@@ -4,7 +4,7 @@
         <div class="form-content">
             <textarea
                 v-model="commentText"
-                placeholder="Viết bình luận của bạn..."
+                placeholder="Bình luận"
                 rows="3"
                 class="comment-input"
                 @keydown.ctrl.enter="handleSubmit"
@@ -104,8 +104,6 @@ export default {
     font-size: 0.85rem;
     color: #95a5a6;
 }
-
-/* comment form uses global button variants */
 
 @media (max-width: 768px) {
     .comment-form {

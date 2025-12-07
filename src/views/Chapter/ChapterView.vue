@@ -883,8 +883,6 @@ export default {
     gap: 1rem;
 }
 
-/* Chapter buttons now use global button styles in src/assets/buttons.css */
-
 /* Responsive */
 @media (max-width: 768px) {
     .chapter-title {

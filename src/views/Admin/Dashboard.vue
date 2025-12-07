@@ -130,7 +130,6 @@ export default {
         };
     },
     computed: {
-        // Lấy data từ store thay vì local state
         loading() {
             return this.novelStore.loading;
         },
@@ -309,8 +308,6 @@ export default {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
-
-
 
 /* Activity List */
 .activity-list {

@@ -94,7 +94,6 @@ export default {
           pages.push('...');
         }
         
-        // Hiển thị các trang xung quanh trang hiện tại
         for (let i = Math.max(2, current - 1); i <= Math.min(total - 1, current + 1); i++) {
           pages.push(i);
         }

@@ -55,7 +55,6 @@ export default {
       return 'Thông báo';
     }
     ,
-    // icon removed — header shows title only
   }
   ,
   methods: {
@@ -117,7 +116,6 @@ export default {
   margin: 0;
   font-size: 1rem;
   line-height: 1.6;
-  /* Reserve space for up to three lines */
   min-height: 4.8rem;
 
   overflow: hidden;

@@ -14,7 +14,6 @@ export const useAuthStore = defineStore('auth', {
         username: (state) => state.user?.username,
         userRole: (state) => {
             const role = state.user?.role || 'user'
-            // Case-insensitive check for admin
             return role.toLowerCase() === 'admin' ? 'Quản trị viên' : 'Người dùng'
         },
         userAvatar: (state) => {

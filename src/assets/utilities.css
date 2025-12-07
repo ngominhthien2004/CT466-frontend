@@ -1,9 +1,5 @@
-/* ============================================
-   UTILITY CLASSES
-   Common utility classes for states, loading, etc.
-   ============================================ */
 
-/* ==================== LOADING STATES ==================== */
+/* LOADING STATES */
 
 .loading-container,
 .loading-state {
@@ -67,7 +63,7 @@
     border-width: 2px;
 }
 
-/* ==================== EMPTY STATES ==================== */
+/* EMPTY STATES */
 
 .empty-state {
     display: flex;
@@ -104,7 +100,7 @@
     margin-top: 0.5rem;
 }
 
-/* ==================== ERROR STATES ==================== */
+/* ERROR STATES */
 
 .error,
 .error-container,
@@ -169,7 +165,7 @@
     box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1) !important;
 }
 
-/* ==================== SUCCESS STATES ==================== */
+/* SUCCESS STATES */
 
 .success,
 .success-container,
@@ -213,7 +209,7 @@
     font-size: 0.875rem;
 }
 
-/* ==================== WARNING STATES ==================== */
+/* WARNING STATES */
 
 .warning,
 .warning-container {
@@ -241,7 +237,7 @@
     font-weight: 500;
 }
 
-/* ==================== INFO STATES ==================== */
+/* INFO STATES */
 
 .info,
 .info-container {
@@ -269,7 +265,7 @@
     font-weight: 500;
 }
 
-/* ==================== MESSAGE BANNERS ==================== */
+/* MESSAGE BANNERS */
 
 .message-banner {
     padding: 1rem 1.5rem;
@@ -317,7 +313,7 @@
     border: 1px solid #bee5eb;
 }
 
-/* ==================== BADGES ==================== */
+/* BADGES */
 
 .badge {
     display: inline-flex;
@@ -359,7 +355,7 @@
     color: #616161;
 }
 
-/* ==================== OVERLAYS ==================== */
+/* OVERLAYS */
 
 .overlay {
     position: fixed;
@@ -389,7 +385,7 @@
     to { opacity: 0; }
 }
 
-/* ==================== DIVIDERS ==================== */
+/* DIVIDERS */
 
 .divider {
     height: 1px;
@@ -427,7 +423,7 @@
     margin-left: 1rem;
 }
 
-/* ==================== RESPONSIVE ==================== */
+/* RESPONSIVE  */
 
 @media (max-width: 768px) {
     .loading-container,

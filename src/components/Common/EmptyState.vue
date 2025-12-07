@@ -26,5 +26,3 @@ export default {
     }
 };
 </script>
-
-<!-- using global `.empty-state` styles from utilities.css -->

@@ -1,7 +1,5 @@
 <template>
     <div class="home">
-        <!-- Hero banner removed per request -->
-
         <div class="container">
             <!-- Search Section -->
             <section class="search-section">
@@ -217,7 +215,6 @@ export default {
 
 /* Responsive */
 @media (max-width: 768px) {
-    /* Responsive tweaks preserved for page content */
 
     .container {
         width: 100%;
@@ -236,6 +233,5 @@ export default {
 }
 
 @media (max-width: 480px) {
-    /* Small screen tweaks preserved for page content */
 }
 </style>

@@ -32,8 +32,6 @@
               autocomplete="off"
             ></textarea>
           </div>
-
-          <!-- slug hidden, kept in local and auto-generated -->
           <input type="hidden" v-model="local.slug" />
         </div>
 

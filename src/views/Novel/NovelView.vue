@@ -162,7 +162,6 @@ export default {
                 
                 this.novel = await NovelService.get(novelId);
                 
-                // Tăng view count chỉ lần đầu load
                 const currentViews = this.novel.views || 0;
                 await NovelService.update(novelId, { 
                     views: currentViews + 1 
@@ -281,7 +280,6 @@ export default {
                     userName: this.authStore.user.username,
                     userAvatar: this.authStore.user.avatar,
                     content: content
-                    // Không có chapterId - đây là comment cho novel
                 };
                 
                 await CommentService.create(commentData);
@@ -378,8 +376,6 @@ export default {
     padding: 0 2rem;
 }
 
-/* Utility styles moved to utilities.css */
-
 /* Custom container styling */
 .loading,
 .error {
@@ -388,8 +384,6 @@ export default {
     padding: 3rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-
-/* Back button styling moved to global button variants in `src/assets/buttons.css` */
 
 @media (max-width: 768px) {
     .container {

@@ -368,8 +368,6 @@ export default {
     gap: 1rem;
 }
 
-/* header button styles moved to global `src/assets/buttons.css` as .btn-header */
-
 /* User Menu */
 .user-menu {
     position: relative;
@@ -380,7 +378,7 @@ export default {
     align-items: center;
     gap: 0.75rem;
     cursor: pointer;
-    padding: 0.4rem 0.85rem; /* Giảm padding để compact hơn */
+    padding: 0.4rem 0.85rem; 
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(10px);
@@ -394,7 +392,7 @@ export default {
 }
 
 .user-avatar {
-    width: 36px; /* Giảm từ 40px */
+    width: 36px;
     height: 36px;
     border-radius: 50%;
     border: 2px solid white;
@@ -406,14 +404,14 @@ export default {
 .user-details {
     display: flex;
     flex-direction: column;
-    gap: 0.1rem; /* Giảm khoảng cách giữa tên và role */
+    gap: 0.1rem; 
     line-height: 1;
 }
 
 .user-name {
     color: white;
     font-weight: 600;
-    font-size: 0.9rem; /* Giảm nhẹ font size */
+    font-size: 0.9rem;
     white-space: nowrap;
     line-height: 1.1;
 }
@@ -526,8 +524,6 @@ export default {
     gap: 0.75rem;
 }
 
-/* auth button styles moved to global `src/assets/buttons.css` as .btn-header / .btn-login */
-
 /* Mobile Menu Toggle */
 .mobile-menu-toggle {
     display: none;
@@ -618,7 +614,6 @@ export default {
         display: none;
     }
 
-    /* header button responsive behavior handled by global styles */
     .user-details {
         display: none;
     }
@@ -642,8 +637,6 @@ export default {
     .auth-buttons {
         gap: 0.5rem;
     }
-
-    /* header auth buttons use global `.btn` + `.btn-header` */
 }
 
 @media (max-width: 480px) {

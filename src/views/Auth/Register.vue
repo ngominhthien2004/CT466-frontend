@@ -422,8 +422,6 @@ export default {
     padding: 0 1rem;
 }
 
-/* form buttons use global styles in src/assets/buttons.css */
-
 .card-footer {
     background: #f8f9fa;
     padding: 1.5rem 2rem;

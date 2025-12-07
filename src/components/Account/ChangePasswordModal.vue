@@ -137,8 +137,6 @@ export default {
 <style scoped>
 @import '@/assets/form.css';
 
-/* Use global .error utility from utilities.css for boxed alert */
-
 .password-input-wrapper {
     position: relative;
 }

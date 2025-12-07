@@ -339,9 +339,6 @@ export default {
     color: #b8a39e;
 }
 
-    /* Use global .error utility from utilities.css */
-
-
 .divider {
     display: flex;
     align-items: center;
@@ -361,8 +358,6 @@ export default {
 .divider span {
     padding: 0 1rem;
 }
-
-/* form buttons use global styles in src/assets/buttons.css */
 
 .card-footer {
     background: #f8f9fa;

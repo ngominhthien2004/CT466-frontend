@@ -578,8 +578,6 @@ export default {
     opacity: 0.9;
 }
 
-/* Login CTA styles moved to global `src/assets/buttons.css` as .btn-header/.btn-login */
-
 /* Account Container */
 .account-container {
     max-width: 1200px;

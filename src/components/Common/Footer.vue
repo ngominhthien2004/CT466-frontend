@@ -59,7 +59,6 @@ export default {
   position: relative;
 }
 .footer-inner {
-  /* Match site container used elsewhere for consistent alignment */
   max-width: 1400px;
   width: 95%;
   margin: 0 auto;

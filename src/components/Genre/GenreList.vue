@@ -61,8 +61,6 @@ export default {
     gap: 1.5rem;
 }
 
-/* Utility styles moved to utilities.css */
-
 @media (max-width: 768px) {
     .genre-grid {
         grid-template-columns: 1fr;

@@ -1,9 +1,5 @@
-/* ============================================
-   TABLE STYLES
-   Common table styles for admin pages
-   ============================================ */
 
-/* ==================== TABLE CONTAINER ==================== */
+/* TABLE CONTAINER  */
 
 .table-container {
     background: white;
@@ -27,7 +23,7 @@
     font-weight: 700;
 }
 
-/* ==================== DATA TABLE ==================== */
+/* DATA TABLE */
 
 .data-table {
     width: 100%;
@@ -74,7 +70,7 @@
     color: #495057;
 }
 
-/* ==================== TABLE CELLS ==================== */
+/* TABLE CELLS */
 
 /* Cover Image */
 .table-cover {
@@ -153,7 +149,7 @@
     cursor: help;
 }
 
-/* ==================== BADGES ==================== */
+/* BADGES */
 
 /* Status Badge */
 .status-badge {
@@ -219,7 +215,7 @@
     color: #e74c3c;
 }
 
-/* ==================== ACTION BUTTONS ==================== */
+/* ACTION BUTTONS */
 
 .action-buttons {
     display: flex;
@@ -280,7 +276,7 @@
     box-shadow: 0 4px 12px rgba(252, 129, 129, 0.4);
 }
 
-/* ==================== PAGINATION ==================== */
+/* PAGINATION */
 
 .pagination {
     display: flex;
@@ -336,7 +332,7 @@
     font-weight: 600;
 }
 
-/* ==================== FILTER SECTION ==================== */
+/* FILTER SECTION */
 
 .filter-section {
     background: white;
@@ -430,7 +426,7 @@
     font-size: 1.1rem;
 }
 
-/* ==================== RESPONSIVE ==================== */
+/* RESPONSIVE  */
 
 @media (max-width: 1200px) {
     .data-table {

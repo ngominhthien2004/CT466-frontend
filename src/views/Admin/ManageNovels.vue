@@ -275,7 +275,6 @@ export default {
                 if (!this.creatorUsernames[userId]) {
                     try {
                         const user = await UserService.get(userId);
-                        // Vue 3: direct assignment works with reactivity
                         this.creatorUsernames[userId] = user.username || 'Không rõ';
                     } catch (error) {
                         console.error(`Error fetching user ${userId}:`, error);
@@ -349,7 +348,6 @@ export default {
 
             this.deleting = true;
             try {
-                // 👉 Xóa trong store - tự động cập nhật tất cả components
                 await this.novelStore.deleteNovel(this.deleteTarget._id);
 
                 // Close modal
@@ -454,6 +452,4 @@ export default {
         min-width: 1000px;
     }
 }
-
-/* Action buttons use global styles from tables.css */
 </style>

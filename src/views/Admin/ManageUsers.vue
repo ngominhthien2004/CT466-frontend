@@ -437,8 +437,6 @@ export default {
     flex-wrap: wrap;
 }
 
- 
-
 /* Stats Cards */
 .stats-cards {
     display: grid;
@@ -489,8 +487,6 @@ export default {
     color: #7f8c8d;
     font-size: 0.9rem;
 }
-
-/* Table styles moved to tables.css */
 
 /* Button styles */
 .btn-action {
