@@ -6,3 +6,4 @@ export { default as GenreService } from './genre.service';
 export { default as UserService } from './user.service';
 export { default as AuthService } from './auth.service';
 export { default as ReadingHistoryService } from './readingHistory.service';
+export { default as ChatbotService } from './chatbot.service';

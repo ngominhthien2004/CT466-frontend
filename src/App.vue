@@ -3,6 +3,7 @@ import AppHeader from './components/AppHeader.vue';
 import ScrollToTop from './components/Common/ScrollToTop.vue';
 import SiteFooter from './components/Common/Footer.vue';
 import NotificationModal from '@/components/Common/NotificationModal.vue';
+import ChatbotWidget from '@/components/Chatbot/ChatbotWidget.vue';
 import { useNotificationStore } from '@/stores';
 
 export default {
@@ -11,7 +12,8 @@ export default {
     AppHeader,
     ScrollToTop,
     SiteFooter,
-    NotificationModal
+    NotificationModal,
+    ChatbotWidget
   },
   setup() {
     const notification = useNotificationStore();
@@ -28,6 +30,7 @@ export default {
     </main>
     <SiteFooter />
     <ScrollToTop />
+    <ChatbotWidget />
     <!-- Global notification modal mounted once at app root -->
     <NotificationModal
       :show="notification.show"
