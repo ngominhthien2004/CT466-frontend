@@ -384,8 +384,7 @@
     font-size: 0.9rem;
 }
 
-.filter-group input,
-.filter-group select {
+.filter-group input {
     width: 30%;
     padding: 0.625rem 0.875rem;
     border: 2px solid #e9ecef;
@@ -394,8 +393,7 @@
     transition: all 0.3s;
 }
 
-.filter-group input:focus,
-.filter-group select:focus {
+.filter-group input:focus {
     outline: none;
     border-color: #c9a9a6;
     box-shadow: 0 0 0 3px rgba(201, 169, 166, 0.1);

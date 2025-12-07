@@ -389,25 +389,7 @@ export default {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.btn-back {
-    padding: 0.75rem 1.5rem;
-    background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.btn-back:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(201, 169, 166, 0.4);
-}
+/* Back button styling moved to global button variants in `src/assets/buttons.css` */
 
 @media (max-width: 768px) {
     .container {

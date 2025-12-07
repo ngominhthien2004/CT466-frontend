@@ -49,7 +49,7 @@
                     <router-link 
                         v-if="isLoggedIn"
                         to="/novels/add" 
-                        class="btn-add-novel"
+                        class="btn btn-add"
                     >
                         <i class="fas fa-plus-circle"></i>
                         <span>Thêm tiểu thuyết</span>
@@ -87,11 +87,11 @@
 
                     <!-- Auth Buttons (Not Logged In) -->
                     <div v-else class="auth-buttons">
-                        <router-link to="/login" class="btn-login">
+                        <router-link to="/login" class="btn btn-header btn-login">
                             <i class="fas fa-sign-in-alt"></i>
                             <span>Đăng nhập</span>
                         </router-link>
-                        <router-link to="/register" class="btn-register">
+                        <router-link to="/register" class="btn btn-header btn-register">
                             <i class="fas fa-user-plus"></i>
                             <span>Đăng ký</span>
                         </router-link>
@@ -368,33 +368,7 @@ export default {
     gap: 1rem;
 }
 
-/* Custom white button with shadow for header */
-.btn-add-novel {
-    background: white;
-    color: #c9a9a6;
-    padding: 0.75rem 1.5rem;
-    border-radius: 10px;
-    font-weight: 600;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    white-space: nowrap;
-}
-
-.btn-add-novel span {
-    line-height: 1;
-}
-
-.btn-add-novel:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-    background: #f8f9fa;
-}
+/* header button styles moved to global `src/assets/buttons.css` as .btn-header */
 
 /* User Menu */
 .user-menu {
@@ -552,47 +526,7 @@ export default {
     gap: 0.75rem;
 }
 
-.btn-login,
-.btn-register {
-    padding: 0.75rem 1.5rem;
-    border-radius: 10px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.95rem;
-    white-space: nowrap;
-}
-
-.btn-login span,
-.btn-register span {
-    line-height: 1;
-}
-
-.btn-login {
-    color: white;
-    background: rgba(255, 255, 255, 0.15);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-.btn-login:hover {
-    background: rgba(255, 255, 255, 0.25);
-    border-color: rgba(255, 255, 255, 0.5);
-    transform: translateY(-2px);
-}
-
-.btn-register {
-    color: #c9a9a6;
-    background: white;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.btn-register:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-}
+/* auth button styles moved to global `src/assets/buttons.css` as .btn-header / .btn-login */
 
 /* Mobile Menu Toggle */
 .mobile-menu-toggle {
@@ -684,14 +618,7 @@ export default {
         display: none;
     }
 
-    .btn-add-novel span {
-        display: none;
-    }
-
-    .btn-add-novel {
-        padding: 0.75rem;
-    }
-
+    /* header button responsive behavior handled by global styles */
     .user-details {
         display: none;
     }
@@ -716,15 +643,7 @@ export default {
         gap: 0.5rem;
     }
 
-    .btn-login span,
-    .btn-register span {
-        display: none;
-    }
-
-    .btn-login,
-    .btn-register {
-        padding: 0.75rem;
-    }
+    /* header auth buttons use global `.btn` + `.btn-header` */
 }
 
 @media (max-width: 480px) {

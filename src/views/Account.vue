@@ -22,7 +22,7 @@
             <i class="fas fa-user-lock"></i>
             <h3>Bạn chưa đăng nhập</h3>
             <p>Vui lòng đăng nhập để xem trang này</p>
-            <router-link to="/login" class="btn-login">
+            <router-link to="/login" class="btn btn-header btn-login">
                 <i class="fas fa-sign-in-alt"></i>
                 Đăng nhập ngay
             </router-link>
@@ -578,24 +578,7 @@ export default {
     opacity: 0.9;
 }
 
-/* Custom button for login */
-.btn-login {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.75rem;
-    background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
-    color: white;
-    padding: 1rem 2rem;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s;
-}
-
-.btn-login:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(201, 169, 166, 0.4);
-}
+/* Login CTA styles moved to global `src/assets/buttons.css` as .btn-header/.btn-login */
 
 /* Account Container */
 .account-container {

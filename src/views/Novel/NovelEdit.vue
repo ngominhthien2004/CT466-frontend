@@ -29,7 +29,7 @@
             <i class="fas fa-exclamation-triangle"></i>
             <h2>Không thể tải thông tin</h2>
             <p>{{ error }}</p>
-            <button class="btn-retry" @click="fetchNovel">
+            <button class="btn btn-secondary" @click="fetchNovel">
                 <i class="fas fa-redo"></i>
                 Thử lại
             </button>
@@ -290,9 +290,7 @@ export default {
         padding: 1.5rem;
     }
     
-    .btn-back {
-        align-self: flex-start;
-    }
+    /* back button layout handled via global button classes */
     
     .header-text h1 {
         font-size: 1.5rem;

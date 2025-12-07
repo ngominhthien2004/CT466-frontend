@@ -270,21 +270,7 @@ input:checked + .slider:before {
 
 /* Modal footer and button styles moved to modals.css and buttons.css */
 
-/* Custom button styling for user form */
-.btn-submit {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-}
-
-.btn-submit:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-}
-
-.btn-submit:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
+/* Button styling moved to global `src/assets/buttons.css` (.btn-submit, .btn-primary, etc.) */
 
 /* Responsive */
 @media (max-width: 640px) {
