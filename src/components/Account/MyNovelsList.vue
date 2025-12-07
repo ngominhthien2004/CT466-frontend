@@ -74,13 +74,13 @@
                     </div>
                 </div>
                 <div class="novel-actions">
-                    <router-link :to="`/novels/${novel._id}`" class="btn-icon" title="Xem chi tiết">
+                    <router-link :to="`/novels/${novel._id}`" class="btn-action btn-view" title="Xem chi tiết">
                         <i class="fas fa-eye"></i>
                     </router-link>
-                    <button @click="$emit('edit', novel)" class="btn-icon" title="Chỉnh sửa">
+                    <button @click="$emit('edit', novel)" class="btn-action btn-edit" title="Chỉnh sửa">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button @click="$emit('delete', novel)" class="btn-icon btn-delete" title="Xóa">
+                    <button @click="$emit('delete', novel)" class="btn-action btn-delete" title="Xóa">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
@@ -145,12 +145,6 @@ export default {
     margin-bottom: 1.5rem;
 }
 
- 
-
- 
-
-
-
 .novels-list {
     display: flex;
     flex-direction: column;
@@ -201,27 +195,6 @@ export default {
     color: #c9a9a6;
 }
 
-.status-badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 12px;
-    font-size: 0.85rem;
-    font-weight: 600;
-}
-
-.status-badge.ongoing {
-    background: #d4edda;
-    color: #155724;
-}
-
-.status-badge.completed {
-    background: #cce5ff;
-    color: #004085;
-}
-
-.status-badge.paused {
-    background: #fff3cd;
-    color: #856404;
-}
 
 .novel-author {
     font-size: 0.9rem;
@@ -267,31 +240,6 @@ export default {
     gap: 0.5rem;
 }
 
-.btn-icon {
-    width: 40px;
-    height: 40px;
-    border: 2px solid #dfe6e9;
-    background: white;
-    color: #7f8c8d;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-}
-
-.btn-icon:hover {
-    border-color: #c9a9a6;
-    color: #c9a9a6;
-}
-
-.btn-icon.btn-delete:hover {
-    border-color: #e74c3c;
-    color: #e74c3c;
-    background: #fee;
-}
 
 @media (max-width: 768px) {
     .section-header {
