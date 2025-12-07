@@ -492,26 +492,6 @@ export default {
     gap: 1rem;
 }
 
-.btn-clear-all {
-    background: white;
-    border: 2px solid #e74c3c;
-    color: #e74c3c;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    white-space: nowrap;
-}
-
-.btn-clear-all:hover {
-    background: #e74c3c;
-    color: white;
-}
-
 /* Filters Section */
 .filters-section {
     max-width: 1200px;
@@ -520,33 +500,6 @@ export default {
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
-}
-
-
-
-
-
-.btn-login,
-.btn-browse {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.75rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 1rem 2rem;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 1.1rem;
-    transition: all 0.3s;
-    border: none;
-    cursor: pointer;
-}
-
-.btn-login:hover,
-.btn-browse:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
 }
 
 /* History Container */

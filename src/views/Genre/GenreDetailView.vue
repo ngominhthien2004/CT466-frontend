@@ -399,12 +399,6 @@ export default {
     .filter-select {
         width: 100%;
     }
-
-    .btn-reset {
-        margin-left: 0;
-        width: 100%;
-        justify-content: center;
-    }
     
     .novels-grid {
         grid-template-columns: repeat(2, 1fr);

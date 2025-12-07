@@ -411,33 +411,6 @@ export default {
     flex-wrap: wrap;
 }
 
-
- 
-
-
-.btn-login,
-.btn-browse {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.75rem;
-    background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
-    color: white;
-    padding: 1rem 2rem;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 1.1rem;
-    transition: all 0.3s;
-    border: none;
-    cursor: pointer;
-}
-
-.btn-login:hover,
-.btn-browse:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(201, 169, 166, 0.4);
-}
-
 /* Novels Container */
 .novels-container {
     max-width: 1200px;
