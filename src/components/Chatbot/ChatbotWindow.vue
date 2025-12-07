@@ -295,24 +295,7 @@ export default {
   border-top: 1px solid #e9ecef;
 }
 
-.btn-clear {
-  width: 40px;
-  height: 40px;
-  border: none;
-  background: #e9ecef;
-  color: #6c757d;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-clear:hover {
-  background: #dc3545;
-  color: white;
-}
+ 
 
 .input-field {
   flex: 1;

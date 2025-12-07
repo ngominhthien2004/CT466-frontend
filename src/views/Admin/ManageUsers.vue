@@ -437,66 +437,7 @@ export default {
     flex-wrap: wrap;
 }
 
-.search-box {
-    flex: 1;
-    min-width: 250px;
-    position: relative;
-}
-
-.search-box i {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #7f8c8d;
-}
-
-.search-box input {
-    width: 100%;
-    padding: 0.875rem 1rem 0.875rem 3rem;
-    border: 2px solid #e9ecef;
-    border-radius: 10px;
-    font-size: 1rem;
-    transition: all 0.3s;
-}
-
-.search-box input:focus {
-    outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-}
-
-.filter-select {
-    padding: 0.875rem 1rem;
-    border: 2px solid #e9ecef;
-    border-radius: 10px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s;
-    background: white;
-}
-
-.filter-select:focus {
-    outline: none;
-    border-color: #667eea;
-}
-
-.btn-reset {
-    padding: 0.875rem 1.5rem;
-    background: #e9ecef;
-    border: none;
-    border-radius: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.btn-reset:hover {
-    background: #dee2e6;
-}
+ 
 
 /* Stats Cards */
 .stats-cards {

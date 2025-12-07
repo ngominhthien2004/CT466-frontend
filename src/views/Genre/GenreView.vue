@@ -55,7 +55,6 @@
 </template>
 
 <script>
-
 import GenreList from '@/components/Genre/GenreList.vue';
 import Pagination from '@/components/Common/Pagination.vue';
 import GenreService from '@/services/genre.service';
@@ -78,12 +77,9 @@ export default {
     },
     computed: {
         filteredGenres() {
-            if (!this.searchQuery.trim()) {
-                return this.genres;
-            }
-            
+            if (!this.searchQuery.trim()) return this.genres;
             const query = this.searchQuery.toLowerCase().trim();
-            return this.genres.filter(genre => 
+            return this.genres.filter(genre =>
                 genre.name.toLowerCase().includes(query) ||
                 genre.description?.toLowerCase().includes(query)
             );
@@ -99,7 +95,6 @@ export default {
     },
     watch: {
         searchQuery() {
-            // Reset về trang 1 khi search
             this.currentPage = 1;
         }
     },
@@ -112,11 +107,9 @@ export default {
             this.error = null;
             try {
                 const response = await GenreService.getAll();
-                console.log('Genres response from API:', response);
-                console.log('First genre:', response[0]);
-                this.genres = response;
-            } catch (error) {
-                console.error('Error loading genres:', error);
+                this.genres = response || [];
+            } catch (err) {
+                console.error('Error loading genres:', err);
                 this.error = 'Không thể tải danh sách thể loại. Vui lòng thử lại!';
             } finally {
                 this.loading = false;
@@ -124,7 +117,6 @@ export default {
         },
         goToPage(page) {
             this.currentPage = page;
-            // Scroll to top khi chuyển trang
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }
@@ -132,12 +124,6 @@ export default {
 </script>
 
 <style scoped>
-.genre-view {
-    min-height: 100vh;
-    background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
-}
-
-/* Page Header */
 .page-header {
     background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
     padding: 3rem 0;
@@ -246,7 +232,7 @@ export default {
 .search-box i {
     position: absolute;
     left: 1.5rem;
-    color: #95a5a6;
+    color: #95a9a6;
     font-size: 1.25rem;
 }
 

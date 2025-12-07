@@ -347,48 +347,7 @@ export default {
     color: #c9a9a6;
 }
 
-.filter-select {
-    padding: 0.625rem 1.25rem;
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    cursor: pointer;
-    transition: all 0.3s;
-    background: white;
-    min-width: 150px;
-}
-
-.filter-select:focus {
-    outline: none;
-    border-color: #c9a9a6;
-    box-shadow: 0 0 0 3px rgba(201, 169, 166, 0.1);
-}
-
-.filter-select:hover {
-    border-color: #c9a9a6;
-}
-
-.btn-reset {
-    margin-left: auto;
-    padding: 0.625rem 1.25rem;
-    background: #f8f9fa;
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
-    color: #7f8c8d;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.95rem;
-    font-weight: 500;
-}
-
-.btn-reset:hover {
-    background: #c9a9a6;
-    color: white;
-    border-color: #c9a9a6;
-}
+ 
 
 /* Novels Grid */
 .novels-grid {

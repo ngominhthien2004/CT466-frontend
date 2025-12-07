@@ -408,40 +408,7 @@ export default {
     color: #2c3e50;
 }
 
-.filter-select {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: border-color 0.3s;
-}
-
-.filter-select:focus {
-    outline: none;
-    border-color: #c9a9a6;
-}
-
-.btn-reset {
-    width: 100%;
-    padding: 0.75rem;
-    background: #ecf0f1;
-    border: none;
-    border-radius: 8px;
-    color: #2c3e50;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-}
-
-.btn-reset:hover {
-    background: #bdc3c7;
-}
+ 
 
 /* Results */
 .search-results {

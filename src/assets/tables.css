@@ -358,6 +358,24 @@
     min-width: 200px;
 }
 
+/* Global select used for filters */
+.filter-select {
+    padding: 0.75rem 1rem;
+    border: 2px solid #dfe6e9;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: white;
+    color: #2c3e50;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #c9a9a6;
+    box-shadow: 0 0 0 3px rgba(201, 169, 166, 0.1);
+}
+
 .filter-group label {
     display: block;
     margin-bottom: 0.5rem;

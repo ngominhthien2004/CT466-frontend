@@ -145,41 +145,9 @@ export default {
     margin-bottom: 1.5rem;
 }
 
-.search-box {
-    flex: 1;
-    position: relative;
-}
+ 
 
-.search-box i {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #95a5a6;
-}
-
-.search-box input {
-    width: 100%;
-    padding: 0.75rem 1rem 0.75rem 3rem;
-    border: 2px solid #dfe6e9;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: all 0.3s;
-}
-
-.search-box input:focus {
-    outline: none;
-    border-color: #c9a9a6;
-}
-
-.filter-select {
-    padding: 0.75rem 1rem;
-    border: 2px solid #dfe6e9;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    background: white;
-}
+ 
 
 
 

@@ -412,20 +412,7 @@ export default {
 }
 
 
-.filter-select {
-    padding: 0.75rem 1rem;
-    border: 2px solid #dfe6e9;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s;
-    background: white;
-}
-
-.filter-select:focus {
-    outline: none;
-    border-color: #c9a9a6;
-}
+ 
 
 
 .btn-login,
