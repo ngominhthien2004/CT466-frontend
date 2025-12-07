@@ -310,16 +310,7 @@ export default {
     100% { transform: rotate(360deg); }
 }
 
-.empty-state {
-    text-align: center;
-    padding: 2rem;
-    color: #95a5a6;
-}
 
-.empty-state i {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-}
 
 /* Activity List */
 .activity-list {

@@ -622,23 +622,6 @@ export default {
 
 /* Utility styles moved to utilities.css */
 
-/* Custom empty state styling */
-.empty-state {
-    background: white;
-    border-radius: 12px;
-    max-width: 600px;
-    margin: 2rem auto;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.empty-state i {
-    font-size: 5rem;
-}
-
-.empty-state h3 {
-    font-size: 1.75rem;
-}
-
 .btn-login,
 .btn-browse {
     display: inline-flex;

@@ -35,7 +35,7 @@
         </div>
 
         <!-- Empty State -->
-        <div v-if="novels.length === 0" class="empty-state-small">
+        <div v-if="novels.length === 0" class="empty-state">
             <i class="fas fa-book-open"></i>
             <p v-if="totalNovels === 0">Bạn chưa đăng tiểu thuyết nào</p>
             <p v-else>Không tìm thấy kết quả phù hợp</p>
@@ -181,17 +181,7 @@ export default {
     background: white;
 }
 
-.empty-state-small {
-    text-align: center;
-    padding: 3rem 2rem;
-    color: #7f8c8d;
-}
 
-.empty-state-small i {
-    font-size: 3rem;
-    color: #c9a9a6;
-    margin-bottom: 1rem;
-}
 
 .novels-list {
     display: flex;

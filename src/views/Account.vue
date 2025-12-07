@@ -155,11 +155,11 @@
             </div>
         </div>
     <NotificationModal
-        :show="showNotification"
-        :type="notificationType"
-        :message="notificationMessage"
-        :autoClose="notificationAutoClose"
-        @close="showNotification = false"
+        :show="notifier.show"
+        :type="notifier.type"
+        :message="notifier.message"
+        :autoClose="notifier.autoClose"
+        @close="notifier.clear()"
     />
 </div>
 </template>
@@ -174,6 +174,7 @@ import MyNovelsList from '@/components/Account/MyNovelsList.vue';
 import EditEmailModal from '@/components/Account/EditEmailModal.vue';
 import ChangePasswordModal from '@/components/Account/ChangePasswordModal.vue';
 import { useNotificationStore } from '@/stores';
+import NotificationModal from '@/components/Common/NotificationModal.vue';
 
 export default {
     name: 'AccountPage',
@@ -212,6 +213,8 @@ export default {
                 profileError: '',
                 selectedAvatar: null,
                 avatarPreview: null
+                ,
+                notifier: useNotificationStore()
         };
     },
     computed: {
