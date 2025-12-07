@@ -11,7 +11,7 @@
             <i class="fas fa-exclamation-circle"></i>
             <h3>Không thể tải chương</h3>
             <p>{{ error }}</p>
-            <button @click="loadChapter" class="btn-retry">
+            <button @click="loadChapter" class="btn btn-secondary">
                 <i class="fas fa-redo"></i>
                 Thử lại
             </button>
@@ -79,7 +79,7 @@
 
                     <!-- Center: Chapter List Dropdown -->
                     <div class="chapter-selector">
-                        <button @click="toggleChapterList" class="btn-chapter-list">
+                        <button @click="toggleChapterList" class="btn btn-chapter-list">
                             <i class="fas fa-list"></i>
                             <span>Danh sách chương</span>
                             <i class="fas fa-caret-down"></i>
@@ -163,7 +163,7 @@
                     Chương trước
                 </button>
 
-                <a :href="`/novels/${novelId}`" @click.prevent="goToNovel" class="btn-back-novel">
+                <a :href="`/novels/${novelId}`" @click.prevent="goToNovel" class="btn btn-nav">
                     <i class="fas fa-book"></i>
                     Về trang tiểu thuyết
                 </a>
@@ -614,19 +614,6 @@ export default {
 
 /* Utility styles moved to utilities.css */
 
-.btn-retry {
-    background: #c9a9a6;
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-top: 1rem;
-}
 
 /* Header */
 .chapter-header {
@@ -753,25 +740,6 @@ export default {
     max-width: 400px;
 }
 
-.btn-chapter-list {
-    width: 100%;
-    background: white;
-    border: 2px solid #dfe6e9;
-    color: #2c3e50;
-    padding: 0.75rem 1rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    transition: all 0.3s;
-}
-
-.btn-chapter-list:hover {
-    border-color: #c9a9a6;
-}
 
 .chapter-dropdown {
     position: absolute;
@@ -915,26 +883,7 @@ export default {
     gap: 1rem;
 }
 
-.btn-back-novel {
-    background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
-    border: 2px solid #c9a9a6;
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s;
-    box-shadow: 0 2px 8px rgba(201, 169, 166, 0.3);
-}
-
-.btn-back-novel:hover {
-    background: linear-gradient(135deg, #b8a39e 0%, #a89491 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(201, 169, 166, 0.4);
-}
+/* Chapter buttons now use global button styles in src/assets/buttons.css */
 
 /* Responsive */
 @media (max-width: 768px) {

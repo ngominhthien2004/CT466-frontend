@@ -401,32 +401,6 @@ export default {
 }
 
 
-.btn-submit {
-    width: 100%;
-    padding: 1rem;
-    background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-}
-
-.btn-submit:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(201, 169, 166, 0.4);
-}
-
-.btn-submit:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
 
 .divider {
     display: flex;
@@ -448,33 +422,7 @@ export default {
     padding: 0 1rem;
 }
 
-.btn-google {
-    width: 100%;
-    padding: 0.875rem 1rem;
-    background: white;
-    color: #2c3e50;
-    border: 2px solid #dfe6e9;
-    border-radius: 10px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-}
-
-.btn-google:hover {
-    background: #f8f9fa;
-    border-color: #c9a9a6;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.btn-google svg {
-    flex-shrink: 0;
-}
+/* form buttons use global styles in src/assets/buttons.css */
 
 .card-footer {
     background: #f8f9fa;

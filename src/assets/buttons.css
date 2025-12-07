@@ -211,6 +211,112 @@
     cursor: pointer;
 }
 
+/* Chapter list button (full-width dropdown trigger) */
+.btn-chapter-list {
+    width: 100%;
+    background: white;
+    border: 2px solid #dfe6e9;
+    color: #2c3e50;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s;
+}
+
+/* Navigation-style button (matches chapter prev/next look) */
+.btn.btn-nav,
+a.btn-nav,
+button.btn-nav {
+    background: white;
+    border: 2px solid #c9a9a6;
+    color: #c9a9a6;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+
+.btn.btn-nav:hover:not(:disabled),
+a.btn-nav:hover:not(:disabled),
+button.btn-nav:hover:not(:disabled) {
+    background: #c9a9a6;
+    color: white;
+}
+
+.btn.btn-nav:disabled,
+a.btn-nav:disabled,
+button.btn-nav:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.btn-chapter-list:hover {
+    border-color: #c9a9a6;
+}
+
+/* Submit button used across forms */
+.btn-submit {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.btn-submit:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(201, 169, 166, 0.4);
+}
+
+.btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Google / social button variant */
+.btn-google {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    background: white;
+    color: #2c3e50;
+    border: 2px solid #dfe6e9;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.btn-google:hover {
+    background: #f8f9fa;
+    border-color: #c9a9a6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
 .btn-login:hover,
 .btn-browse:hover {
     transform: translateY(-3px);

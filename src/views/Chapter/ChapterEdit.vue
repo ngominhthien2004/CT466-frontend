@@ -2,7 +2,7 @@
     <div class="chapter-edit">
         <div class="page-header">
             <div class="header-content">
-                <button @click="goBack" class="btn-back">
+                <button @click="goBack" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i>
                 </button>
                 <div>
@@ -179,25 +179,7 @@ export default {
     gap: 1.5rem;
 }
 
-.btn-back {
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    color: white;
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s;
-    font-size: 1.2rem;
-}
-
-.btn-back:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: translateX(-3px);
-}
+/* back button uses global .btn + variant classes from src/assets/buttons.css */
 
 .header-content h1 {
     color: white;

@@ -90,7 +90,6 @@
             <h3>Chưa có lịch sử đọc</h3>
             <p>Bạn chưa đọc tiểu thuyết nào. Hãy bắt đầu khám phá!</p>
             <router-link to="/" class="btn-browse">
-                <i class="fas fa-compass"></i>
                 Khám phá ngay
             </router-link>
         </div>

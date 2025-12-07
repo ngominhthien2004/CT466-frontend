@@ -10,7 +10,7 @@
             <div v-else-if="error" class="error">
                 <i class="fas fa-exclamation-triangle"></i>
                 <p>{{ error }}</p>
-                <button @click="$router.push('/')" class="btn-back">
+                <button @click="$router.push('/')" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i>
                     Quay về trang chủ
                 </button>

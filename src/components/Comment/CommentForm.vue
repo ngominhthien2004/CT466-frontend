@@ -14,7 +14,7 @@
                 <button 
                     @click="handleSubmit" 
                     :disabled="!commentText.trim() || isSubmitting" 
-                    class="btn-submit"
+                    class="btn btn-nav"
                 >
                     <i class="fas" :class="isSubmitting ? 'fa-spinner fa-spin' : 'fa-paper-plane'"></i>
                     {{ isSubmitting ? 'Đang gửi...' : 'Gửi bình luận' }}
@@ -105,30 +105,7 @@ export default {
     color: #95a5a6;
 }
 
-.btn-submit {
-    background: #c9a9a6;
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s;
-}
-
-.btn-submit:hover:not(:disabled) {
-    background: #b8a39e;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(201, 169, 166, 0.3);
-}
-
-.btn-submit:disabled {
-    opacity: 0.6;
-    cursor: default;
-}
+/* comment form uses global button variants */
 
 @media (max-width: 768px) {
     .comment-form {

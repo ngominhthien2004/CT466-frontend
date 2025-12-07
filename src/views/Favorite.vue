@@ -78,7 +78,6 @@
             <h3>Chưa có tiểu thuyết yêu thích</h3>
             <p>Bạn chưa thêm tiểu thuyết nào vào danh sách yêu thích</p>
             <router-link to="/" class="btn-browse">
-                <i class="fas fa-book-open"></i>
                 Khám phá ngay
             </router-link>
         </div>
@@ -124,6 +123,18 @@
             :auto-close="notificationAutoClose"
             @close="() => { showNotification = false; notificationAutoClose = false; notificationMessage = ''; notificationType = 'info' }"
         />
+
+        <!-- Confirm Delete (Unfavorite) Modal -->
+        <DeleteModal
+            :show="showDeleteModal"
+            title="Bỏ yêu thích?"
+            :message="'Bạn có chắc muốn bỏ yêu thích cuốn này?'"
+            :item-name="itemToDelete && (itemToDelete.title || itemToDelete.novelTitle)"
+            :loading="deleting"
+            @confirm="handleRemove"
+            @cancel="closeDeleteModal"
+        />
+
     </div>
 </template>
 
@@ -131,14 +142,16 @@
 import { NovelService } from '@/services';
 import { useAuthStore, useNovelStore } from '@/stores';
 import NovelCard from '@/components/Novel/NovelCard.vue';
-import NotificationModal from '@/components/Common/NotificationModal.vue';
 import Pagination from '@/components/Common/Pagination.vue';
+import NotificationModal from '@/components/Common/NotificationModal.vue';
+import DeleteModal from '@/components/Common/DeleteModal.vue';
 
 export default {
     name: 'FavoritePage',
     components: {
         NovelCard,
         NotificationModal,
+        DeleteModal,
         Pagination
     },
     data() {
@@ -158,6 +171,11 @@ export default {
             notificationMessage: '',
             notificationType: 'info',
             notificationAutoClose: false
+            ,
+            // delete/unfavorite modal state
+            showDeleteModal: false,
+            itemToDelete: null,
+            deleting: false
         };
     },
     computed: {
@@ -248,42 +266,55 @@ export default {
             this.sortBy = 'addedDate';
             this.applyFilters();
         },
-        async toggleFavorite(novel) {
-            // Remove from favorites
+        // open confirm modal for unfavorite
+        confirmRemove(novel) {
             if (!novel || !novel._id) return;
-            
-            const confirmed = confirm(`Bạn có chắc muốn bỏ yêu thích "${novel.title}"?`);
-            if (!confirmed) return;
+            this.itemToDelete = novel;
+            this.showDeleteModal = true;
+        },
 
+        async handleRemove() {
+            if (!this.itemToDelete) return;
+
+            this.deleting = true;
             try {
                 const userId = this.authStore.user?._id;
                 if (!userId) {
                     this.showNotification = true;
                     this.notificationType = 'warning';
                     this.notificationMessage = 'Vui lòng đăng nhập';
+                    this.deleting = false;
+                    this.showDeleteModal = false;
                     return;
                 }
-                
-                // Use store to toggle favorite - this will update all pages
-                await this.novelStore.toggleFavoriteWithApi(novel._id, userId);
-                
+
+                await this.novelStore.toggleFavoriteWithApi(this.itemToDelete._id, userId);
+
                 // Remove from local list
-                this.favoriteNovels = this.favoriteNovels.filter(n => n._id !== novel._id);
+                this.favoriteNovels = this.favoriteNovels.filter(n => n._id !== this.itemToDelete._id);
                 this.applyFilters();
+                this.closeDeleteModal();
             } catch (error) {
                 console.error('Error removing from favorites:', error);
                 this.showNotification = true;
                 this.notificationType = 'error';
                 this.notificationMessage = 'Không thể bỏ yêu thích. Vui lòng thử lại!';
+            } finally {
+                this.deleting = false;
             }
         },
+
+        closeDeleteModal() {
+            this.showDeleteModal = false;
+            this.itemToDelete = null;
+        },
+
+        // preserve existing handler name used by NovelCard
         handleToggleFavorite(novelId) {
-            // Find the novel object by id
             const novel = this.favoriteNovels.find(n => n._id === novelId);
-            if (novel) {
-                this.toggleFavorite(novel);
-            }
+            if (novel) this.confirmRemove(novel);
         },
+        // (handled by confirmRemove -> handleRemove)
         goToPage(page) {
             if (page >= 1 && page <= this.totalPages) {
                 this.currentPage = page;

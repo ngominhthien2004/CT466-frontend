@@ -3,7 +3,7 @@
         <!-- Page Header -->
         <div class="page-header">
             <div class="header-content">
-                <button class="btn-back" @click="goBack">
+                <button class="btn btn-secondary btn-back" @click="goBack">
                     <i class="fas fa-arrow-left"></i>
                     Quay lại
                 </button>
@@ -139,25 +139,8 @@ export default {
     gap: 2rem;
 }
 
-.btn-back {
-    background: white;
-    border: 2px solid #dfe6e9;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #2c3e50;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.btn-back:hover {
-    background: #f8f9fa;
-    border-color: #c9a9a6;
-    color: #c9a9a6;
+/* header back button uses global .btn classes from src/assets/buttons.css */
+.header-content .btn-back {
     transform: translateX(-5px);
 }
 

@@ -3,7 +3,7 @@
         <!-- Page Header -->
         <div class="page-header">
             <div class="header-content">
-                <button class="btn-back" @click="goBack">
+                <button class="btn btn-secondary" @click="goBack">
                     <i class="fas fa-arrow-left"></i>
                     Quay lại
                 </button>
@@ -167,27 +167,6 @@ export default {
     gap: 2rem;
 }
 
-.btn-back {
-    background: white;
-    border: 2px solid #dfe6e9;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #2c3e50;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.btn-back:hover {
-    background: #f8f9fa;
-    border-color: #c9a9a6;
-    color: #c9a9a6;
-    transform: translateX(-5px);
-}
 
 .header-text h1 {
     margin: 0 0 0.5rem 0;
@@ -239,25 +218,7 @@ export default {
     font-size: 1.1rem;
 }
 
-.btn-retry {
-    background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
-    color: white;
-    border: none;
-    padding: 0.75rem 2rem;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.btn-retry:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(201, 169, 166, 0.4);
-}
+/* Buttons use global styles from src/assets/buttons.css */
 
 /* Message Banner */
 .message-banner {
