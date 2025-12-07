@@ -411,34 +411,6 @@ export default {
     flex-wrap: wrap;
 }
 
-.search-box {
-    flex: 1;
-    min-width: 250px;
-    position: relative;
-}
-
-.search-box i {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #95a5a6;
-}
-
-.search-box input {
-    width: 100%;
-    padding: 0.75rem 1rem 0.75rem 3rem;
-    border: 2px solid #dfe6e9;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: all 0.3s;
-}
-
-.search-box input:focus {
-    outline: none;
-    border-color: #c9a9a6;
-    box-shadow: 0 0 0 3px rgba(201, 169, 166, 0.1);
-}
 
 .filter-select {
     padding: 0.75rem 1rem;
@@ -455,22 +427,6 @@ export default {
     border-color: #c9a9a6;
 }
 
-.btn-clear {
-    background: white;
-    border: 2px solid #dfe6e9;
-    color: #7f8c8d;
-    padding: 0.75rem 1.25rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s;
-    font-size: 1rem;
-}
-
-.btn-clear:hover {
-    background: #f8f9fa;
-    border-color: #c9a9a6;
-    color: #c9a9a6;
-}
 
 .btn-login,
 .btn-browse {
@@ -509,7 +465,6 @@ export default {
     gap: 2rem;
 }
 
-/* Pagination handled by shared Pagination.vue component styles */
 
 /* Responsive */
 @media (max-width: 1024px) {
