@@ -38,9 +38,17 @@
 
         <div class="container">
             <GenreList 
-                :genres="filteredGenres"
+                :genres="paginatedGenres"
                 :loading="loading"
                 :error="error"
+            />
+            
+            <!-- Pagination -->
+            <Pagination
+                :current-page="currentPage"
+                :total-pages="totalPages"
+                :total-items="filteredGenres.length"
+                @change="goToPage"
             />
         </div>
     </div>
@@ -49,19 +57,23 @@
 <script>
 
 import GenreList from '@/components/Genre/GenreList.vue';
+import Pagination from '@/components/Common/Pagination.vue';
 import GenreService from '@/services/genre.service';
 
 export default {
     name: 'GenreView',
     components: {
-        GenreList
+        GenreList,
+        Pagination
     },
     data() {
         return {
             genres: [],
             searchQuery: '',
             loading: false,
-            error: null
+            error: null,
+            currentPage: 1,
+            itemsPerPage: 12
         };
     },
     computed: {
@@ -75,6 +87,20 @@ export default {
                 genre.name.toLowerCase().includes(query) ||
                 genre.description?.toLowerCase().includes(query)
             );
+        },
+        totalPages() {
+            return Math.ceil(this.filteredGenres.length / this.itemsPerPage);
+        },
+        paginatedGenres() {
+            const start = (this.currentPage - 1) * this.itemsPerPage;
+            const end = start + this.itemsPerPage;
+            return this.filteredGenres.slice(start, end);
+        }
+    },
+    watch: {
+        searchQuery() {
+            // Reset về trang 1 khi search
+            this.currentPage = 1;
         }
     },
     async mounted() {
@@ -95,6 +121,11 @@ export default {
             } finally {
                 this.loading = false;
             }
+        },
+        goToPage(page) {
+            this.currentPage = page;
+            // Scroll to top khi chuyển trang
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }
 };
