@@ -39,7 +39,7 @@ export default {
 .scroll-top-btn {
     position: fixed;
     bottom: 2rem;
-    right: 2rem;
+    right: 6rem;
     width: 50px;
     height: 50px;
     background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
@@ -82,7 +82,7 @@ export default {
 @media (max-width: 768px) {
     .scroll-top-btn {
         bottom: 1.5rem;
-        right: 1.5rem;
+        right: 5rem;
         width: 45px;
         height: 45px;
         font-size: 1rem;
