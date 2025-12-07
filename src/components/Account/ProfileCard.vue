@@ -71,21 +71,13 @@
             </button>
         </div>
     
-        <NotificationModal
-            :show="showNotification"
-            :type="notificationType"
-            :message="notificationMessage"
-            :autoClose="notificationAutoClose"
-            @close="showNotification = false"
-        />
     </div>
 </template>
 
 <script>
-import NotificationModal from '@/components/Common/NotificationModal.vue';
+import { useNotificationStore } from '@/stores'
 
 export default {
-    components: { NotificationModal },
     name: 'ProfileCard',
     props: {
         username: { type: String, required: true },
@@ -100,10 +92,7 @@ export default {
         return {
             editingUsername: false,
             tempUsername: '',
-            showNotification: false,
-            notificationMessage: '',
-            notificationType: 'error',
-            notificationAutoClose: false
+            
         };
     },
     methods: {
@@ -122,11 +111,9 @@ export default {
             this.tempUsername = '';
         },
         saveUsername() {
+            const notifier = useNotificationStore();
             if (!this.tempUsername || this.tempUsername.trim() === '') {
-                this.notificationMessage = 'Tên người dùng không được để trống!';
-                this.notificationType = 'error';
-                this.notificationAutoClose = false;
-                this.showNotification = true;
+                notifier.showNotification('Tên người dùng không được để trống!', 'error', false);
                 return;
             }
             if (this.tempUsername === this.username) {

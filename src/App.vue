@@ -2,13 +2,20 @@
 import AppHeader from './components/AppHeader.vue';
 import ScrollToTop from './components/Common/ScrollToTop.vue';
 import SiteFooter from './components/Common/Footer.vue';
+import NotificationModal from '@/components/Common/NotificationModal.vue';
+import { useNotificationStore } from '@/stores';
 
 export default {
   name: 'App',
   components: {
     AppHeader,
-    ScrollToTop
-    ,SiteFooter
+    ScrollToTop,
+    SiteFooter,
+    NotificationModal
+  },
+  setup() {
+    const notification = useNotificationStore();
+    return { notification };
   }
 }
 </script>
@@ -21,6 +28,15 @@ export default {
     </main>
     <SiteFooter />
     <ScrollToTop />
+    <!-- Global notification modal mounted once at app root -->
+    <NotificationModal
+      :show="notification.show"
+      :type="notification.type"
+      :message="notification.message"
+      :autoClose="notification.autoClose"
+      :duration="notification.duration"
+      @close="notification.clear()"
+    />
   </div>
 </template>
 
