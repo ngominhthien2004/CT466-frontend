@@ -7,12 +7,6 @@
           <h3>NovelMT</h3>
         </div>
         <p>Nền tảng nghe tiểu thuyết hàng đầu Việt Nam. Hàng nghìn tiểu thuyết hay, cập nhật liên tục.</p>
-        <div class="socials">
-          <a aria-label="facebook" href="#"><i class="fab fa-facebook-f"></i></a>
-          <a aria-label="youtube" href="#"><i class="fab fa-youtube"></i></a>
-          <a aria-label="instagram" href="#"><i class="fab fa-instagram"></i></a>
-          <a aria-label="twitter" href="#"><i class="fab fa-twitter"></i></a>
-        </div>
       </div>
 
       <div class="col links">
@@ -39,16 +33,10 @@
         <h4>Liên Hệ</h4>
         <ul class="contact-list">
           <li><i class="far fa-envelope"></i> support@novelmt.vn</li>
-          <li><i class="fas fa-phone"></i> 0123 456 789</li>
-          <li><i class="fas fa-map-marker-alt"></i> 123 Đường 3/2, Ninh Kiều, TP.Cần Thơ</li>
         </ul>
       </div>
     </div>
 
-    <div class="footer-bottom">
-      <div class="copyright">© 2025 NovelMT. All rights reserved.</div>
-      <div class="made">Made with <span class="heart">❤</span> by NovelMT Team</div>
-    </div>
   </footer>
 </template>
 

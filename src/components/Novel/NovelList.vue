@@ -25,59 +25,13 @@
             </div>
 
             <!-- Pagination -->
-            <div v-if="totalPages > 1" class="pagination">
-                <button 
-                    class="page-btn" 
-                    :disabled="currentPage === 1"
-                    @click="goToPage(1)"
-                    title="Trang đầu"
-                >
-                    <i class="fas fa-angle-double-left"></i>
-                </button>
-                
-                <button 
-                    class="page-btn" 
-                    :disabled="currentPage === 1"
-                    @click="goToPage(currentPage - 1)"
-                    title="Trang trước"
-                >
-                    <i class="fas fa-angle-left"></i>
-                </button>
-
-                <template v-for="page in visiblePages" :key="page">
-                    <button 
-                        v-if="page !== '...'"
-                        class="page-btn"
-                        :class="{ active: page === currentPage }"
-                        @click="goToPage(page)"
-                    >
-                        {{ page }}
-                    </button>
-                    <span v-else class="page-dots">...</span>
-                </template>
-
-                <button 
-                    class="page-btn" 
-                    :disabled="currentPage === totalPages"
-                    @click="goToPage(currentPage + 1)"
-                    title="Trang sau"
-                >
-                    <i class="fas fa-angle-right"></i>
-                </button>
-
-                <button 
-                    class="page-btn" 
-                    :disabled="currentPage === totalPages"
-                    @click="goToPage(totalPages)"
-                    title="Trang cuối"
-                >
-                    <i class="fas fa-angle-double-right"></i>
-                </button>
-
-                <div class="page-info">
-                    Trang {{ currentPage }} / {{ totalPages }} (Tổng {{ novels.length }})
-                </div>
-            </div>
+            <Pagination
+                v-if="totalPages > 1"
+                :current-page="currentPage"
+                :total-pages="totalPages"
+                :total-items="novels.length"
+                @change="goToPage"
+            />
         </template>
     </div>
 </template>
@@ -85,11 +39,13 @@
 <script>
 import NovelCard from './NovelCard.vue';
 import { useAuthStore } from '@/stores';
+import Pagination from '@/components/Common/Pagination.vue';
 
 export default {
     name: 'NovelList',
     components: {
-        NovelCard
+        NovelCard,
+        Pagination
     },
     props: {
         title: {
@@ -127,39 +83,6 @@ export default {
             const start = (this.currentPage - 1) * this.itemsPerPage;
             const end = start + this.itemsPerPage;
             return this.novels.slice(start, end);
-        },
-        visiblePages() {
-            const pages = [];
-            const total = this.totalPages;
-            const current = this.currentPage;
-            
-            if (total <= 7) {
-                // Hiển thị tất cả nếu <= 7 trang
-                for (let i = 1; i <= total; i++) {
-                    pages.push(i);
-                }
-            } else {
-                // Luôn hiển thị trang đầu
-                pages.push(1);
-                
-                if (current > 3) {
-                    pages.push('...');
-                }
-                
-                // Hiển thị các trang xung quanh trang hiện tại
-                for (let i = Math.max(2, current - 1); i <= Math.min(total - 1, current + 1); i++) {
-                    pages.push(i);
-                }
-                
-                if (current < total - 2) {
-                    pages.push('...');
-                }
-                
-                // Luôn hiển thị trang cuối
-                pages.push(total);
-            }
-            
-            return pages;
         }
     },
     watch: {
@@ -221,67 +144,7 @@ export default {
     width: 100%;
 }
 
-/* Pagination Styles */
-.pagination {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-top: 2rem;
-    padding-top: 2rem;
-    border-top: 1px solid #ecf0f1;
-    flex-wrap: wrap;
-}
-
-.page-btn {
-    min-width: 40px;
-    height: 40px;
-    padding: 0 12px;
-    border: 1px solid #dfe6e9;
-    background: white;
-    color: #2c3e50;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.95rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.page-btn:hover:not(:disabled) {
-    background: #f8f9fa;
-    border-color: #c9a9a6;
-    color: #c9a9a6;
-    transform: translateY(-2px);
-}
-
-.page-btn.active {
-    background: linear-gradient(135deg, #c9a9a6 0%, #b8a39e 100%);
-    color: white;
-    border-color: #c9a9a6;
-    font-weight: 600;
-}
-
-.page-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
-
-.page-dots {
-    padding: 0 8px;
-    color: #95a5a6;
-    font-weight: 600;
-}
-
-.page-info {
-    margin-left: 1rem;
-    color: #7f8c8d;
-    font-size: 0.9rem;
-    padding: 0 1rem;
-    border-left: 2px solid #ecf0f1;
-}
+/* Pagination handled by shared Pagination.vue component styles */
 
 @media (max-width: 1024px) {
     .novel-grid {

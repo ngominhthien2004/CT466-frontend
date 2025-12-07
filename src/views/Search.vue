@@ -110,32 +110,13 @@
                     />
 
                     <!-- Pagination -->
-                    <div v-if="totalPages > 1" class="pagination">
-                        <button
-                            @click="currentPage--"
-                            :disabled="currentPage === 1"
-                            class="pagination-btn"
-                        >
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-
-                        <button
-                            v-for="page in visiblePages"
-                            :key="page"
-                            @click="currentPage = page"
-                            :class="['pagination-btn', { active: page === currentPage }]"
-                        >
-                            {{ page }}
-                        </button>
-
-                        <button
-                            @click="currentPage++"
-                            :disabled="currentPage === totalPages"
-                            class="pagination-btn"
-                        >
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                    </div>
+                    <Pagination
+                        v-if="totalPages > 1"
+                        :current-page="currentPage"
+                        :total-pages="totalPages"
+                        :total-items="filteredNovels.length"
+                        @change="goToPage"
+                    />
                 </main>
             </div>
         </div>
@@ -150,6 +131,7 @@ import EmptyState from '@/components/Common/EmptyState.vue';
 import NovelService from '@/services/novel.service';
 import GenreService from '@/services/genre.service';
 import { useAuthStore } from '@/stores';
+import Pagination from '@/components/Common/Pagination.vue';
 
 export default {
     name: 'SearchPage',
@@ -157,7 +139,8 @@ export default {
         SearchNovel,
         NovelList,
         LoadingSpinner,
-        EmptyState
+        EmptyState,
+        Pagination
     },
     data() {
         return {
@@ -182,21 +165,6 @@ export default {
         },
         totalPages() {
             return Math.ceil(this.filteredNovels.length / this.itemsPerPage);
-        },
-        visiblePages() {
-            const pages = [];
-            const maxVisible = 5;
-            let start = Math.max(1, this.currentPage - Math.floor(maxVisible / 2));
-            let end = Math.min(this.totalPages, start + maxVisible - 1);
-
-            if (end - start < maxVisible - 1) {
-                start = Math.max(1, end - maxVisible + 1);
-            }
-
-            for (let i = start; i <= end; i++) {
-                pages.push(i);
-            }
-            return pages;
         }
     },
     async mounted() {
@@ -284,6 +252,11 @@ export default {
 
             this.filteredNovels = result;
             this.currentPage = 1;
+        },
+
+        goToPage(page) {
+            this.currentPage = page;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         },
 
         resetFilters() {

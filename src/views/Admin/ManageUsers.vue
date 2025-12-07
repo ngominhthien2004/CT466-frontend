@@ -92,15 +92,13 @@
             </table>
 
             <!-- Pagination -->
-            <div v-if="totalPages > 1" class="pagination">
-                <button @click="currentPage--" :disabled="currentPage === 1" class="btn-page">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                <span class="page-info">Trang {{ currentPage }} / {{ totalPages }}</span>
-                <button @click="currentPage++" :disabled="currentPage === totalPages" class="btn-page">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
-            </div>
+            <Pagination
+                v-if="totalPages > 1"
+                :current-page="currentPage"
+                :total-pages="totalPages"
+                :total-items="filteredUsers.length"
+                @change="goToPage"
+            />
         </div>
 
         <!-- Delete Confirmation Modal -->
@@ -151,6 +149,7 @@ import UserForm from '@/components/User/UserForm.vue';
 import PageHeader from '@/components/Admin/PageHeader.vue';
 import StatsCards from '@/components/Admin/StatsCards.vue';
 import SearchFilter from '@/components/Admin/SearchFilter.vue';
+import Pagination from '@/components/Common/Pagination.vue';
 import { useAuthStore } from '@/stores';
 
 export default {
@@ -163,7 +162,8 @@ export default {
         PageHeader,
         StatsCards,
         SearchFilter,
-        NotificationModal
+        NotificationModal,
+        Pagination
     },
     data() {
         return {
@@ -278,6 +278,10 @@ export default {
 
             this.filteredUsers = filtered;
             this.currentPage = 1;
+        },
+        goToPage(page) {
+            this.currentPage = page;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         },
         resetFilters() {
             this.searchQuery = '';

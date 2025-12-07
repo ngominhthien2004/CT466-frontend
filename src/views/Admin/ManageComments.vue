@@ -99,14 +99,13 @@
     />
 
     <!-- Unreport Comment Modal -->
-    <ConfirmModal
+    <DeleteModal
         :show="showUnreportModal"
-        title="Gỡ báo cáo"
-        :message="`Bạn có chắc muốn gỡ báo cáo cho bình luận này?`"
+        :item-name="unreportTarget?.content?.substring(0, 50) + '...'"
+        message="Bạn có chắc muốn gỡ báo cáo cho bình luận này?"
         confirmText="Gỡ báo cáo"
-        cancelText="Hủy"
         @confirm="handleUnreport"
-        @update:show="(v) => showUnreportModal = v"
+        @cancel="closeUnreportModal"
     />
     <!-- Notification Modal -->
     <NotificationModal
@@ -123,7 +122,6 @@ import StatsCards from '@/components/Admin/StatsCards.vue';
 import LoadingSpinner from '@/components/Common/LoadingSpinner.vue';
 import EmptyState from '@/components/Common/EmptyState.vue';
 import DeleteModal from '@/components/Common/DeleteModal.vue';
-import ConfirmModal from '@/components/Common/ConfirmModal.vue';
 import NotificationModal from '@/components/Common/NotificationModal.vue';
 import CommentService from '@/services/comment.service';
 
@@ -135,7 +133,6 @@ export default {
         LoadingSpinner,
         EmptyState,
         DeleteModal,
-        ConfirmModal,
         NotificationModal
     },
     data() {
@@ -203,14 +200,18 @@ export default {
                 this.notificationType = 'success';
                 this.showNotification = true;
                 await this.loadReportedComments();
-                this.showUnreportModal = false;
-                this.unreportTarget = null;
+                this.closeUnreportModal();
             } catch (error) {
                 console.error('Error unreporting comment:', error);
                 this.notificationMessage = 'Không thể gỡ báo cáo';
                 this.notificationType = 'error';
                 this.showNotification = true;
             }
+        },
+
+        closeUnreportModal() {
+            this.showUnreportModal = false;
+            this.unreportTarget = null;
         },
 
         async deleteComment(commentId) {
@@ -331,28 +332,6 @@ export default {
     color: #95a5a6;
     font-style: italic;
     font-size: 0.8rem;
-}
-
-.action-buttons {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.btn-action {
-    padding: 0.5rem 0.75rem;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.3s;
-    color: white;
-}
-
-.btn-action.btn-edit {
-    background: #3498db;
-}
-
-.btn-action.btn-edit:hover {
-    background: #2980b9;
 }
 
 

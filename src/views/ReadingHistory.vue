@@ -137,36 +137,13 @@
             </div>
 
             <!-- Pagination -->
-            <div v-if="totalPages > 1" class="pagination">
-                <button
-                    @click="goToPage(currentPage - 1)"
-                    :disabled="currentPage === 1"
-                    class="pagination-btn"
-                >
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-
-                <button
-                    v-for="page in visiblePages"
-                    :key="page"
-                    @click="goToPage(page)"
-                    :class="['pagination-btn', { active: page === currentPage }]"
-                >
-                    {{ page }}
-                </button>
-
-                <button
-                    @click="goToPage(currentPage + 1)"
-                    :disabled="currentPage === totalPages"
-                    class="pagination-btn"
-                >
-                    <i class="fas fa-chevron-right"></i>
-                </button>
-
-                <span class="pagination-info">
-                    Trang {{ currentPage }} &#47; {{ totalPages }}
-                </span>
-            </div>
+            <Pagination
+                v-if="totalPages > 1"
+                :current-page="currentPage"
+                :total-pages="totalPages"
+                :total-items="filteredHistory.length"
+                @change="goToPage"
+            />
         </div>
 
         <!-- No Results After Filter -->
@@ -206,10 +183,11 @@ import { ReadingHistoryService } from '@/services';
 import { useAuthStore } from '@/stores';
 import DeleteModal from '@/components/Common/DeleteModal.vue';
 import NotificationModal from '@/components/Common/NotificationModal.vue';
+import Pagination from '@/components/Common/Pagination.vue';
 
 export default {
     name: 'ReadingHistoryPage',
-    components: { DeleteModal, NotificationModal },
+    components: { DeleteModal, NotificationModal, Pagination },
     data() {
         return {
             historyList: [],
@@ -252,21 +230,6 @@ export default {
         },
         totalPages() {
             return Math.ceil(this.filteredHistory.length / this.itemsPerPage);
-        },
-        visiblePages() {
-            const pages = [];
-            const maxVisible = 5;
-            let start = Math.max(1, this.currentPage - Math.floor(maxVisible / 2));
-            let end = Math.min(this.totalPages, start + maxVisible - 1);
-
-            if (end - start < maxVisible - 1) {
-                start = Math.max(1, end - maxVisible + 1);
-            }
-
-            for (let i = start; i <= end; i++) {
-                pages.push(i);
-            }
-            return pages;
         }
     },
     async mounted() {
@@ -765,54 +728,7 @@ export default {
     font-size: 0.75rem;
 }
 
-/* Pagination */
-.pagination {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    justify-content: center;
-    margin-top: 3rem;
-    padding: 1.5rem;
-}
-
-.pagination-btn {
-    min-width: 40px;
-    height: 40px;
-    padding: 0 0.75rem;
-    border: 2px solid #dfe6e9;
-    background: white;
-    color: #2c3e50;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-}
-
-.pagination-btn:hover:not(:disabled) {
-    border-color: #667eea;
-    background: #667eea;
-    color: white;
-}
-
-.pagination-btn.active {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-color: #667eea;
-}
-
-.pagination-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.pagination-info {
-    margin-left: 1rem;
-    color: #7f8c8d;
-    font-size: 0.9rem;
-}
+/* Pagination handled by shared Pagination.vue component styles */
 
 /* Responsive */
 @media (max-width: 1024px) {

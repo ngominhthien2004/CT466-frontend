@@ -133,36 +133,13 @@
         </div>
 
         <!-- Pagination -->
-        <div v-if="totalPages > 1" class="pagination">
-            <button
-                @click="goToPage(currentPage - 1)"
-                :disabled="currentPage === 1"
-                class="pagination-btn"
-            >
-                <i class="fas fa-chevron-left"></i>
-            </button>
-
-            <button
-                v-for="page in visiblePages"
-                :key="page"
-                @click="goToPage(page)"
-                :class="['pagination-btn', { active: page === currentPage }]"
-            >
-                {{ page }}
-            </button>
-
-            <button
-                @click="goToPage(currentPage + 1)"
-                :disabled="currentPage === totalPages"
-                class="pagination-btn"
-            >
-                <i class="fas fa-chevron-right"></i>
-            </button>
-
-            <span class="pagination-info">
-                Tổng {{ filteredNovels.length }}
-            </span>
-        </div>
+        <Pagination
+            v-if="totalPages > 1"
+            :current-page="currentPage"
+            :total-pages="totalPages"
+            :total-items="filteredNovels.length"
+            @change="goToPage"
+        />
 
         <!-- Delete Confirmation Modal -->
         <DeleteModal
@@ -205,10 +182,11 @@ import SearchNovel from '@/components/Novel/SearchNovel.vue';
 import FilterBar from '@/components/Common/FilterBar.vue';
 import LoadingSpinner from '@/components/Common/LoadingSpinner.vue';
 import EmptyState from '@/components/Common/EmptyState.vue';
+import Pagination from '@/components/Common/Pagination.vue';
 
 export default {
     name: 'ManageNovels',
-    components: { PageHeader, StatsCards, NovelForm, DeleteModal, NotificationModal, SearchNovel, FilterBar, LoadingSpinner, EmptyState },
+    components: { PageHeader, StatsCards, NovelForm, DeleteModal, NotificationModal, SearchNovel, FilterBar, LoadingSpinner, EmptyState, Pagination },
     data() {
         return {
             novelStore: useNovelStore(),
@@ -274,21 +252,6 @@ export default {
         },
         totalPages() {
             return Math.ceil(this.filteredNovels.length / this.itemsPerPage);
-        },
-        visiblePages() {
-            const pages = [];
-            const maxVisible = 5;
-            let start = Math.max(1, this.currentPage - Math.floor(maxVisible / 2));
-            let end = Math.min(this.totalPages, start + maxVisible - 1);
-
-            if (end - start < maxVisible - 1) {
-                start = Math.max(1, end - maxVisible + 1);
-            }
-
-            for (let i = start; i <= end; i++) {
-                pages.push(i);
-            }
-            return pages;
         }
     },
     watch: {
@@ -418,6 +381,11 @@ export default {
                 this.closeEditModal();
                 // Re-apply filters so table reflects updated data
                 this.applyFilters();
+                // Show success notification
+                this.notificationMessage = 'Đã cập nhật tiểu thuyết thành công!';
+                this.notificationType = 'success';
+                this.notificationAutoClose = true;
+                this.showNotification = true;
             } catch (error) {
                 console.error('Error updating novel:', error);
                 this.notificationMessage = 'Có lỗi xảy ra khi cập nhật tiểu thuyết!';
@@ -486,4 +454,6 @@ export default {
         min-width: 1000px;
     }
 }
+
+/* Action buttons use global styles from tables.css */
 </style>

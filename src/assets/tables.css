@@ -224,6 +224,7 @@
 .action-buttons {
     display: flex;
     gap: 0.5rem;
+    justify-content: center;
 }
 
 .btn-action {
@@ -237,19 +238,46 @@
     justify-content: center;
     transition: all 0.3s;
     text-decoration: none;
+    color: white;
+    font-size: 0.9rem;
 }
 
 .btn-action:hover {
-    transform: scale(1.1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
+.btn-action:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* View Button (Blue) */
 .btn-view {
-    background: #3498db;
-    color: white;
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
 }
 
 .btn-view:hover {
-    background: #2980b9;
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+}
+
+/* Edit Button (Orange) */
+.btn-edit {
+    background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%);
+}
+
+.btn-edit:hover {
+    box-shadow: 0 4px 12px rgba(246, 173, 85, 0.4);
+}
+
+/* Delete Button (Red) */
+.btn-delete {
+    background: linear-gradient(135deg, #fc8181 0%, #f56565 100%);
+}
+
+.btn-delete:hover {
+    box-shadow: 0 4px 12px rgba(252, 129, 129, 0.4);
 }
 
 /* ==================== PAGINATION ==================== */

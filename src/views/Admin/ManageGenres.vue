@@ -339,31 +339,7 @@ export default {
     text-align: center;
 }
 
-/* Action Buttons */
-.action-buttons {
-    display: flex;
-    gap: 0.5rem;
-    justify-content: center;
-}
-
-.btn-action {
-    padding: 0.5rem 0.75rem;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.3s;
-    color: white;
-    font-size: 0.9rem;
-}
-
-.btn-edit {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-}
-
-.btn-edit:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(240, 147, 251, 0.4);
-}
+/* Action buttons use global styles from tables.css */
 
 /* Custom modal header for genres */
 .modal-header {
