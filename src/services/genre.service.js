@@ -1,30 +1,33 @@
-import api from './api';
+import createApiClient from './api.service';
 
-const GenreService = {
-    async getAll() {
-        const res = await api.get('/genres');
-        return res.data;
-    },
-    async getBySlug(slug) {
-        const res = await api.get(`/genres/slug/${slug}`);
-        return res.data;
-    },
-    async getById(id) {
-        const res = await api.get(`/genres/${id}`);
-        return res.data;
-    },
-    async create(data) {
-        const res = await api.post('/genres', data);
-        return res.data;
-    },
-    async update(id, data) {
-        const res = await api.put(`/genres/${id}`, data);
-        return res.data;
-    },
-    async delete(id) {
-        const res = await api.delete(`/genres/${id}`);
-        return res.data;
+class GenreService {
+    constructor(baseUrl = "/api/genres") {
+        this.api = createApiClient(baseUrl);
     }
-};
 
-export default GenreService;
+    async getAll() {
+        return (await this.api.get("/")).data;
+    }
+
+    async getBySlug(slug) {
+        return (await this.api.get(`/slug/${slug}`)).data;
+    }
+
+    async getById(id) {
+        return (await this.api.get(`/${id}`)).data;
+    }
+
+    async create(data) {
+        return (await this.api.post("/", data)).data;
+    }
+
+    async update(id, data) {
+        return (await this.api.put(`/${id}`, data)).data;
+    }
+
+    async delete(id) {
+        return (await this.api.delete(`/${id}`)).data;
+    }
+}
+
+export default new GenreService();
