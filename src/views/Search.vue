@@ -273,18 +273,12 @@ export default {
             }
 
             try {
-                const novel = this.novels.find(n => n._id === novelId);
-                if (!novel) return;
-
                 const userId = this.authStore.currentUser._id;
-                const isFavorited = novel.likedBy?.includes(userId);
+                
+                // Use the service's toggleFavorite method
+                await NovelService.toggleFavorite(novelId, userId);
 
-                if (isFavorited) {
-                    await NovelService.unlike(novelId, userId);
-                } else {
-                    await NovelService.like(novelId, userId);
-                }
-
+                // Reload data to reflect changes
                 await this.loadData();
             } catch (error) {
                 console.error('Error toggling favorite:', error);
